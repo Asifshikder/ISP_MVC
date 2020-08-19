@@ -1,0 +1,247 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.Pop>
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+<script src="~/Scripts/CustomScripts/PopManager.js"></script>
+
+<script>
+
+    var PopID;
+    $(document).ready(function () {
+
+        //$('#tblPop').dataTable({
+        //    "lengthMenu": [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
+        //    "scrollX": true,
+        //    "stateSave": false,
+        //    dom: 'Bfrtip',
+        //    buttons:
+        //    [
+        //        'pageLength',
+
+        //        {
+        //            extend: 'excelHtml5',
+        //            title: 'Pop List',
+        //            exportOptions: { columns: [1, 2] }
+        //        }
+
+
+        //    ]
+        //});
+
+        $("#tblPop").on("click", "#showPopForUpdate", function (e) {
+
+            e.preventDefault();
+            PopID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            PopManager.ShowPopDetailsByIDForUpdate(PopID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlPopInsert").modal("show");
+        });
+
+        $("#btnInsertPop").click(function (e) {
+
+            if (PopManager.CreateValidation() === true) {
+
+                PopManager.InsertPopFromPopUp();
+            }
+        });
+
+        $("#btnUpdatePop").click(function () {
+
+            if (PopManager.UpdateValidation() === true) {
+
+                PopManager.UpdatePopInformation();
+            }
+        });
+        //btnPopUpPackageClose
+
+
+
+        //$('#btnInsertPopModalClose,#,#').click(function () {
+
+
+        //});
+
+
+        $("#btnPopUpPopInsertClose").click(function (e) {
+            PopManager.clearForSaveInformation();
+            $("#mdlPopInsert").modal("hide");
+        });
+
+        $("#btnPopUpPopUpdateClose").click(function () {
+            PopID = "";
+            PopManager.clearForUpdateInformation();
+            $("#mdlPopUpdate").modal("hide");
+        });
+
+        $('#btnInsertPopModalClose').click(function () {
+            PopManager.clearForSaveInformation();
+        });
+        $('#btnUpdatePopModalClose').click(function () {
+            PopManager.clearForUpdateInformation();
+        });
+        $("#tblPop").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            PopManager.PrintPopList();
+        });
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Pop</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Pop/Index"><i class="fa fa-dashboard"></i> All Pop</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+            <table id="tblPop" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;">
+                @*  <table id="tblPop" class="table table-striped table-bordered table-responsive">*@
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName(" Pop Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName(" Pop Location")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Pop))
+                            {
+                                <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var Pop in Model)
+                    {
+                        <tr>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => Pop.PopID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelPop => Pop.PopName)
+                            </td>
+                            <td>
+                                <a href="https://www.google.com.bd/maps/place/'@Pop.LatitudeLongitude'" target="_blank">@Html.DisplayFor(modelPop => Pop.PopLocation)</a>
+                                @*@Html.DisplayFor(modelPop => Pop.PopLocation)*@
+                            </td>
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Pop))
+                                {
+                                    <a href="" id="showPopForUpdate">Show</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Pop))
+        {
+            <div class="modal fade" id="mdlPopInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:55%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertPopModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Pop Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label(" Pop Name ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("PopName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Pop Name " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label(" Pop Location ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px;float:left">
+                                            @Html.TextBox("PopLocation", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Pop Location " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label(" Latitude & Longitude", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px;float:left">
+                                            @Html.TextBox("LatitudeLongitude", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Latitude & Longitude " })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpPopInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertPop" value="Save Pop" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Pop))
+        {
+            <div class="modal fade" id="mdlPopUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:55%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdatePopModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Pop Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_Pop")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpPopUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdatePop" value="Update Pop" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>

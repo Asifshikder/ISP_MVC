@@ -1,0 +1,349 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.TimePeriodForSignal>
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+@*<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>*@
+<script src="~/Scripts/CustomScripts/TimePeriodForSignalManager.js"></script>
+
+@*@if (TempData["AlreadyInsert"] != null)
+    {
+        <script>
+            AppUtil.ShowSuccess('@TempData["AlreadyInsert"].ToString()');
+        </script>
+
+    }
+    @if (TempData["SaveSucessOrFail"] != null)
+    {
+        <script>
+            AppUtil.ShowSuccess('@TempData["SaveSucessOrFail"].ToString()');
+        </script>
+
+    }*@
+@*@if (TempData["UpdateSucessOrFail"] != null)
+    {
+        <script>
+            AppUtil.ShowSuccess('@TempData["UpdateSucessOrFail"].ToString()');
+        </script>
+
+    }*@
+<script>
+
+    var TimePeriodForSignalID;
+    $(document).ready(function () {
+        $('#PurchaseDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnSearchTimePeriodForSignalListByTimePeriodForSignalTypeID").click(function () {
+              
+            table.draw();
+        });
+
+        $("#btnTimePeriodForSignalDeletePermently").click(function () {
+              
+            TimePeriodForSignalManager.DeleteTimePeriodForSignal();
+            $("#popModalForDeletePermently").modal("hide");
+        });
+        var table = $("#tblTimePeriodForSignal").DataTable
+            ({
+                "language":
+                    {
+                        "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                    },
+                "processing": true,
+                "serverSide": true,
+
+
+                "ajax":
+                    {
+                        "url": "/TimePeriodForSignal/GetTimePeriodForSignalAJAXData",
+                        "type": "POST",
+                        "dataType": "JSON",
+                        data: function (d) {
+
+                            d.TimePeriodForSignalTypeID = $("#SearchByTimePeriodForSignalTypeID").val();
+                            d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                        }
+                    },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    //{ "targets": [0], "width": "5%" },
+                    //  { "targets": [0], "data": "TransactionID", "render": function (data, type, row, meta) { return '<td hidden><input type="hidden" id="TransactionID" name="TransactionID" value=' + row.TransactionID + ' /></td>' } },
+                    //{ "targets": [1], "data": "Name", "render": function (data, type, row, meta) { return '<a href="#" onclick="GetTimePeriodForSignalByTimePeriodForSignalID(' + row.TimePeriodForSignalID + ',' + row.TransactionID + ')">' + row.Name + '</a>' } },
+                    { "targets": [0], "render": function (data, type, row, meta) { return '<input type="hidden" id="TimePeriodForSignalID" name="TimePeriodForSignalID" value=' + row.TimePeriodForSignalID + ' />' } },
+                    //{ "targets": [1], "data": "PaymentDate", "render": function (data, type, row, meta) { return row.PurchaseDate != null ? AppUtil.ParseDateTime(row.PurchaseDate) : "" } },
+                    { "targets": [2], "style": "align='center'", "data": "Action", "render": function (data, type, row, meta) { return row.SignalSignString } },
+                    { "targets": [3], "orderable": false, "style": "align='center'", "data": "Action", "render": function (data, type, row, meta) { return row.Button === true ? ' <button id="btnDelete" type="button" class="btn btn-danger btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForDeletePermently"> <span class="glyphicon glyphicon-remove"></span> </button> <button id="btnUpdate" type="button" class="btn btn-success btn-sm padding" data-placement="top" data-toggle="modal" > <span class="glyphicon glyphicon-pencil"></span> </button> ' : "" } }
+
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "UpToHours"
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+        $("#tblTimePeriodForSignal").on("click", "#showTimePeriodForSignalForUpdate", function (e) {
+              
+            e.preventDefault();
+            TimePeriodForSignalID = $(this).closest("tr").find("td:eq(0) input").val();
+              
+            TimePeriodForSignalManager.ShowTimePeriodForSignalDetailsByIDForUpdate(TimePeriodForSignalID);
+        });
+
+        $("#createNew").click(function (e) {
+            //$("#tblTimePeriodForSignal").on("click", "#createNew", function (e) {
+              
+            e.preventDefault();
+            $("#mdlTimePeriodForSignalInsert").modal("show");
+        });
+
+        $("#btnInsertTimePeriodForSignal").click(function (e) {
+              
+            if (TimePeriodForSignalManager.CreateValidation() === true) {
+                  
+                TimePeriodForSignalManager.InsertTimePeriodForSignalFromPopUp();
+            }
+        });
+
+        $("#btnUpdateTimePeriodForSignal").click(function () {
+              
+            if (TimePeriodForSignalManager.UpdateValidation() === true) {
+                  
+                TimePeriodForSignalManager.UpdateTimePeriodForSignalInformation();
+            }
+        });
+        //btnPopUpPackageClose
+
+        $("#btnPopUpTimePeriodForSignalInsertClose").click(function (e) {
+              
+            TimePeriodForSignalManager.ClearForSaveInformation();
+            $("#mdlTimePeriodForSignalInsert").modal("hide");
+        });
+
+        $("#btnPopUpTimePeriodForSignalUpdateClose").click(function () {
+              
+            TimePeriodForSignalID = "";
+            TimePeriodForSignalManager.ClearForUpdateInformation();
+            $("#mdlTimePeriodForSignalUpdate").modal("hide");
+        });
+
+        $('#btnInsertTimePeriodForSignalModalClose').click(function () {
+              
+            TimePeriodForSignalManager.clearForSaveInformation();
+        });
+
+        $('#btnUpdateTimePeriodForSignalModalClose').click(function () {
+              
+            TimePeriodForSignalManager.clearForUpdateInformation();
+        });
+
+        $("#btnExportExcel").click(function () {
+              
+            TimePeriodForSignalManager.PrintTimePeriodForSignalList(0);
+        });
+
+        $("#tblTimePeriodForSignal").on("click", "#btnUpdate", function (e) {
+
+              
+            e.preventDefault();
+            TimePeriodForSignalID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            TimePeriodForSignalManager.ShowTimePeriodForSignalDetailsByIDForUpdate(TimePeriodForSignalID);
+        });
+
+        $("#tblTimePeriodForSignal").on("click", "tr", function () {
+              
+            TimePeriodForSignalID = $(this).closest("tr").find("td:eq(0) input").val();
+            // TimePeriodForSignalManager.DeleteTimePeriodForSignal();
+        });
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Time Period For Signal</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/TimePeriodForSignal/Index"><i class="fa fa-dashboard"></i> All TimePeriodForSignal</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+            <div class="row">
+                <div style="float: right; padding-bottom: 0px;  margin-right: 15px;">
+                    <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary  btn-sm" value="Export Excel">
+                    <!-- export xl file -->
+                    @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+                </div>
+            </div>
+            <table id="tblTimePeriodForSignal" class="table table-striped table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Hour")
+                        </th>
+                        <th>
+                            @Html.DisplayName(" Signal ")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_TimePeriodForSignal))
+                            {
+                                <a href="#" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                @*<tbody>
+                        @foreach (var TimePeriodForSignal in Model)
+                    {
+                            <tr>
+                                <td hidden="hidden">
+                                    @Html.HiddenFor(s => TimePeriodForSignal.TimePeriodForSignalID)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelTimePeriodForSignal => TimePeriodForSignal.TimePeriodForSignalName)
+                                </td>
+                                <td>
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_TimePeriodForSignal))
+                                    {
+                                        <a href="" id="showTimePeriodForSignalForUpdate">Show</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>*@
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_TimePeriodForSignal))
+        {
+            <div class="modal fade" id="mdlTimePeriodForSignalInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertTimePeriodForSignalModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Time For Complain Signal Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label(" Hours ", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left: 5px;color: red;"> *</span>
+                                    </div>
+                                    <div style="clear: both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("UpToHours", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Up To Hours " })
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Signal", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left: 5px; color: red;"> *</span>
+                                    </div>
+                                    <div style="clear: both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        <input id="SignalSign" name="SignalSign" type="radio" value="1" />
+                                        @*<label for="radio1" style="color:green">Green</label>*@
+                                        <div id='Status' class='label label-success'>Green</div>
+                                        <input id="SignalSign" name="SignalSign" type="radio" value="2" />
+                                        @*<label for="radio1" style="color:yellow">Yellow</label>*@
+                                        <div id='Status' class='label label-warning'>Yellow</div>
+                                        <input id="SignalSign" name="SignalSign" type="radio" value="3" />
+                                        @*<label for="radio1" style="color:red">Red</label>*@
+                                        <div id='Status' class='label label-danger'>Red</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpTimePeriodForSignalInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertTimePeriodForSignal" value="Save" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_TimePeriodForSignal))
+        {
+            <div class="modal fade" id="mdlTimePeriodForSignalUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateTimePeriodForSignalModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update TimePeriodForSignal Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_TimePeriodForSignal")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpTimePeriodForSignalUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateTimePeriodForSignal" value="Update TimePeriodForSignal" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Confirm Submit
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to Delete This TimePeriodForSignal Permently From the system? In future no information will able to retrieve.
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <a href="#" id="btnTimePeriodForSignalDeletePermently" class="btn btn-success success">Remove TimePeriodForSignal From System</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

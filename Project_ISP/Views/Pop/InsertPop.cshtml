@@ -1,0 +1,77 @@
+﻿@*@model ISP_ManagementSystemModel.ViewModel.VM_Pop_ClientDetails*@
+@{
+    ViewBag.Title = "Insert Pop";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Scripts/CustomScripts/PopManager.js"></script>
+
+<script>
+    var PopID;
+    $(document).ready(function () {
+        $("#btnInsertPop").click(function (e) {
+            if (PopManager.CreateValidation() === true) {
+                PopManager.InsertPop();
+            }
+        });
+    });
+
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm())
+{
+    <div class="container" style="padding-left: 0px; padding-top:0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">New Pop</h6>
+                    <ol class="breadcrumb">
+                        <li><a href="/Pop/Index"><i class="fa fa-dashboard"></i> All Pop</a></li>
+                        <li class="active"> <a href="/Pop/insertPop"> New Pop </a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="form-group col-sm-12">
+                    <div class="form-group col-sm-12">
+                        <div>
+                            @Html.Label(" Pop Name ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                            @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                @Html.TextBox("PopName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Pop Name " })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <div>
+                            @Html.Label(" Pop Location ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                            @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                @Html.TextBox("PopLocation", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Pop Location " })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <div>
+                            @Html.Label("Latitude & Longitude ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                            @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                @Html.TextBox("LatitudeLongitude", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "LatitudeLongitude " })
+                            </div>
+                        </div>
+                    </div>
+                    <input type="button" id="btnInsertPop" value="Save Pop" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+

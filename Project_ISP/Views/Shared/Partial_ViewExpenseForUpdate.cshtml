@@ -1,0 +1,46 @@
+﻿@*@Html.Hidden("ExpenseID")*@
+
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Subject", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+    </div>
+    <div style="clear: both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtSubject", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Subject " })
+    </div>
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Details", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+    </div>
+    <div style="clear: both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtDetails", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Details " })
+    </div>
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Paid To", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+    </div>
+    <div style="clear: both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtPaidTo", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Paid To " })
+    </div>
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Amount", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+    </div>
+    <div style="clear: both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtAmount", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Amount " })
+    </div>
+</div>

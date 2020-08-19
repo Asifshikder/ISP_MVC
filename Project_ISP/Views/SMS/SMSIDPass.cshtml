@@ -1,0 +1,77 @@
+﻿@model ISP_ManagementSystemModel.Models.SMSSenderIDPass
+@{
+    // Layout = null;
+}
+<script src="~/Scripts/CustomScripts/SMSManager.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $("#btnSaveOrUpdateSMSSenderInformation").click(function (e) {
+            if (SMSManager.CreateValidationForSaveSMSSenderInformation() === true) {
+                SMSManager.InsertSmsSenderIdPass();
+            }
+        });
+
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    // if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Update_SMS_Sender_IDPass))
+    //{
+    <div class="panel" style="margin-bottom: 0px;">
+
+        @* <div class="modal-dialog modal-lg" style="width: 100%;"> *@
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Add/Update SMS Sender ID Pass</h4>
+            </div>
+            <div class="modal-body panel-body">
+                <div class="form-group col-sm-12">
+                    <div>
+                        @Html.Label("User ID", null, new { @class = "control-label col-md-2", Style = "float:left" })
+                        <div class="col-md-4" style="padding-left: 0px;float:left">
+                            @Html.TextBoxFor(model => model.ID, null, new { @class = "form-control input-sm col-sm-11", @placeholder = " User ID " })
+                        </div>
+                    </div>
+                    <div class="row form-group"></div>
+                    <div>
+                        @Html.Label("Password", null, new { @class = "control-label col-md-2", Style = "float:left" })
+                        <div class="col-md-4" style="padding-left: 0px;float:left">
+                            @Html.TextBoxFor(model => model.Pass, null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Password " })
+                        </div>
+                    </div>
+                    <div class="row form-group"></div>
+                    <div style="">
+                        @Html.Label("Masking Name", null, new { @class = "control-label col-md-2", Style = "float:left" })
+                        <div class="col-md-4" style="padding-left: 0px;float:left">
+                            @Html.TextBoxFor(model => model.Sender, null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Masking Name " })
+                        </div>
+                    </div>
+                    <div class="row form-group"></div>
+                    <div>
+                        @Html.Label("Company Name", null, new { @class = "control-label col-md-2", Style = "float:left" })
+                        <div class="col-md-4" style="padding-left: 0px;float:left">
+                            @Html.TextBoxFor(model => model.CompanyName, null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Company Name " })
+                        </div>
+                    </div>
+                    <div class="row form-group"></div>
+                    <div>
+                        @Html.Label("Help Line", null, new { @class = "control-label col-md-2", Style = "float:left" })
+                        <div class="col-md-4" style="padding-left: 0px;float:left">
+                            @Html.TextBoxFor(model => model.HelpLine, null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Help Line " })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="MikrotikUp" style="float:left">
+                    <input type="button" id="btnSaveOrUpdateSMSSenderInformation" value="Save/Update SMS Sender Info" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+        @*</div>*@
+    </div>
+    //}
+}

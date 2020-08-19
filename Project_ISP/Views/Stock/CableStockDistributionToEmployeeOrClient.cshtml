@@ -1,0 +1,454 @@
+﻿
+@model ISP_ManagementSystemModel.Models.CableStock
+
+@{
+    ViewBag.Title = "Cable Distribution";
+}
+<style>
+    .maxWidthFor {
+        max-width: 288px;
+    }
+
+    .required_field {
+        color: red;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .panel-heading {
+        height: 43px;
+    }
+
+
+    .padding {
+        padding: 3px 6px;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+@Html.AntiForgeryToken()
+@using (Html.BeginForm())
+{
+    <div class="col-sm-4" style="padding-left: 7px;padding-right: 7px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <section class="content-header" style="padding: 0px 0px 0px 0px">
+                    <h6 class="panel-title">@Html.RadioButton("rdbEmployeeOrClient", 1, new { @checked = true })  Cable Assign For Employee: </h6>
+                </section>
+            </div>
+            <div class="panel-body" style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+                <div class="form-group col-sm-12">
+                    <div>
+                        @Html.Label("Cable  Employee", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div class="col-sm-12" style="padding-left: 0px;">
+                        @Html.DropDownList("lstEmployeeID", null, "-- Select Employee --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8" style="padding-left: 7px;padding-right: 7px; ">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <section class="content-header" style="padding: 0px 0px 0px 0px">
+                    <h6 class="panel-title">@Html.RadioButton("rdbEmployeeOrClient", 2)  Cable Assign For Client: </h6>
+                </section>
+            </div>
+            <div class="panel-body" style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+                <div class="col-sm-6">
+                    <div class="form-group col-sm-12">
+                        <div>
+                            @Html.Label("Assign Employee", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                            <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                        </div>
+                        <div class="col-sm-12" style="padding-left: 0px;">
+                            @Html.DropDownList("lstAssignEmployee", null, "-- Select Employee --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  ", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group col-sm-12">
+                        <div>
+                            @Html.Label("Client Login Name", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                            <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                        </div>
+                        <div class="col-sm-12" style="padding-left: 0px;">
+                            @Html.DropDownList("lstClientDetailsID", null, "-- Select Client --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  ", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default" style="padding: 13% 0 0 0; margin-bottom: 0px">
+        <div class="panel-heading">
+            <section class="content-header" style="padding: 0px 0px 0px 0px">
+                <h6 class="panel-title">Cable Distribution: </h6>
+            </section>
+        </div>
+        <div class="panel-body" style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+            @*<div class="form-group">
+                    <div>
+                        @Html.Label("Cable Type", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("CableTypeID", null, "-- Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                    </div>
+                </div>*@
+            <div class="form-group col-sm-3">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        @Html.Label("Cable Type", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("CableTypeID", null, "-- Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        @Html.Label("Box/Drum", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("CableStockID", Enumerable.Empty<SelectListItem>(), "-- Select Box/Drum --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group col-sm-3">
+                <div style="margin-top:30px;">
+                    <div>
+                        <div id="Status" class="label label-success" style="display: none">Login Name Already Exist</div>
+                        @Html.Label("Total:", new { @class = "control-label col-md-0", Style = "float:left;width:45%" })
+                        <div>
+                            @Html.Label("lblTotalCableLength", new { @id = "lblTotalCableLength", @class = "label label-success", Style = "float:left; width:auto;display:none" })
+                            @Html.Label("M", new { @id = "", @class = "label label-success", Style = "float:right; width:auto;" })
+                        </div>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div>
+                        @Html.Label("Used:", new { @class = "control-label col-md-0", Style = "float:left;width:45%" })
+                        <div>
+                            @Html.Label("lblUsedCableLength", new { @id = "lblUsedCableLength", @class = "label label-danger", Style = "float:left; width:auto; display:none" })
+                            @Html.Label("M", new { @id = "", @class = "label label-danger", Style = "float:right; width:auto;" })
+                        </div>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div>
+                        @Html.Label("Avialable:", new { @class = "control-label col-md-0", Style = "float:left;width:45%" })
+                        <div>
+                            @Html.Label("lblDueCableLength", new { @id = "lblDueCableLength", @class = "label label-warning", Style = "float:left; width:auto; display:none" })
+                            @Html.Label("M", new { @id = "", @class = "label label-warning", Style = "float:right; width:auto;" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group col-sm-2">
+                <div style="margin-top:30px;">
+                    <div>
+                        @Html.Label("Cable Quantity", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("txtCableQuantity", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Cable Quantity " })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-sm-3">
+                <div style="margin-top:5px;">
+
+                    <div class="form-group col-sm-12">
+                        <div>
+                            @Html.Label("Remarks", new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-12" style="padding-left: 0px;">
+                            @Html.TextArea("txtAreaRemarks", new { @class = "form-control input-sm col-sm-11", @placeholder = " Remarks  ", Style = "height: 80px" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-sm-1 " style="padding:2% 0 0 0; margin-top:30px;">
+                <input type="button" id="btnAddInAssignCableTableForCustomer" value="Add In List" class="btn btn-primary btn-sm maxWidthFor" style="text-align: center;" />
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-bottom: 20px; overflow: auto;">
+            <div class="panel-heading">
+                <section class="content-header" style="padding: 0px 0px 0px 0px">
+                    <h6 class="panel-title">Cable quantity For Customer</h6>
+                </section>
+            </div>
+            <div class="panel-body" style="padding-bottom: 0px">
+
+                <table id="tblCableList" class="table table-hover table-striped table-responsive table-bordered">
+
+                    <thead>
+                        <tr>
+                            @* CableStokID *@
+                            <th hidden="hidden"></th>
+                            @* Cable Quantity *@
+                            <th hidden="hidden"></th>
+                            @* Employee ID *@
+                            <th hidden="hidden"></th>
+                            @* Client ID *@
+                            <th hidden="hidden"></th>
+                            @* Asign Employee *@
+                            <th hidden="hidden"></th>
+
+                            <th>Employee Name</th>
+                            <th>Customer Name</th>
+                            <th>Assign Employee</th>
+                            <th>Cable type</th>
+                            <th>Cable Box/Drum Name</th>
+                            <th>Item Cable Quantity</th>
+                            <th>Remarks</th>
+                            <th style="text-align: center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div style="margin-left: 15px; margin-top: 10px">
+                    <input type="button" id="btnSave" value="Save" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*<div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Update Client Information</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        @Html.Partial("Partial_SpecificCLientDetails")
+                    </div>
+                    <div class="modal-footer">
+                        @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        <div id="PopUp" style="float: right">
+                            <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                            @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Client_GetAllClients_Update__Client))
+                            {
+                                <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Employee Permently?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnEmployeeDeletePermently" class="btn btn-success success">Delete Employee</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script src="~/Scripts/CustomScripts/StockManager.js"></script>
+
+<script>
+
+    var cableAssignArray = [];
+    var cableLengthFromDB = 0;
+    var cableUsedFromDB = 0;
+    var cableCanBeUseForThisClientFromDB = 0;
+    var _afterCalculatingTheCableFromTable = 0;
+    var _actualAmountCanBeUsedAfterCalculatingWithTableWithTheDBResult = 0;
+
+    function ClearInformationToDefault() {
+
+        $("#lstEmployeeID").prop("selectedIndex", 0);
+        $("#CableTypeID").prop("selectedIndex", 0);
+        $("#CableStockID").find("option").not(":first").remove();
+        $("#txtCableQuantity").val("");
+        $("#lblTotalCableLength").text("").css("display", "none");
+        $("#lblUsedCableLength").text("").css("display", "none");
+        $("#lblDueCableLength").text("").css("display", "none");
+        $("#lstAssignEmployee").prop("selectedIndex", 0);
+        $("#lstClientDetailsID").prop("selectedIndex", 0);
+        $("#txtAreaRemarks").val("");
+    }
+
+    $(document).ready(function() {
+
+        $("input[name='rdbEmployeeOrClient']").change(function() {
+            ClearInformationToDefault();
+            if ($("input[name='rdbEmployeeOrClient']:checked").val() == 1) {
+                $("#lstAssignEmployee").prop("disabled", true);
+                $("#lstClientDetailsID").prop("disabled", true);
+                $("#lstEmployeeID").prop("disabled", false);
+            }
+            if ($("input[name='rdbEmployeeOrClient']:checked").val() == 2) {
+                $("#lstEmployeeID").prop("disabled", true);
+                $("#lstAssignEmployee").prop("disabled", false);
+                $("#lstClientDetailsID").prop("disabled", false);
+            }
+
+        });
+
+        $("#btnAddInAssignCableTableForCustomer").click(function() {
+
+            var selectedRDB = $("input[name='rdbEmployeeOrClient']:checked").val();
+
+            if (StockManager.CableAddInListValidation(selectedRDB)) {
+
+                var cableStockID = $("#CableStockID").val();
+                var employeeID = $("#lstEmployeeID").val();
+                var clientID = $("#lstClientDetailsID").val();
+                var txtCableQuantity = $("#txtCableQuantity").val();
+                var assignEmployeeID = $("#lstAssignEmployee").val();
+                var customerID = "";
+                var employeeName = (employeeID == "") ? "" : $("#lstEmployeeID option:selected").text();
+                var clientName = (clientID == "") ? "" : $("#lstClientDetailsID option:selected").text();
+                var CableTypeName = $("#CableTypeID option:selected").text();
+                var cableBoxOrDrumName = $("#CableStockID option:selected").text();
+                var assignEMployeeName = (assignEmployeeID == "") ? "" : $("#lstAssignEmployee option:selected").text();
+                var areaRemarks = $("#txtAreaRemarks").val();
+
+                var cableStockExist = false;
+
+             //   if (_actualAmountCanBeUsedAfterCalculatingWithTableWithTheDBResult < txtCableQuantity) {
+
+                    //$("#tblCableList>tbody>tr").each(function() {
+
+                    //    var index = $(this).index();
+                    //    var rdbVal = $("input[name='rdbEmployeeOrClient']:checked").val();
+                    //    if (rdbVal == 1) {
+                    //        var CableStockID = $(this).find("td:eq(0) input").val();
+                    //        var employeeeIDFromTable = $(this).find("td:eq(2) input").val();
+
+                    //        if (CableStockID == cableStockID && employeeID == employeeeIDFromTable) {
+                    //            cableStockExist = true;
+                    //        }
+                    //    }
+                    //    if (rdbVal == 2) {
+                    //        var CableStockID = $(this).find("td:eq(0) input").val();
+                    //        var clientIDFromTable = $(this).find("td:eq(3) input").val();
+                    //        if (CableStockID == cableStockID && clientID == clientIDFromTable) {
+                    //            cableStockExist = true;
+                    //        }
+                    //    }
+                    //});
+                    //
+                    //if (cableAssignArray.filter(e=>e.CableStockID == cableStockID).length > 0) {
+                    //
+                    //    cableStockExist = true;
+                    //}
+
+                    if (cableStockExist) {
+                        AppUtil.ShowSuccess("Sorry Cable Already Added in the list. Choose different serial number. Remove first then again agiain.");
+                    } else {
+                        $("#tblCableList>tbody").append("<tr><td hidden='hidden' style=''><input type='hidden' value='" + cableStockID + "'></td><td hidden='hidden'><input type='hidden' value='" + txtCableQuantity + "'></td>\
+                    <td hidden='hidden'><input type='hidden' value='" + employeeID + "'></td><td hidden='hidden'><input type='hidden' value='" + clientID + "'></td><td hidden='hidden'><input type='hidden' value='" + assignEmployeeID + "'></td>\
+                    <td>" + employeeName + "</td><td>" + clientName + "</td><td>" + assignEMployeeName + "</td><td>" + CableTypeName + "</td><td>" + cableBoxOrDrumName + "</td><td>" + txtCableQuantity + "</td><td>" + areaRemarks + "</td>\
+                    <td align='center'><button id='btnDelete' type='button' class='btn btn-danger btn-sm padding padding' data-toggle='confirmation' data-placement='top'><span class='glyphicon glyphicon-remove'></span></button></td>\
+                </tr>");
+                        ClearInformationToDefault();
+
+                    }
+                //} else {
+                //    AppUtil.ShowError("You Can assign More than " + txtCableQuantity + " M.");
+                //}
+                // }
+            }
+
+        });
+
+        $("#CableStockID").change(function () {
+
+            var cableStockID = $("#CableStockID").val();
+            StockManager.SearchCableQuantityStockedByCableBoxOrDrumName(cableStockID);
+        });
+
+        $("#CableTypeID").change(function () {
+
+            var cableTypePopUpID = $("#CableTypeID").val();
+            StockManager.SearchCableBoxOrDrumNameByCableTypeID(cableTypePopUpID);
+        });
+
+        $("#tblCableList").on("click", "#btnDelete", function () {
+
+            $(this).closest("tr").remove();
+
+            //cableAssignArray = JQuery.grep(cableAssignArray, function (value) {
+            //    return removeItemCableStockID != value.CableStockID;
+            //});
+        });
+
+        //@* CableStokID*@
+        //@* Cable Quantity *@
+        //@* Employee ID *@
+        //@* Client ID *@
+        //@* Asign Employee *@
+        $("#btnSave").click(function() {
+            if ($("#tblCableList>tbody>tr").length > 0) {
+
+                $("#tblCableList>tbody>tr").each(function () {
+
+                    var cableStokID = $(this).find('td:eq(0) input').val();
+                    var cableQuantity = $(this).find('td:eq(1) input').val();
+                    var employeeID = $(this).find('td:eq(2) input').val();
+                    var clientID = $(this).find('td:eq(3) input').val();
+                    var assignEmployee = $(this).find('td:eq(4) input').val();
+                    var remarks = $(this).find('td:eq(11)').text();
+                    cableAssignArray.push({
+                        "CableStokID": cableStokID,
+                        "CableQuantity": cableQuantity,
+                        "EmployeeID": employeeID,
+                        "ClientID": clientID,
+                        "AssignEmployee": assignEmployee,
+                        "Remarks": remarks
+                    });
+                });
+                StockManager.InsertCableStockDistributionForClientOrEmployee(cableAssignArray);
+
+            }
+            else {
+                AppUtil.ShowError("Please Add Information in table.");
+            }
+
+
+        });
+
+        $("#ContactNumber").keyup(function () {
+            var mob = $("#ContactNumber").val();
+            $("#SMSCommunication").val(mob);
+        });
+    });
+
+</script>

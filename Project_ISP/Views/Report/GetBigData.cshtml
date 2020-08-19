@@ -1,0 +1,13 @@
+﻿
+@{
+    Layout = null;
+}
+
+@(!string.IsNullOrEmpty(TempData["Success"].ToString()))
+{
+    <text>
+        alert(@TempData["Success"].ToString());
+    </text>
+}
+
+

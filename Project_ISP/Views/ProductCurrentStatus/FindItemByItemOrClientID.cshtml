@@ -1,0 +1,180 @@
+﻿@model ISP_ManagementSystemModel.ViewModel.VM_lstStockDetails_lstDistribution
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default" style="padding-bottom: 20px; margin-bottom: 0px;">
+        <div class="panel-heading" style="height: 45px;">
+            <section class="content-header" style="padding: 5px 10px 0px 15px;">
+                <h6 class="panel-title">Search By</h6>
+                <ol class="breadcrumb" style="padding: 0px 5px; top: 5px;">
+                    <li class="active"><a href="/stock/StockDistribution"><i class="fa fa-dashboard"></i> Distribute Item</a></li>
+
+                </ol>
+            </section>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-3">
+                <div>
+                    @Html.Label("Item Category", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("lstStockID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  ", @id = "lstStockID" })
+
+                </div>
+            </div>
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label(" Serial", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("lstStockDetailsID", Enumerable.Empty<SelectListItem>(), "-- Select Serial --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                </div>
+            </div>
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Client ID", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-12" style="padding-left: 0px;">
+                    @Html.DropDownList("lstClientDetailsID", null, "-- Select Client --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Brand ", @id = "lstClientDetailsID" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-1">
+                <div style="float: left; margin-top: 25px">
+                    <input type="button" id="btnSearch" value="Search" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">Item List</h4> @*@Date*@
+
+        </div>
+
+        <div class="panel-body" style="overflow:auto">
+            <table id="tblRunningList" class="table table-bordered table-hover table-responsive table-striped">
+                <thead>
+                    <tr>
+                        <th style="" hidden="hidden"></th>
+                        <th style="" hidden="hidden"></th>
+                        <th style="" hidden="hidden"></th>
+                        <th style="" hidden="hidden"></th>
+                        <th style="">Item Name</th>
+                        <th style="">Brand</th>
+                        <th style="">Serial</th>
+                        <th>Client Login Name</th>
+                        <th>Employee Name</th>
+                        <th> Pop Name</th>
+                        <th> Box Name</th>
+                        <th style="">Section</th>
+                        <th style="">Status</th>
+                        <th style="text-align: center; width: 5%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stockDetails in Model.lstStockDetails)
+                    {
+                        // var clientLoginName = if(stockDetails.)
+
+                        //int stockDetailsID = stockDetails.StockDetailsID;
+
+                        string clientLoginName = "";
+                        string employeeName = "";
+                        string popName = "";
+                        string boxName = "";
+                        int DistributionID = 0;
+                        foreach (var item in Model.lstDistribution)
+                        {
+                            if (item.StockDetailsID == stockDetails.StockDetailsID)
+                            {
+                                DistributionID = item.DistributionID;
+                                clientLoginName = (item.ClientDetails != null) ? item.ClientDetails.LoginName : "";
+                                employeeName = (item.Employee != null) ? item.Employee.Name : "";
+                                popName = (item.Pop != null) ? item.Pop.PopName : "";
+                                boxName = (item.Box != null) ? item.Box.BoxName : "";
+                            }
+                        }
+
+                        <tr>
+                            <td style="padding: 0px" hidden="hidden"><input type="hidden" id="" name="" value="@stockDetails.StockDetailsID" /></td>
+                            <td style="padding: 0px" hidden="hidden"><input type="hidden" id="" name="" value="@DistributionID" /></td>
+                            <td style="padding: 0px" hidden="hidden"><input type="hidden" id="" name="" value="@stockDetails.SectionID" /></td>
+                            <td style="padding: 0px" hidden="hidden"><input type="hidden" id="" name="" value="@stockDetails.ProductStatusID" /></td>
+                            <td>@stockDetails.Stock.Item.ItemName</td>
+                            <td>@stockDetails.Brand.BrandName</td>
+                            <td>@stockDetails.Serial</td>
+                            <td>@clientLoginName</td>
+                            <td>@employeeName</td>
+                            <td>@popName</td>
+                            <td>@boxName</td>
+                            <td>@stockDetails.Section.SectionName.ToString()</td>
+                            <td>@stockDetails.ProductStatus.ProductStatusName</td>
+                            <td align='center' style="padding: 8px 25px;">
+                                <div style="float: left">
+                                    <button type="button" id="btnDelete" class="btn btn-danger  btn-sm"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<script src="~/Scripts/CustomScripts/ProductCurrentStatusManager.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#lstStockID").change(function () {
+
+            var stockID = $("#lstStockID").val();
+            ProductCurrentStatusManager.GetStockDetailsItemListByStockID(stockID);
+        });
+
+        $("#tblRunningList").on("click", "#btnDelete", function () {
+
+            var StockDetailsID = $(this).closest("tr").find("td:eq(0) input").val();
+            var DistributionID = $(this).closest("tr").find("td:eq(1) input").val();
+
+
+            ProductCurrentStatusManager.DeleteDistributionSearchByClientOrStockDetailsOrStockDetailsID(StockDetailsID, DistributionID);
+        });
+
+        $("#btnSearch").click(function () {
+
+            if (ProductCurrentStatusManager.FindItemByItemOrClientIDSearch() === true) {
+                var stockID = $("#lstStockID").val();
+                var stockDetailsID = $("#lstStockDetailsID").val();
+                var clientDetailsID = $("#lstClientDetailsID").val();
+                ProductCurrentStatusManager.FindItemStatusByClientOrByStockDetailsID(stockID, stockDetailsID, clientDetailsID);
+            }
+        });
+        $("#tblRunningList").DataTable();
+    });
+</script>

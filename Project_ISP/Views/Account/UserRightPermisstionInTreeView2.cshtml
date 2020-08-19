@@ -1,0 +1,117 @@
+﻿
+<meta charset="utf-8" />
+<title>Bootstrap TreeView with Checkboxes</title>
+<script src="~/Scripts/CustomScripts/AccountManager.js"></script>
+<script src="http://code.gijgo.com/1.6.1/js/gijgo.js" type="text/javascript"></script>
+<link href="http://code.gijgo.com/1.6.1/css/gijgo.css" rel="stylesheet" type="text/css" />
+@* <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">*@
+<style>
+    .maxWidthFor {
+        max-width: 288px;
+    }
+
+    .required_field {
+        color: red;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .panel-heading {
+        height: 43px;
+    }
+
+
+    .padding {
+        padding: 3px 6px;
+    }
+
+    .row {
+        margin: 10px;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var tree = $('#tree').tree({
+            primaryKey: 'id',
+            uiLibrary: 'bootstrap',
+           
+            dataSource: '/Account/Get',
+            checkboxes: true
+        });
+
+
+        $('#btnSave,#btnSaveDown').on('click', function () {
+            var checkedIds = tree.getCheckedNodes();
+            $.ajax({ url: '/Account/SaveCheckedNodes', data: { checkedIds: checkedIds, UserRightID: $("#UserRightID").val() }, method: 'POST' })
+                .fail(function () {
+                    alert('Failed to save.');
+                });
+        });
+
+        //$('#btnLoad').on('click', function () {
+        //      
+        //     tree = $('#tree').tree({
+        //        primaryKey: 'id',
+        //        uiLibrary: 'bootstrap',
+        //        dataSource: '/Account/Get',
+        //        data: { UserRightID: $("#UserRightID").val() },
+        //        checkboxes: true
+        //    });
+
+        //});
+
+        //$("#UserRightID").change(function () {
+        //    var valUserRightID = $("#UserRightID").val();
+        //      
+        //    if (valUserRightID > 0) {
+        //        //AccountManager.GetUserPermissionDetailsByUserRightID(valUserRightID);
+        //        var item = 'F1';
+        //        $('[data-id = ' + item + ']').prop(checked, true);
+        //    }
+        //});
+    });
+</script>
+
+
+    @Html.AntiForgeryToken()
+    @*@using (Html.BeginForm("UserRightPermisstionInTreeView", "Account", new { Type = 1}, FormMethod.Post, new {@class = "form-horizontal", role = "form" })) {*@ 
+         <div class="panel panel-default">
+             <div class="panel-heading">
+                 <section class="content-header">
+                     <h6 class="panel-title">Lock to Active</h6>
+                 </section>
+             </div>
+
+             <div class="panel-body">
+                 <div class="form-group col-sm-6">
+                     <div>
+                         @Html.Label("UserRight", new {@class = "control-label col-md-0", Style = "float:left"})
+                         <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                     </div>
+                     <div style="clear: both"> </div>
+                     <div class="col-md-11" style="padding-left: 0px;">
+                         @Html.DropDownList("UserRightID", null, "-- User Right --", new {@class = "form-control input-sm col-sm-11", @placeholder = " Zone "})
+                     </div>
+                 </div>
+                 <div class="form-group col-sm-6" style="margin-top: 25px">
+                     <button id="btnLoad" class="btn btn-default">Load</button>
+                 </div>
+             </div>
+         </div>
+@*  }*@
+    <div class="container-fluid">
+
+        <div class="row col-sm-12">
+            <div id="tree"></div>
+        </div>
+
+        <div class="row">
+            <button id="btnSaveDown" class="btn btn-default">Save Checked Nodes</button>
+        </div>
+    </div>
+

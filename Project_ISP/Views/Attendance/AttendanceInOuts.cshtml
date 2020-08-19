@@ -1,0 +1,297 @@
+﻿@model IEnumerable<Project_ISP.Models.AtendaceInOut>
+
+@{
+    ViewBag.Title = "AttendanceInOut";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="modal fade" id="AddAttendanceInOutModal" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width: 45%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="clsUpdateAdmin" type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add New Attendance In Out</h4>
+            </div>
+            <div class="modal-body panel-body">
+                @Html.Partial("_PartialInsertAttendanceInOut")
+            </div>
+            <div class="modal-footer">
+                <div id="PopUp" style="float: right">
+                    <input type="button" id="btnCloseModalInsertInOut" value="Close" class="btn btn-default btn-sm" />
+                    <input type="button" id="btnSaveInOut" value="Add New Attendance In Out" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Hidden("AttendaceInOutID")
+@Html.Hidden("AttendanceTypeID")
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+        <section class="content-header">
+            <div class="panel-title">
+                <div>
+                    <button type="button" id="btnAddAttendaceInOut" class="btn btn-primary">
+                        Add New
+                    </button>
+                </div>
+            </div>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Attedance/AttendanceInOuts"><i class="fa fa-dashboard"></i> Index</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        <div>
+            <h3 class="text-center">Work In Out Status</h3>
+
+            <table class="table table-condensed table-bordered" id="myTable">
+                <tr>
+                    <th hidden>
+                    </th>
+                    <th hidden>
+
+                    </th>
+                    <th>
+                        Title
+                    </th>
+                    <th>
+                        Start
+                    </th>
+                    <th>
+                        End
+                    </th>
+                    <th>
+                        In Salary Cut
+                    </th>
+                    <th>
+                        Out Salary Cut
+                    </th>
+
+                    <th>Action</th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    if (item.AttendanceTypeID == 40)
+                    {
+                        <tr>
+                            <td hidden>
+                                <input type="hidden" value="@item.AttendaceInOutID" />
+                            </td>
+                            <td hidden>
+                                <input type="hidden" value="@item.AttendanceTypeID" />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.start)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.end)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InSalaryCut)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OutSalaryCut)
+                            </td>
+                            <td>
+                                <a value="@item.AttendaceInOutID" class="glyphicon glyphicon-edit btn-primary btn-circle" onclick="ShowForEdit(@item.AttendaceInOutID)">
+                                </a>
+                                <a value="@item.AttendaceInOutID" class="glyphicon glyphicon-remove btn-primary btn-circle" onclick="ShowForDelete(@item.AttendaceInOutID)">
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                }
+
+            </table>
+        </div>
+        <div>
+            <h3 class="text-center">Break In Out Status</h3>
+            <table class="table table-condensed table-bordered" id="MyTable">
+                <tr>
+                    <th hidden>
+                    </th>
+                    <th hidden>
+
+                    </th>
+                    <th>
+                        Title
+                    </th>
+                    <th>
+                        Start
+                    </th>
+                    <th>
+                        End
+                    </th>
+                    <th>
+                        In Salary Cut
+                    </th>
+                    <th>
+                        Out Salary Cut
+                    </th>
+
+                    <th>Action</th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    if (item.AttendanceTypeID == 41)
+                    {
+                        <tr>
+                            <td hidden>
+                                <input type="hidden" value="@item.AttendaceInOutID" />
+                            </td>
+                            <td hidden>
+                                <input type="hidden" value="@item.AttendanceTypeID" />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.start)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.end)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InSalaryCut)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OutSalaryCut)
+                            </td>
+                            <td>
+                                <a value="@item.AttendaceInOutID" class="glyphicon glyphicon-edit btn-primary btn-circle" onclick="ShowForEdit(@item.AttendaceInOutID)">
+                                </a>
+                                <a value="@item.AttendaceInOutID" class="glyphicon glyphicon-remove btn-primary btn-circle" onclick="ShowForDelete(@item.AttendaceInOutID)">
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                }
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="UpdateAttendanceInOutModal" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width: 45%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="clsUpdateAdmin" type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Update Attendance In Out</h4>
+            </div>
+            <div class="modal-body panel-body">
+
+                @Html.Partial("_PartialUpdateAttendanceInOut")
+            </div>
+            <div class="modal-footer">
+                <div id="PopUp" style="float: right">
+                    <input type="button" id="btnCloseModalUpdateInOut" value="Close" class="btn btn-default btn-sm" />
+                    <input type="button" id="btnUpdateInOut" value="Edit Attendance In Out" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteAttendanceInOutModal" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width: 45%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="clsUpdateAdmin" type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete Attendance In Out</h4>
+            </div>
+            <div class="modal-body panel-body">
+                Are You Sure To Delete?
+            </div>
+            <div class="modal-footer">
+                <div id="PopUp" style="float: right">
+                    <input type="button" id="btnCloseModaDeleteInOut" value="Close" class="btn btn-default btn-sm" />
+                    <input type="button" id="btnDeleteInOut" value="Delete Attendance In Out" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/CustomScripts/AppUtil.js"></script>
+<script src="~/Scripts/CustomScripts/AttendanceManager.js"></script>
+<script>
+    var rowIndex;
+    var RowIndex;
+    function ShowForDelete(AttendaceInOutID) {
+        AttendanceManager.DeleteAttenanceInOutGet(AttendaceInOutID);
+    }
+    function ShowForEdit(AttendaceInOutID) {
+        AttendanceManager.EditAttenanceInOutGet(AttendaceInOutID);
+    }
+
+    function ClearAfterAdd() {
+        $("#insertTitle").val("");
+        $("#insertStart").val("");
+        $("#insertEnd").val("");
+        $("#insertInSalayCut").val("");
+        $("#insertOutSalaryCut").val("");
+        $("#InsertAttenDanceType").val("");
+    }
+    $(document).ready(function () {
+        $("#btnAddAttendaceInOut").click(function (e) {
+            debugger;
+            e.preventDefault();
+            $("#AddAttendanceInOutModal").modal("show");
+        });
+
+        $("#btnCloseModalInsertInOut").click(function (e) {
+
+            $("#AddAttendanceInOutModal").modal("hide");
+        });
+        $("#btnCloseModalUpdateInOut").click(function (e) {
+
+            $("#UpdateAttendanceInOutModal").modal("hide");
+        });
+
+        $("#btnSaveInOut").click(function (e) {
+
+
+            AttendanceManager.InsertAttendanceInOut();
+            ClearAfterAdd();
+        });
+        $("#btnUpdateInOut").click(function (e) {
+
+
+            AttendanceManager.EditAttendanceInOut();
+
+        });
+        $("#btnDeleteInOut").click(function (e) {
+
+
+            AttendanceManager.DeleteAttendanceInOut();
+
+        });
+        $("#btnCloseModaDeleteInOut").click(function (e) {
+
+            $("#DeleteAttendanceInOutModal").modal("hide");
+        });
+        $("#myTable>tbody>tr").on("click", function () {
+
+            rowIndex = $(this).index();
+
+        });
+        $("#MyTable>tbody>tr").on("click", function () {
+
+            RowIndex = $(this).index();
+
+        });
+    });
+</script>

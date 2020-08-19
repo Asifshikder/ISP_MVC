@@ -1,0 +1,220 @@
+﻿
+@{
+    ViewBag.Title = "User Dashboard";
+}
+
+<style>
+    .margin-bottom-zero {
+        margin-bottom: 0px;
+    }
+
+    .info-box-number {
+        display: block;
+        font-weight: normal;
+        font-size: 14px;
+    }
+
+    .customHeightAndImagePosition {
+        height: 122px;
+        line-height: 125px;
+    }
+
+    .nav-tabs > li.active {
+        border-top-color: #3c8dbc;
+    }
+
+    .nav-tabs > li {
+        border-top: 3px solid transparent;
+        /*margin-bottom: -2px;
+        margin-right: 5px;*/
+    }
+
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+            border: 0px solid #ddd;
+        }
+
+        .nav-tabs > li > a {
+            border-radius: 0px 0px 0 0;
+        }
+
+    .content-header {
+        padding: 15px 0px 5px 13px;
+    }
+
+
+
+    .floatleftright15px {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .card {
+        background: #fff;
+        min-height: 50px;
+        box-shadow: none;
+        position: relative;
+        margin-bottom: 20px;
+        transition: .5s;
+        border: 1px solid #f2f2f2;
+        border-radius: 0;
+    }
+
+    .card {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        border-radius: 4px;
+        color: rgba(0,0,0, 0.87);
+        background: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
+    }
+
+    * {
+        -webkit-tap-highlight-color: rgba(255,255,255,0);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .top-report h3 {
+        margin-top: 0;
+    }
+
+    .progress {
+        height: 5px;
+    }
+
+    .card:hover {
+        box-shadow: 0 1px 5px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
+        transition: all 150ms linear;
+    }
+
+    .panel-footer-admin-Paid {
+        padding: 0px 0px;
+        background-color: #fff;
+        border-top: 0px solid #ddd;
+        border-bottom-right-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+</style>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, "", window.location.href);
+        };
+    });
+
+</script>
+  
+    <!-- Content Wrapper. Contains page content -->
+    @*<div class="content-wrapper">*@
+    <!-- Content Header (Page header)  BreadCrumb here -->
+    <section class="content-header">
+        <h1>
+            Dashboard
+            <small>Control panel</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-bar-chart fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div><b>My Profile</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("MyProfile","Client")">
+                        <div class="panel-footer-admin-Paid">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-usd fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">Total : @ViewBag.BillHistoryNumber</div>
+                                <div><b>Bill History</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("GetMyPaymentHistory","Transaction")">
+                        <div class="panel-footer-admin-Paid">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-line-chart fa-5x"></i>
+                            </div>								<div class="col-xs-9 text-right">
+                                <div class="huge">Total Complains : @ViewBag.MyTotalComplain</div>
+                                <div class="huge">Pending Complains : @ViewBag.MyPendingComplain BDT</div>
+                                <div class="huge">Solved Complains  : @ViewBag.MySolveComplain BDT</div>
+                                <div><b>Complain History</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("GetAllComplainListForSpecificUser", "Complain")">
+                        <div class="panel-footer-admin-Paid">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-support fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div><b>Change Password</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("ChangeCredentials","Client")">
+                        <div class="panel-footer-admin-Paid">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+    @*</div>*@
+    <!-- /.content-wrapper --> 
+ 
+

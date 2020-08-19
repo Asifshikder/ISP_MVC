@@ -1,0 +1,993 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.Complain>
+
+@*<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>*@
+<script src="~/Scripts/CustomScripts/TransactionManager.js"></script>
+<script src="~/Scripts/CustomScripts/ComplainManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdataeFromSeveralPageManager.js"></script>
+
+
+@* DataTable CSS *@
+@*<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">*@
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css">
+@*<link rel="stylesheet" href="http://cdn.datatables.net/tabletools/2.2.4/css/dataTables.tableTools.min.css">*@
+
+<script type="text/javascript" src="http://cdn.datatables.net/tabletools/2.2.4/js/dataTables.tableTools.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+
+
+@{
+    ViewBag.Title = "Complain List";
+}
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+
+    .btn-sm {
+        padding: 2px 4px;
+    }
+
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+
+    .changetrbackgroundForComplainCount {
+        /*background-color: #FCE5E0;*/
+        background-color: #FCF0ED;
+    }
+
+    .checkbox {
+        padding-left: 20px;
+    }
+
+        .checkbox label {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .checkbox label::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                left: 0;
+                margin-left: -20px;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                background-color: #fff;
+                -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+            }
+
+            .checkbox label::after {
+                display: inline-block;
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                left: 0;
+                top: 0;
+                margin-left: -20px;
+                padding-left: 3px;
+                padding-top: 1px;
+                font-size: 11px;
+                color: #555555;
+            }
+
+        .checkbox input[type="checkbox"] {
+            opacity: 0;
+        }
+
+            .checkbox input[type="checkbox"]:focus + label::before {
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+
+            .checkbox input[type="checkbox"]:checked + label::after {
+                font-family: 'FontAwesome';
+                content: "\f00c";
+            }
+
+            .checkbox input[type="checkbox"]:disabled + label {
+                opacity: 0.65;
+            }
+
+                .checkbox input[type="checkbox"]:disabled + label::before {
+                    background-color: #eeeeee;
+                    cursor: not-allowed;
+                }
+
+        .checkbox.checkbox-circle label::before {
+            border-radius: 50%;
+        }
+
+        .checkbox.checkbox-inline {
+            margin-top: 0;
+        }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::before {
+        background-color: #428bca;
+        border-color: #428bca;
+    }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::before {
+        background-color: #d9534f;
+        border-color: #d9534f;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::before {
+        background-color: #5bc0de;
+        border-color: #5bc0de;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::before {
+        background-color: #f0ad4e;
+        border-color: #f0ad4e;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::before {
+        background-color: #5cb85c;
+        border-color: #5cb85c;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .radio {
+        padding-left: 20px;
+    }
+
+        .radio label {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .radio label::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                left: 0;
+                margin-left: -20px;
+                border: 1px solid #cccccc;
+                border-radius: 50%;
+                background-color: #fff;
+                -webkit-transition: border 0.15s ease-in-out;
+                -o-transition: border 0.15s ease-in-out;
+                transition: border 0.15s ease-in-out;
+            }
+
+            .radio label::after {
+                display: inline-block;
+                position: absolute;
+                content: " ";
+                width: 11px;
+                height: 11px;
+                left: 3px;
+                top: 3px;
+                margin-left: -20px;
+                border-radius: 50%;
+                background-color: #555555;
+                -webkit-transform: scale(0, 0);
+                -ms-transform: scale(0, 0);
+                -o-transform: scale(0, 0);
+                transform: scale(0, 0);
+                -webkit-transition: -webkit-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                -moz-transition: -moz-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                -o-transition: -o-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                transition: transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+            }
+
+        .radio input[type="radio"] {
+            opacity: 0;
+        }
+
+            .radio input[type="radio"]:focus + label::before {
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+
+            .radio input[type="radio"]:checked + label::after {
+                -webkit-transform: scale(1, 1);
+                -ms-transform: scale(1, 1);
+                -o-transform: scale(1, 1);
+                transform: scale(1, 1);
+            }
+
+            .radio input[type="radio"]:disabled + label {
+                opacity: 0.65;
+            }
+
+                .radio input[type="radio"]:disabled + label::before {
+                    cursor: not-allowed;
+                }
+
+        .radio.radio-inline {
+            margin-top: 0;
+        }
+
+    .radio-primary input[type="radio"] + label::after {
+        background-color: #428bca;
+    }
+
+    .radio-primary input[type="radio"]:checked + label::before {
+        border-color: #428bca;
+    }
+
+    .radio-primary input[type="radio"]:checked + label::after {
+        background-color: #428bca;
+    }
+
+    .radio-danger input[type="radio"] + label::after {
+        background-color: #d9534f;
+    }
+
+    .radio-danger input[type="radio"]:checked + label::before {
+        border-color: #d9534f;
+    }
+
+    .radio-danger input[type="radio"]:checked + label::after {
+        background-color: #d9534f;
+    }
+
+    .radio-info input[type="radio"] + label::after {
+        background-color: #5bc0de;
+    }
+
+    .radio-info input[type="radio"]:checked + label::before {
+        border-color: #5bc0de;
+    }
+
+    .radio-info input[type="radio"]:checked + label::after {
+        background-color: #5bc0de;
+    }
+
+    .radio-warning input[type="radio"] + label::after {
+        background-color: #f0ad4e;
+    }
+
+    .radio-warning input[type="radio"]:checked + label::before {
+        border-color: #f0ad4e;
+    }
+
+    .radio-warning input[type="radio"]:checked + label::after {
+        background-color: #f0ad4e;
+    }
+
+    .radio-success input[type="radio"] + label::after {
+        background-color: #5cb85c;
+    }
+
+    .radio-success input[type="radio"]:checked + label::before {
+        border-color: #5cb85c;
+    }
+
+    .radio-success input[type="radio"]:checked + label::after {
+        background-color: #5cb85c;
+    }
+</style>
+
+@if ((TempData["message"] != null) == true)
+{
+    <text>
+        <script>
+            AppUtil.ShowSuccess('@TempData["message"]');
+        </script>
+    </text>
+}
+
+
+@{
+    bool userIsResellerOrNot = false;
+}
+@using (Html.BeginForm())
+{
+    string Date = ISP_ManagementSystemModel.AppUtils.GetDateTimeNow().ToString("yyyy-MMM");
+    string complainOpenBy = "";
+
+    userIsResellerOrNot = ISP_ManagementSystemModel.AppUtils.GetLoginRoleID() == ISP_ManagementSystemModel.AppUtils.ResellerRole ? true : false;
+
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">Search By</h6>
+                <ol class="breadcrumb">
+                    <li class="active"><a href="/Complain/GetAllComplainList"><i class="fa fa-dashboard"></i> Complain List</a></li>
+                </ol>
+            </section>
+        </div>
+        <div class="panel-body">
+            @Html.Partial("Partial_Year_Month_Employee")
+        </div>
+    </div>
+
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Complain List  @Date
+                <input id="ComplainType" name="ComplainType" type="radio" value="6" style="margin-left:50px" checked />
+                <label id='Status' class='label label-danger'>Pending</label>
+                <input id="ComplainType" name="ComplainType" type="radio" value="8" style="margin-left:10px" />
+                <label id='Status' class='label label-success'>Solve</label>
+                <input id="ComplainType" name="ComplainType" type="radio" value="9" style="margin-left:10px" />
+                <label id='Status' class='label label-primary'>On Request Pending</label>
+                <input id="ComplainType" name="ComplainType" type="radio" value="10" style="margin-left:10px" />
+                <label id='Status' class='label label-warning'>Clients Pending</label>
+            </h4>
+
+        </div>
+        @*<input type="button" class="btn btn-primary btn-sm" id="btnShowBillPaymentWindow" style="visibility:hidden" value="Bill Pay" />
+
+            <input type="button" class="btn btn-primary btn-sm" id="btnUpnapiBill" value="Unpaid Bill" />
+            <input type="button" class="btn btn-primary btn-sm" id="btnNewSignUpBill" value="New SIgnUp Bill" />
+            <input type="button" class="btn btn-primary btn-sm" id="btnBillPrint" value="Bill Print" />
+            <input type="button" class="btn btn-primary btn-sm" id="btnExportExcel" value="Export Excel" />*@
+        <div class="panel-body">
+
+            <div class="row">
+                <div style="float: right; margin-right: 15px">
+                    @*<a class="btn btn-danger btn-new" href="" id="DeleteButton">Delete</a>
+                        <a class="btn btn-sm btn-primary" href="#" id="SolvedButton">Solved</a>*@
+                    @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Create_Complain))
+                    {
+                        <a class="btn btn-sm btn-primary" href="\Complain\CreateComplain">New Complain</a>
+                    }
+                </div>
+            </div>
+
+            <div style="overflow: auto;">
+                <table id="tblComplainList" class="table table-bordered table-hover table-responsive" style="align-content: center; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th hidden="hidden"></th>
+                            <th style="">Serial_No</th>
+                            <th style="">Login_ID</th>
+                            <th style="">Time</th>
+                            <th style="">Status</th>
+                            <th style="padding-left: 5px;padding-right: 5px; align-content:center;">Signal</th>
+                            <th style="padding-left:50px;padding-right:50px;">Address</th>
+                            @*<th style="padding-left:50px;padding-right:50px;">Zone</th>
+                            <th style="">Contact</th>*@
+                            <th style="">Complain_Type</th>
+                            <th style="padding-left:100px; padding-right:100px;">Complain</th>
+                            <th style="">Which/Where</th>
+                            @*8*@
+                            <th hidden="hidden">Due</th>
+                            <th style="">Assign_To</th>
+                            <th style="">Open_By</th>
+                            <th style="">Total_Items_Given</th>
+                            <th hidden="hidden" style="">Status-Activate-Date</th>
+                            <th style="padding-left:17px; padding-right:18px; ">Action</th>
+                        </tr>
+                    </thead>
+                    @*<tbody>
+                            @foreach (var group in Model)
+                            {
+                                string Name = "";
+
+                                if (group.ClientDetails != null)
+                                {
+                                    foreach (var vItem in (IEnumerable<ISP_ManagementSystemModel.Models.ClientSetByViewBag>)ViewData["lstTransaction"])
+                                    {
+                                        int clientDetailsIDFromDB = vItem.ClientDetailsID;
+                                        if (@vItem.ClientDetailsID == group.ClientDetails.ClientDetailsID)
+                                        {
+                                            Name = "<a href='#' onclick='GetClientDetailsByClientDetailsID(" + group.ClientDetails.ClientDetailsID + "," + vItem.TransactionID + ")'>" + group.ClientDetails.Name + "</a>";
+                                        }
+                                    }
+                                }
+
+
+
+                                /// foreach (var group in item)
+                                <tr>
+
+
+
+
+                                    @*<td width="0px">
+                                            @Html.CheckBox("chkShowDetails", new {@class = "checkGroup1", @onclick = "setCompleteStatus(" + group.ComplainID + ")"})
+                                        </td>
+
+                                    @*<td>@Html.Hidden(group.TransactionID)</td>
+                                    <td hidden="hidden"><input type="hidden" id="ComplainID" name="ComplainID" value="@group.ComplainID" /></td>
+                                    @*<td>@group.TransactionID</td>
+                                    <td>@group.TokenNo</td>
+                                    <td>@Html.Raw(Name)</td>
+                                    <td>@group.ClientDetails.Address</td>
+                                    <td>@group.ClientDetails.Zone.ZoneName</td>
+                                    <td>@group.ClientDetails.ContactNumber</td>
+                                    <td>@group.ComplainDetails</td>
+                                    <td>@group.ComplainTime</td>
+                                    <td hidden=""></td>
+                                    <td> @group.Employee.Name</td>
+                                    @foreach (var item in @ViewBag.EmployeeID)
+                                    {
+                                        if (item.Value == group.ComplainOpenBy.ToString())
+                                        {
+                                            complainOpenBy = item.Text;
+                                        }
+                                    }
+
+                                    <td>@complainOpenBy</td>
+                                    <td><div id="Status" class="label label-warning">@group.LineStatus.LineStatusName</div></td>
+                                    <td align="center" style="width:9%">
+
+                                        @*<button id="btnDelete" type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></button>
+                                        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Complain_Status))
+                                        {
+                                            <button type='button' id='btnEdit' class='btn btn-danger btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='btnDelete' class='btn btn-danger btn-sm ' data-toggle="modal" data-target="#popModalForDeletePermently"><span class='glyphicon glyphicon-remove'></span></button><button type='button' id='btnSolve' class='btn btn-success btn-sm  '><span class='glyphicon glyphicon-ok'></span></button>
+                                        }
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>*@
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="mdlShowDueBillsList" role="dialog" style="overflow:auto">
+        <div class="modal-dialog modal-lg" style="width:90%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Due Bills</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_ShowDueBillsList")
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUp" style="float:right">
+                        <input type="button" id="btn" value="Close" class="btn btn-default btn-sm" />
+                        @* <input type="button" id="btnPayUnpaidBill" value="Yes" class="btn btn-primary btn-sm" />*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Complain_Status))
+    {
+        <div class="modal fade" id="mdlComplainUpdate" role="dialog" style="overflow:auto">
+            <div class="modal-dialog modal-lg" style="width:45%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Update Complain Information</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        @Html.Partial("Partial_UpdateComplain")
+                    </div>
+                    <div class="modal-footer">
+                        @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                        <div id="PopUp" style="float:right">
+                            <input type="button" id="btnComplainClose" value="Close" class="btn btn-default btn-sm" />
+                            <input type="button" id="btnUpdateComplain" value="Update Complain Information" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Client Information</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_SpecificCLientDetails_PopUp")
+                </div>
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6 class="panel-title">Mikrotik</h6>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("MIkrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    @Html.Label("IP", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("IP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("Mac", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("Mac", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 " })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUpClientUpdate" style="float: right">
+                        <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Client))
+                        {
+                            <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Complain Permently?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnComplainDeletePermently" class="btn btn-success success">Delete Complain</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForAcceptClientComplain" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to accept This Complain?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnComplainAccept" class="btn btn-success success">Accept Complain</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+<script>
+
+    var checkboxID;
+    var ComplainID;
+    var onRequestStatus;
+    var T_ID;
+    var T_DuePayment_ID;
+    var complainStatus = 6; //by default pending
+    var complainMessage = false;
+    var whichOrWhere = false;
+    var pageID = '@ISP_ManagementSystemModel.AppUtils.View_Complain_List';
+    var T_ID;
+    var T_DuePayment_ID;
+    var _ClientName;
+    var _ClientLoginName;
+    var tableRowIndexForUpdateClientName;
+
+    function setCompleteStatus(TransactionID) {
+
+        T_ID = TransactionID;
+        $("#btnShowBillPaymentWindow").css("visibility", "visible");
+    }
+    function GetClientDetailsByClientDetailsID(clientDetailsID, t_ID) {
+        // AppUtil.ShowSuccess(clientDetailsID);
+        T_ID = t_ID;
+        ClientUpdataeFromSeveralPageManager.GetClientDetailsByID(clientDetailsID);
+    }
+    function checkCheckbox(id) {
+
+       // alert("changed" + id.id);
+        var checkbox = document.getElementById(id.id);
+        checkboxID = checkbox.id;
+        if (checkbox.checked != true) {
+            //alert("yes");
+            onRequestStatus = "removed";
+            ComplainManager.ChangeCheckboxValue(ComplainID, false);
+        }
+        else {
+            //alert("no");
+            onRequestStatus = "set";
+            ComplainManager.ChangeCheckboxValue(ComplainID,true);
+        }
+    }
+
+    $(document).ready(function () {
+
+        var table = $("#tblComplainList").DataTable
+        ({
+            "language":
+            {
+                "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+            },
+            "processing": true,
+            "serverSide": true,
+
+            "ajax":
+            {
+                "url": "/Complain/GetComplainAJAXData",
+                "type": "POST",
+                "dataType": "JSON",
+                data: function (d) {
+                    d.YearID = $("#YearID").val();
+                    d.MonthID = $("#MonthID").val();
+                    d.EmployeeID = $("#EmployeeID").val();
+                    d.ComplainStatus = complainStatus;
+                    d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                },
+                //dataFilter: function (reps) {
+                //
+                //    if (searchBySearchButton !== 1) {
+
+                //        TransactionManager.GetBillsListBySearchCriteria();
+                //    }
+                //    searchBySearchButton = 0;
+                //    console.log(reps);
+                //    return reps;
+                //}
+            },
+
+            //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+            "columnDefs": [
+                // { "targets": [1], "width": "5%" },
+                //{  "targets": [16] },
+                //{ "align": "centre", "targets": "_all" },
+                { "targets": [0], "data": "Show", "render": function (data, type, row, meta) { return  '<input  id="complainID" name="complainID"  type="hidden" value='+row.ComplainID+'>' } },
+               { "targets": [2], "data": "Show", "render": function (data, type, row, meta) { return '<a href="#" onclick="GetClientDetailsByClientDetailsID(' + row.ClientDetailsID + ',' + row.TransactionID + ')">' + row.ClientLoginName + '</a>' } },
+                { "targets": [3], "data": "Show", "render": function (data, type, row, meta) { return AppUtil.ParseDateTime(row.Time)  } },
+                { "targets": [4], "data": "Show", "render": function (data, type, row, meta) { return ""+row.Status+""  } },
+                { "targets": [5], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.SignalInString } },
+                { "targets": [10], "data": "Show", "render": function (data, type, row, meta) { return ""  } },
+                { "targets": [12], "data": "Show", "render": function (data, type, row, meta) { return ""+row.ComplainOpenBy+""  } },
+                { "targets": [13], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.totalelementsgiven } },
+                { "targets": [14], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.LineStatusActiveDate } },
+                // { "targets": [11], "data": "Show", "render": function (data, type, row, meta) { return (row.StatusThisMonthID === 3) ? "<div style='color: green; font-weight:bold'>Active</td>" : "<div style='color: red; font-weight:bold'>Lock</td>" } },
+                {
+                    "width": "5%", "targets": [15], "style": "align='center',padding= 8px 3px; ", "data": "Action", "render": function (data, type, row, meta) {
+                        return row.ButtonList //+ "<input type='checkbox' class='form-check-input' id='checkboxWarning' value='option1'>"
+                        //<div class='checkbox checkbox-primary'><input type='checkbox' id='chk'  value='test'><label for='checkbox2'></label ></div>
+                        //<input type='checkbox' class='form - check - input' id='checkboxWarning' value='option1'>
+                    }
+                }//row.DeleteUpdate === true ? "":""
+
+            ],
+
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                //console.log(nRow);
+
+                if (aData.IsPriorityClient) {
+                    $(nRow).removeClass('odd');
+                    $(nRow).addClass('changetrbackground');
+                }
+                else {
+                    //$(nRow).removeClass('changetrbackground');
+                    $(nRow).removeClass('changetrbackground');
+                }
+                
+                if (aData.TotalComplainCount >= 3 ) { 
+                    $(nRow).addClass('changetrbackgroundForComplainCount');
+                } 
+
+
+
+                $(nRow).find("td:eq(0)").attr("hidden", true);
+                $(nRow).find("td:eq(10)").attr("hidden", true);
+                $(nRow).find("td:eq(5)").css("width", "5%");
+                $(nRow).find("td:eq(14)").attr("hidden", true);
+
+                return nRow;
+            },
+
+
+            "columns": [
+                {
+                    "data": "ComplainID"
+                }, 
+                {
+                    "data": "RunningMonthSerial"
+                }, 
+                {
+                    "data": "ClientName"
+                },
+                {
+                    "data": "Time"
+                },
+                {
+                    "data": "Status"
+                },
+                {
+                    "data": "SignalInString"
+                },
+                {
+                    "data": "Address"
+                },
+                //{
+                //    "data": "Zone"
+                //},
+                //{
+                //    "data": "Contact"
+                //},
+                {
+                    "data": "ComplainType"
+                },
+                {
+                    "data": "Complain"
+                },
+                {
+                    "data":"WhichOrWhere"
+                },
+                {
+                    "data":""
+                },
+                {
+                    "data": "AssignTo"
+                },
+                {
+                    "data": "ComplainOpenBy"
+                },
+                {
+                    "data": ""
+                },
+                {
+                    "data": ""
+                },
+                {     // fifth column (Edit link)
+                    "data": "DeleteUpdate"
+
+                } ]
+        });
+
+
+        $("#btnPopUpClientUpdateClose").click(function () {
+
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#tblEmployeeDetails").modal("hide");
+        });
+
+        $("#tblComplainList").on("click", "tr", function (e) {
+            //var index = $(this).index();
+            //alert("clicked :" + index);
+            tableRowIndexForUpdateClientName = $(this).index();
+        });
+
+        //$('#tblComplainList').find('tr').click(function () {
+        //
+        //    tableRowIndexForUpdateClientName = $(this).index();
+        //});
+
+        $('#popsConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        //$('#popsBillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $("#PopUpClientUpdate").on("click", "#btnUpdateClientDetails", function () {
+
+            if (ClientUpdataeFromSeveralPageManager.UpdateClientDetailsValidation() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                 {
+                     <text>
+                         if ($("#lstMikrotik").val() === '') {
+                             AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                             return false;
+                         }
+                         //if (AppUtil.GetIdValue("IP") === '') {
+                         //    AppUtil.ShowSuccess("Please Insert IP.");
+                         //    return false;
+                         //}
+                         //if (AppUtil.GetIdValue("Mac") === '') {
+                         //    AppUtil.ShowSuccess("Please Insert Mac.");
+                         //    return false;
+                         //}
+                     </text>
+                 }
+                //ClientUpdataeFromSeveralPageManager.UpdateClientDetailsPopUpFromOtherPages();
+                ClientUpdataeFromSeveralPageManager.UpdateClientDetailsPopUpFromOtherPagesWithPageNumber();
+            }
+        });
+
+
+        $("#chkPackageFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+            }
+        });
+
+
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        //$("#tblClientMonthlyBill").DataTable();
+        //$("#tblComplainList").DataTable();
+
+        //$("#btnDelete").click(function() {
+        //
+        //    var ComplainID = $(this).closest("tr").find("td:eq(1) input").val();
+        //    ComplainManager.UpdateStatusByDelete(ComplainID);
+        //});
+
+        $("#tblComplainList").on("click", "tr", function () {
+
+            ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+        });
+
+        $("#btnComplainAccept").click(function(){
+            ComplainManager.UpdateClientComplainStatusToPending(ComplainID);
+            $("#popModalForAcceptClientComplain").modal("hide");
+        });
+
+
+        $("#btnComplainDeletePermently").click(function(){
+            ComplainManager.UpdateStatusByDelete(ComplainID);
+            $("#popModalForDeletePermently").modal("hide");
+        });
+
+        $("#tblComplainList").on("click", "#btnEdit", function (e) {
+            e.preventDefault();
+
+            ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.ShowComplainByIdForUpdate(ComplainID);
+        });
+
+        $("#tblComplainList").on("click", "#btnSolve", function (e) {
+            e.preventDefault();
+
+            var ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.UpdateStatusBySolve(ComplainID);
+        });
+
+        $("#btnComplainClose").click(function () {
+            $("#mdlComplainUpdate").modal("hide");
+        });
+
+        $("#mdlComplainUpdate").on("click", "#btnUpdateComplain", function () {
+            if (ComplainManager.UpdateComplainValidation(false, "@userIsResellerOrNot.ToString().ToLower()" == "true" ? false : true) === true)
+            {
+                ComplainManager.UpdateComplain();
+            }
+
+        });
+
+        $("#btnSearch").click(function() {
+
+            if(ComplainManager.ComplainSearchValidation())
+            {
+                //ComplainManager.SearchComplainBySearchCriteria();
+                table.draw();
+            }
+
+        });
+
+        $("#ComplainTypeUpdate").change(function () {
+
+            var selectedText = $("#ComplainTypeUpdate option:selected").text().toLowerCase();
+            ComplainManager.ClearComplainAndWhichOrWhere();
+            if (selectedText === "compose") {
+                complainMessage = true;
+                $("#divComplainDetails").prop("hidden", false);
+            }
+                var complainTypeUpdateID = $("#ComplainTypeUpdate").val();
+                ComplainManager.ShowMessageBoxOrNotByComplainTypeIDForUpdate(complainTypeUpdateID);
+        });
+
+        $("input[name=ComplainType]").change(function () {
+            var val = $("input[name=ComplainType]:checked").val();
+            complainStatus = val;
+            table.draw();
+        });
+
+        $('input[name="checkboxtest"]').change(function (event) {
+
+            if (this.checked) {
+                alert("s");
+            }
+            else {
+                alert("f");
+            }
+        });
+        $("#closeTblEmployeeDetails").click(function () {
+            //ClientDetailsManager.ClearClientDetailsModalInformation();
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            //$("#Status").css("display", "none");
+        });
+
+        $('#PopsLineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+
+</script>
+
+

@@ -1,0 +1,447 @@
+﻿@using ISP_ManagementSystemModel
+@model  IEnumerable<ISP_ManagementSystemModel.Models.ClientCustomInformation>
+
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+</style>
+
+
+
+@{
+    ViewBag.Title = "Active Client";
+}
+
+<script src="~/Scripts/CustomScripts/ClientUpdateManager.js"></script>
+<script src="~/Scripts/CustomScripts/GetAllActiveClientsManager.js"></script>
+<script src="~/Scripts/CustomScripts/CommonManager.js"></script>
+
+<script>
+
+
+    var ClientDetailsID;
+    var ClientLineStatusID;
+    var ClientBannedStatusID;
+    var ClientTransactionID;
+    var searchType = 3;
+
+    function showWaitingDialog() {
+        //AppUtil.ShowWaitingDialog();
+    }
+    function hideWaitingDialog() {
+        //AppUtil.HideWaitingDialog();
+    }
+
+    $(document).ready(function () {
+        var table = $("#tblUsers").DataTable
+        ({
+            "language":
+            {
+                "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+            },
+            "processing": true,
+            "serverSide": true,
+
+
+            "ajax":
+            {
+                "url": "/Client/GetAllActiveClientsAJAXData",
+                "type": "POST",
+                "dataType": "JSON",
+                data: function (d) {
+                    d.YearID = $("#YearID").val();
+                    d.MonthID = $("#MonthID").val();
+                    d.ZoneID = $("#SearchByZoneID").val();
+                    d.SearchTypeForActive = searchType;
+                    d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                }
+            },
+            //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+            "columnDefs": [
+                { "targets": [0], "width": "5%" },
+                { "width": "5%", "targets": [6] },
+                { "targets": [0], "data": "ClientDetailsID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='EmployeeDetailsID' name='EmployeeDetailsID' value=" + row.ClientDetailsID + "></td>" } },
+                { "targets": [9], "data": "Show", "render": function (data, type, row, meta) { return row.StatusThisMonthID == '3' ? "<div style='color: green; font-weight:bold'>Active</td>" : "<div style='color: red; font-weight:bold'>Lock</td>" } },
+                { "targets": [10], "data": "Show", "render": function (data, type, row, meta) { return row.StatusNextMonthID == '5' ? "<div style='color: red; font-weight:bold'>Lock</td>" : "<div style='color:green ; font-weight:bold'>Active</td>" } },
+                { "targets": [11], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.LineStatusActiveDate } },
+                { "targets": [12], "data": "Show", "render": function (data, type, row, meta) { return "<a href='#' id='ShowPopUps'>Edit</a>" } },
+             //   { "targets": [12], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.LineStatusActiveDate } },
+
+            ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                //console.log(nRow);
+                if (aData.IsPriorityClient) {
+                    $(nRow).removeClass('odd');
+                    $(nRow).addClass('changetrbackground');
+                }
+                else {
+                    //$(nRow).removeClass('changetrbackground');
+                    $(nRow).removeClass('changetrbackground');
+                }
+
+                $(nRow).find("td:eq(0)").attr("hidden", true);
+                return nRow;
+            },
+
+            "columns": [
+                {
+                    "data": "ClientDetailsID"
+                },
+                {
+                    "data": "Name"
+                },
+                {
+                    "data": "LoginName"
+                },
+                {
+                    "data": "PackageNameThisMonth"
+                },
+                {
+                    "data": "PackageNameNextMonth"
+                },
+                {
+                    "data": "Address"
+                },
+                {
+                    "data": "Email"
+                },
+                {
+                    "data": "Zone"
+                },
+                {
+                    "data": "ContactNumber"
+                },
+                {
+                    "data": "StatusThisMonthID"
+                },
+                {
+                    "data": "StatusNextMonthID"
+                },
+                {     // fifth column (Edit link)
+                    "data": ""
+
+                },
+                {     // fifth column (Edit link)
+                    "data": ""
+
+                }
+            ]
+        });
+
+        $("#closeTblEmployeeDetails").click(function () {
+
+            ClientDetailsManager.ClearClientDetailsModalInformation();
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#Status").css("display", "none");
+        });
+
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $('#ConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#LineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnSearch").click(function () {
+
+            //var SearchID = $("#SearchByZoneID").val();
+
+            //var searchType = 3;
+            //GetAllActiveClientsManager.SearchClientListByZone(SearchID, searchType);
+            table.draw();
+        });
+
+        $("#tblUsers").on("click", "#ShowPopUp", function () {
+
+            // e.preventDefault();
+            var data = $(this).closest("tr").find("td:eq(0) input").val();
+            alert("Hidden: " + data);
+            $("#tblEmployeeDetails").modal("show");
+        });
+
+        $("#tblUsers").on("click", "#ShowPopUps", function (e) {
+
+
+            e.preventDefault();
+            ClientDetailsID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            //GetAllActiveClientsManager.GetClientDetailsByID(ClientDetailsID);
+        ClientUpdateManager.GetClientDetailsByID(clientDetailsID);
+        });
+
+        $("#PopUp").on("click", "#btnPopUpClientUpdateClose", function () {
+
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#tblEmployeeDetails").modal("hide");
+            ClientDetailsID = "";
+            ClientLineStatusID = "";
+            ClientBannedStatusID = "";
+            ClientTransactionID = "";
+        });
+
+        $("#PopUp").on("click", "#btnUpdateClientDetails", function () {
+
+            if (ClientUpdateManager.UpdateClientDetailsValidation() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <text>
+                if ($("#lstMikrotik").val() === '') {
+                    AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                    return false;
+                }
+
+                //if (AppUtil.GetIdValue("IP") === '') {
+                //    AppUtil.ShowSuccess("Please Insert IP.");
+                //    return false;
+                //}
+                //if (AppUtil.GetIdValue("Mac") === '') {
+                //    AppUtil.ShowSuccess("Please Insert Mac.");
+                //    return false;
+                //}
+                </text>
+            }
+                GetAllActiveClientsManager.UpdateClientDetails();
+
+            }
+        });
+
+        $("#chkPackageFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        //$("#LoginName").change(function () {
+        //    var loginName = $("#LoginName").val();
+        //    CommonManager.ClientLoginExistOrNot(loginName);
+        //});
+        $("#LoginName").change(function () {
+            var loginName = $("#LoginName").val();
+            // var ClientDetailsID = $("#ClientDetailsID").val();
+            ClientDetailsManager.ClientLoginExistOrNotIncludeID(loginName, ClientDetailsID);
+        });
+
+        $("#btnExportExcel").click(function () {
+            GetAllActiveClientsManager.PrintAllActiveClientList();
+        });
+        $("#ContactNumber").keyup(function () {
+            var mob = $("#ContactNumber").val();
+            $("#SMSCommunication").val(mob);
+        });
+    });
+</script>
+
+
+@Html.AntiForgeryToken()
+
+
+<div class="panel panel-default" style="margin-bottom: 0px;">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">Active Client</h6>
+            <ol class="breadcrumb">
+                <li><a href="/Client/GetAllCLients"><i class="fa fa-dashboard"></i> Client</a></li>
+                <li class="active"> <a href="/Client/GetAllActiveClient"> Active Client </a> </li>
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title">Select Zone</h6>
+            </div>
+            <div class="panel-body">
+                @Html.Partial("Partial_Year_Month_Zone")
+                @*<div class="col-sm-4">
+                    <input type="Button" id="btnSearchClientListByZone" value="Find" class="btn btn-primary btn-sm" />
+                </div>*@
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title">Active Client</h6>
+            </div>
+            <div class="panel-body" style="overflow: auto">
+
+                <div style="float:right;">
+                    <a class="btn btn-sm btn-primary" href="\Client\Create">New Client</a>
+                    @*<a class="btn btn-sm btn-primary" href="\Client\GetAllActiveClient">Active Client</a>*@
+                    <a class="btn btn-sm btn-primary" href="\Client\GetAllLockCLients">Lock Client</a>
+                    <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+
+                    <!-- export xl file -->
+                    @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+                </div>
+
+                <table id="tblUsers" class="table table-bordered table-hover table-responsive " style="align-content: center; width: 100%">
+                    <thead>
+                        <tr style="height: 20px;">
+                            <th hidden="hidden"></th>
+                            <th> Name</th>
+                            <th> Login_Name</th>
+                            <th> This_Month</th>
+                            <th> Next_Month</th>
+                            <th style="padding-left:100px; padding-right:100px;"> Address</th>
+                            <th style="padding-left:50px; padding-right:50px;"> Email </th>
+                            <th style="padding-left:45px; padding-right:45px;">Zone</th>
+                            <th>Contact</th>
+                            <th>This_Month</th>
+                            <th>Latest</th>
+                            <th>Effect_Date</th>
+                            <th>Show</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ClassTable">
+                        @foreach (var clientLineStatusTable in Model)
+                        {
+                            <tr>
+                                <td hidden="hidden">@Html.HiddenFor(s => clientLineStatusTable.ClientDetailsID)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.Name)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.LoginName)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.PackageNameThisMonth)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.PackageNameNextMonth)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.Address)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.Email)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.Zone)</td>
+                                <td>@Html.DisplayFor(s => clientLineStatusTable.ContactNumber)</td>
+                                @if (clientLineStatusTable.StatusThisMonthID == "3")
+                                {
+                                    <td style="color: green; font-weight:bold">Active</td>
+                                }
+                                else if (clientLineStatusTable.StatusThisMonthID == "5")
+                                {
+                                    <td style="color: red; font-weight:bold">Lock</td>
+                                }
+                                else
+                                {
+                                    <td style="color: red; font-weight:bold"></td>
+                                }
+
+                                @if (clientLineStatusTable.StatusNextMonthID == "3")
+                                {
+                                    <td style="color: green; font-weight:bold">Active</td>
+                                }
+                                else if (clientLineStatusTable.StatusNextMonthID == "5")
+                                {
+                                    <td style="color: red; font-weight:bold">Lock</td>
+                                }
+                                else
+                                {
+                                    <td style="color: red; font-weight:bold"></td>
+                                }
+                                <td>
+                                    <a href="" id="ShowPopUps">Show</a>
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+
+                <div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow:auto">
+                    <div class="modal-dialog modal-lg" style="width: 65%">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Update Client Information</h4>
+                            </div>
+                            <div class="modal-body panel-body">
+                                @Html.Partial("Partial_SpecificCLientDetails")
+                            </div>
+                            @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                            {
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h6 class="panel-title">Mikrotik</h6>
+                                    </div>
+
+                                    <div class="panel-body">
+
+                                        <div class="form-group col-sm-1"></div>
+                                        <div class="form-group col-sm-6">
+                                            <div>
+                                                @Html.Label("MIkrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-11" style="padding-left: 0px;">
+                                                @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-5">
+                                            <div>
+                                                @Html.Label("IP", new { @class = "control-label col-md-0", Style = "float:left" })
+                                                @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-11" style="padding-left: 0px;">
+                                                @Html.TextBox("IP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 " })
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-1"></div>
+                                        <div class="form-group col-sm-6">
+                                            <div>
+                                                @Html.Label("Mac", new { @class = "control-label col-md-0", Style = "float:left" })
+                                                @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-11" style="padding-left: 0px;">
+                                                @Html.TextBox("Mac", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 " })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
+                            <div class="modal-footer">
+                                @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                                <div id="PopUp" style="float: right">
+                                    <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Client))
+                                    {
+                                        <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

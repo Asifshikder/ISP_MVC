@@ -1,0 +1,645 @@
+﻿@using ISP_ManagementSystemModel
+@model  IEnumerable<ISP_ManagementSystemModel.Models.ClientCustomInformation>
+
+@{
+    ViewBag.Title = "All Client List";
+}
+
+<style>
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    .padding {
+        padding: 3px 6px;
+    }
+
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+
+    .checkbox {
+        padding-left: 20px;
+    }
+
+        .checkbox label {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .checkbox label::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                left: 0;
+                margin-left: -20px;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                background-color: #fff;
+                -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+            }
+
+            .checkbox label::after {
+                display: inline-block;
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                left: 0;
+                top: 0;
+                margin-left: -20px;
+                padding-left: 3px;
+                padding-top: 1px;
+                font-size: 11px;
+                color: #555555;
+            }
+
+        .checkbox input[type="checkbox"] {
+            opacity: 0;
+        }
+
+            .checkbox input[type="checkbox"]:focus + label::before {
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+
+            .checkbox input[type="checkbox"]:checked + label::after {
+                font-family: 'FontAwesome';
+                content: "\f00c";
+            }
+
+            .checkbox input[type="checkbox"]:disabled + label {
+                opacity: 0.65;
+            }
+
+                .checkbox input[type="checkbox"]:disabled + label::before {
+                    background-color: #eeeeee;
+                    cursor: not-allowed;
+                }
+
+        .checkbox.checkbox-circle label::before {
+            border-radius: 50%;
+        }
+
+        .checkbox.checkbox-inline {
+            margin-top: 0;
+        }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::before {
+        background-color: #428bca;
+        border-color: #428bca;
+    }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::before {
+        background-color: #d9534f;
+        border-color: #d9534f;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::before {
+        background-color: #5bc0de;
+        border-color: #5bc0de;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::before {
+        background-color: #f0ad4e;
+        border-color: #f0ad4e;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::before {
+        background-color: #5cb85c;
+        border-color: #5cb85c;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .radio {
+        padding-left: 20px;
+    }
+
+        .radio label {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .radio label::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                left: 0;
+                margin-left: -20px;
+                border: 1px solid #cccccc;
+                border-radius: 50%;
+                background-color: #fff;
+                -webkit-transition: border 0.15s ease-in-out;
+                -o-transition: border 0.15s ease-in-out;
+                transition: border 0.15s ease-in-out;
+            }
+
+            .radio label::after {
+                display: inline-block;
+                position: absolute;
+                content: " ";
+                width: 11px;
+                height: 11px;
+                left: 3px;
+                top: 3px;
+                margin-left: -20px;
+                border-radius: 50%;
+                background-color: #555555;
+                -webkit-transform: scale(0, 0);
+                -ms-transform: scale(0, 0);
+                -o-transform: scale(0, 0);
+                transform: scale(0, 0);
+                -webkit-transition: -webkit-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                -moz-transition: -moz-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                -o-transition: -o-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                transition: transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+            }
+
+        .radio input[type="radio"] {
+            opacity: 0;
+        }
+
+            .radio input[type="radio"]:focus + label::before {
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+
+            .radio input[type="radio"]:checked + label::after {
+                -webkit-transform: scale(1, 1);
+                -ms-transform: scale(1, 1);
+                -o-transform: scale(1, 1);
+                transform: scale(1, 1);
+            }
+
+            .radio input[type="radio"]:disabled + label {
+                opacity: 0.65;
+            }
+
+                .radio input[type="radio"]:disabled + label::before {
+                    cursor: not-allowed;
+                }
+
+        .radio.radio-inline {
+            margin-top: 0;
+        }
+
+    .radio-primary input[type="radio"] + label::after {
+        background-color: #428bca;
+    }
+
+    .radio-primary input[type="radio"]:checked + label::before {
+        border-color: #428bca;
+    }
+
+    .radio-primary input[type="radio"]:checked + label::after {
+        background-color: #428bca;
+    }
+
+    .radio-danger input[type="radio"] + label::after {
+        background-color: #d9534f;
+    }
+
+    .radio-danger input[type="radio"]:checked + label::before {
+        border-color: #d9534f;
+    }
+
+    .radio-danger input[type="radio"]:checked + label::after {
+        background-color: #d9534f;
+    }
+
+    .radio-info input[type="radio"] + label::after {
+        background-color: #5bc0de;
+    }
+
+    .radio-info input[type="radio"]:checked + label::before {
+        border-color: #5bc0de;
+    }
+
+    .radio-info input[type="radio"]:checked + label::after {
+        background-color: #5bc0de;
+    }
+
+    .radio-warning input[type="radio"] + label::after {
+        background-color: #f0ad4e;
+    }
+
+    .radio-warning input[type="radio"]:checked + label::before {
+        border-color: #f0ad4e;
+    }
+
+    .radio-warning input[type="radio"]:checked + label::after {
+        background-color: #f0ad4e;
+    }
+
+    .radio-success input[type="radio"] + label::after {
+        background-color: #5cb85c;
+    }
+
+    .radio-success input[type="radio"]:checked + label::before {
+        border-color: #5cb85c;
+    }
+
+    .radio-success input[type="radio"]:checked + label::after {
+        background-color: #5cb85c;
+    }
+</style>
+
+
+<script src="~/Scripts/CustomScripts/UnpaidBillsManager.js"></script>
+
+<script>
+
+    var ClientDetailsID;
+    var ClientLineStatusID;
+    var ClientBannedStatusID;
+    var ClientTransactionID;
+    var searchType = 0;
+    var strchksms = "chkTXID";
+    var billPayListAry = [];
+    var isCheckAll = false;
+    var ifIsCheckAllThenNonCheckList = [];
+    var ifNotCheckAllThenCheckList = [];
+    var table;
+    //var zoneIDs = 3;
+
+
+    function enableDisablePaymentID(TXID) {
+        debugger;
+        var allCheck = $("input[name='chkPaymentForAll']").prop("checked");
+
+        var a = document.getElementById(TXID.id);
+        var onlyID = TXID.id.split("chkTXID");
+        if (a.checked) {
+            billPayListAry.push('' + onlyID[1] + '');
+            if (allCheck) {
+                ifIsCheckAllThenNonCheckList = jQuery.grep(ifIsCheckAllThenNonCheckList, function (value) {
+                    return value != onlyID[1];
+                });
+            }
+            else {
+                ifNotCheckAllThenCheckList.push('' + onlyID[1] + '');
+            }
+        }
+        else {
+            //var res = jQuery.inArray("7028", billPayListAry);
+            var aa = '' + onlyID[1] + '';
+            if (jQuery.inArray(aa, billPayListAry) != -1) {
+                billPayListAry = jQuery.grep(billPayListAry, function (value) {
+                    return value != onlyID[1];
+                });
+            }
+
+            if (allCheck) {
+                ifIsCheckAllThenNonCheckList.push(onlyID[1]);
+            }
+            else {
+                ifNotCheckAllThenCheckList = jQuery.grep(ifNotCheckAllThenCheckList, function (value) {
+                    return value != onlyID[1];
+                });
+            }
+        }
+
+        ShowOrHidePaymentDiv();
+    }
+
+    function ShowOrHidePaymentDiv() {
+        debugger;
+        var totalRecords = $("#tblUsers").DataTable().page.info().recordsTotal;
+
+        if (isCheckAll && totalRecords > 0) {
+            $("#divShowPaymentDiv").show();//prop("visible", true)
+        }
+        else if (ifNotCheckAllThenCheckList.length > 0) {
+            $("#divShowPaymentDiv").show();
+        }
+        else {
+            $("#divShowPaymentDiv").hide();
+        }
+    }
+
+    function makeEmptyForLoadPaymentID() {
+
+        billPayListAry = [];
+        isCheckAll = false;
+        ifIsCheckAllThenNonCheckList = [];
+        ifNotCheckAllThenCheckList = [];
+    }
+
+    $(document).ready(function () {
+        $("#SearchByZoneID").change(function () {
+
+            zoneIDs = $("#SearchByZoneID").val();
+        });
+
+        table = $("#tblUsers").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+
+                "ajax":
+                {
+                    "url": "/Transaction/GetPayMultipleBill",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.SearchTypeForAll = searchType;
+                        d.IsCheckAll = isCheckAll;
+                        d.IfIsCheckAllThenNonCheckList = ifIsCheckAllThenNonCheckList;
+                        d.IfNotCheckAllThenCheckList = ifNotCheckAllThenCheckList;
+                        d.YearID = $("#YearID").val();
+                        d.MonthID = $("#MonthID").val();
+                        d.ZoneID = $("#SearchByZoneID").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    { "width": "5%", "targets": [6] },
+                    { "targets": [0], "data": "TransactionID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='TXID' name='TXID' value=" + row.TransactionID + "></td>" } },
+                    { "targets": [1], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.chkPayBill } },
+
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+
+                    if (aData.IsPriorityClient) {
+                        $(nRow).removeClass('odd');
+                        $(nRow).addClass('changetrbackground');
+                    }
+                    else {
+                        //$(nRow).removeClass('changetrbackground');
+                        $(nRow).removeClass('changetrbackground');
+                    }
+
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+                "columns": [
+                    {
+                        "data": "TransactionID"
+                    },
+                    {
+                        "data": "chkPayBill"
+                    },
+                    {
+                        "data": "ClientName"
+                    },
+                    {
+                        "data": "ClientLoginName"
+                    },
+                    {
+                        "data": "Address"
+                    },
+                    {
+                        "data": "Email"
+                    },
+                    {
+                        "data": "ZoneName"
+                    },
+                    {
+                        "data": "ContactNumber"
+                    },
+                    {
+                        "data": "PackageName"
+                    },
+                    {
+                        "data": "FeeForThisMonth"
+                    },
+                    {
+                        "data": "PaidAmount"
+                    },
+                    {
+                        "data": "Discount"
+                    },
+                    {
+                        "data": "Due"
+                    }]
+            });
+
+        /// Following code is for filter input to apply filter only on Enter
+        var itm = $("#tblUsers_filter input");
+        itm.unbind();
+        itm.keyup(function (e) {
+            //enter or tab
+
+
+
+            makeEmptyForSendingSMS();
+            ShowOrHideSMSDiv();
+
+            $("input:checkbox").prop("checked", false);
+
+            //  if (e.keyCode == 13) {
+            table.search(this.value).draw();
+            //}
+        });
+
+        $("#btnSearchClientListByZone").click(function () {
+
+
+            makeEmptyForSendingSMS();
+            ShowOrHideSMSDiv();
+            var SearchID = $("#SearchByZoneID").val();
+            var searchType = 0;
+            //ClientDetailsManager.SearchClientListByZone(SearchID, searchType);
+
+            // var mytable = $('#tblUsers').DataTable();
+
+
+            //var mytable = $('#tblUsers')
+            //.DataTable({
+            //  //  "destroy": true, "filter": false,
+            //    "deferRender": true,
+            //    "paging": true,
+            //    "lengthChange": false,
+            //    "searching": false,
+            //    "ordering": true,
+            //    "info": true,
+            //    "autoWidth": false,
+            //    "sDom": 'lfrtip'
+            //});
+            table.draw();
+        });
+
+        $("#btnSearch").click(function () {
+            if (UnpaidBillsManager.ValidationForPayMultiplePaymentSearch()) {
+                makeEmptyForLoadPaymentID();
+                $("#divShowPaymentDiv").hide();
+                table.draw();
+
+            }
+        });
+
+        $("#tblUsers").on("click", "tr", function () {
+
+            ClientDetailsID = $(this).closest("tr").find("td:eq(0) input").val();
+            // ClientDetailsManager.DeleteClientDetails();
+        });
+
+        $("input[name='chkPaymentForAll']").change(function (e) {
+
+            debugger;
+            isCheckAll = false;
+            ifNotCheckAllThenCheckList = [];
+            ifIsCheckAllThenNonCheckList = [];
+            billPayListAry = [];
+            if (this.checked) {
+                // alert("success");
+                isCheckAll = true;
+                //$("input:checkbox").not(this).prop("checked",true);
+
+                $('input[type = checkbox]').each(function () {
+
+                    var id = this.id;
+                    var aa = id.indexOf(strchksms);
+                    if (aa >= 0) {
+
+                        //  alert(id);
+                        $('#tblUsers>tbody').find('tr').each(function () {
+                            var row = $(this).index();
+                            //tr: eq(' + index + ')').find("td:eq(3)")
+                            var chkBoxHtml = $("#tblUsers>tbody>tr:eq(" + row + ")>td:eq(1)").html();
+                            //  console.log(test);
+                            var getID = $(chkBoxHtml).find('input').attr("id");
+                            //  console.log(getID);
+                            if (getID == id) {
+                                var clnID = $("#tblUsers>tbody>tr:eq(" + row + ")").find("td:eq(0) input").val();
+                                billPayListAry.push(clnID);
+                            }
+                        });
+
+                    }
+                });
+
+                console.log("array:" + billPayListAry);
+                $(billPayListAry).each(function (index, item) {
+                    $("input[id='chkTXID" + item + "']").prop("checked", true);
+                    //alert(item);
+                });
+            }
+            else {
+                isCheckAll = false;
+                $("input:checkbox").prop("checked", false);
+                // alert("false");
+            }
+            ShowOrHidePaymentDiv();
+        });
+
+        $("#btnPay").click(function () {
+            if (UnpaidBillsManager.PayMultipleBillsValidations()) {
+                UnpaidBillsManager.PayMultipleBills(isCheckAll, ifIsCheckAllThenNonCheckList, ifNotCheckAllThenCheckList)
+            }
+        });
+    });
+</script>
+
+@Html.AntiForgeryToken()
+
+
+<div class="panel panel-default" style="margin-bottom: 0px;">
+
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">Multiple Bill Pay</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Transaction/PayMultipleBill"><i class="fa fa-dashboard"></i> Pay Multiple Bill</a></li>
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("Partial_Year_Month_Zone")
+
+        <div style="float: right; padding-bottom:0px;">
+            <!-- export xl file -->
+            @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title">All Client</h6>
+            </div>
+
+            <div class="panel-body" style="overflow: auto">
+
+                <table id="tblUsers" class="table table-bordered table-hover table-responsive " style="align-content: center; width: 100%">
+                    <thead>
+                        <tr style="height: 20px;">
+                            <th style="" hidden="hidden"></th>
+                            @*<th >ClientDetailsID</th>*@
+                            <th><div class='checkbox checkbox-danger'><input type="checkbox" id="chkPaymentForAll" name="chkPaymentForAll" /><label for='chkPaymentForAll'> </label></div></th>
+                            <th> Name</th>
+                            <th> Login_Name</th>
+                            <th style="padding-left:100px; padding-right:100px;"> Address</th>
+                            <th style="padding-left:50px; padding-right:50px;"> Email </th>
+                            <th style="padding-left:45px; padding-right:45px;">Zone</th>
+                            <th>Contact</th>
+                            <th> Package</th>
+                            <th>Total_Amount</th>
+                            <th> Paid</th>
+                            <th>Discount</th>
+                            <th>Due</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div id="divShowPaymentDiv" hidden>
+                    <input type="button" value="Pay Bll" class="btn btn-sm btn-primary" data-placement="top" data-toggle="modal" data-target="#popModalForPayMultipleTS" />
+                </div>
+                <div class="modal fade" id="popModalForPayMultipleTS" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                Confirm Submit
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to Pay This Client ?
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <a href="#" id="btnPay" class="btn btn-success success">Pay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+

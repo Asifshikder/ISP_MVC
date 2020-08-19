@@ -1,0 +1,751 @@
+﻿
+@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.ViewModel.VM_Transaction_EmpTraLockUnlock_ClientDueBills>
+
+@{
+    ViewBag.Title = "Reseller Accounts";
+}
+
+
+<script src="~/Scripts/CustomScripts/TransactionManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdataeFromSeveralPageManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdateManager.js"></script>
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+</style>
+
+<script>
+
+    var table;
+    var T_ID;
+    var T_DuePayment_ID;
+    var _ClientName;
+    var _ClientLoginName;
+    var searchBySearchButton = 0;
+    var byAdmin = false;
+
+    var _InformationUpdateForWhichPage = "accounts";
+    var _tblName = "tblClientMonthlyBill";
+    var _rowIndex = "";
+
+    function GetClientDetailsByClientDetailsID(clientDetailsID, t_ID) {
+        T_ID = t_ID;
+        //ClientUpdataeFromSeveralPageManager.GetClientDetailsByID(clientDetailsID);
+        ClientUpdateManager.GetClientDetailsByID(clientDetailsID);
+    }
+
+    function setCompleteStatus(TransactionID) {
+        T_ID = TransactionID;
+        $("#btnShowBillPaymentWindow").css("visibility", "visible");
+    }
+
+    $(document).ready(function () {
+
+        $("#tblShowDueBillsList").on("change", "input[name=chkPayDueBills]:radio", function () {
+
+            T_DuePayment_ID = $(this).closest("tr").find("td:eq(1) input").val();
+            $("#btnShowDueBillPaymentWindow").css("visibility", "visible");
+            alert($(this).index());
+        });
+        $("#"+_tblName+"").on("click","tr", function () {
+            _rowIndex = $(this).index();
+        });
+
+         table = $("#tblClientMonthlyBill").DataTable
+            ({
+            "language":
+            {
+                "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+            },
+            "processing": true,
+            "serverSide": true,
+
+            "ajax":
+            {
+                "url": "/Transaction/GetResellerCurrentMonthArchiveBillsAJAXData",
+                "type": "POST",
+                "dataType": "JSON",
+                data: function (d) {
+                    d.YearID = $("#YearID").val();
+                    d.MonthID = $("#MonthID").val();
+                    d.ZoneID = $("#SearchByZoneID").val();
+                    d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                },
+                dataFilter: function (reps) {
+                    if (searchBySearchButton !== 1) {
+                        TransactionManager.GetBillsListBySearchCriteria(byAdmin);
+                    }
+                    searchBySearchButton = 0;
+                    console.log(reps);
+                    return reps;
+                },
+                //success: function (msg) {
+                //
+                //    fnCallback(msg);
+                //    console.log(msg);
+                //   // $("#sample_1").find("tbody").html(msg.data);
+                //  //  $("#sample_1_processing").hide();
+                //   // Init();
+                //}
+            },
+
+            @*@if (item.Due > 0)
+                {
+
+                    <td><a href="" id="linkOfShowingDueAmount">@item.Due</a></td>
+
+                    }
+            else
+            {
+                <td style="color:blue">0</td>
+            }*@
+
+            //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+            "columnDefs": [
+               // { "targets": [1], "width": "5%" },
+                //{  "targets": [16] },
+                { "targets": [0], "data": "Show", "render": function (data, type, row, meta) { return (row.Paid === false) ? '<input type="checkbox" class="checkGroup1" id="" name="chkBillPay" onclick="setCompleteStatus(' + row.TransactionID + ')" /*value="true"*/>' : "" } },
+                { "targets": [1], "data": "TransactionID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='TransactionID' name='TransactionID' value=" + row.TransactionID + "></td>" } },
+                { "targets": [2], "data": "Show", "render": function (data, type, row, meta) { return '<a href="#" onclick="GetClientDetailsByClientDetailsID(' + row.ClientDetailsID + ',' + row.TransactionID + ')">' + row.ClientLoginName + '</a>' } },
+                { "targets": [11], "data": "Due", "render": function (data, type, row, meta) { return row.Due > 0 ? '<a href="" id="linkOfShowingDueAmount">' + row.Due + '</a>' : "<div style='color:blue'>0</div>" } },//alert("kamruol Hasan: " + row.Due +" "+ row.ClientDetailsID);
+                { "targets": [12], "data": "Show", "render": function (data, type, row, meta) { return (row.StatusThisMonthID === 3) ? "<div style='color: green; font-weight:bold'>Active</td>" : "<div style='color: red; font-weight:bold'>Lock</td>" } },
+                //{ "targets": [17], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.LineStatusActiveDate } },
+                { "width": "5%", "targets": [18], "style": "align='center',padding= 8px 3px; ", "data": "Action", "render": function (data, type, row, meta) { return ('<div style="float: left"> <button type="button" id="btnPrint" class="btn btn-success  btn-sm"><span class="glyphicon glyphicon-print"></span></button> </div>') + " " + (row.Paid === true ? '<div style="float: right"><button type="button" id="" class="btn btn-success  btn-sm" title="Paid"><span class="glyphicon glyphicon-ok"></span></button></div>' : '<div style="float: right"><button type="button" id="" class="btn btn-danger btn-sm" title="Not Paid"><span class="glyphicon glyphicon-remove"></span></button> </div>') } }
+
+            ],
+
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                //console.log(nRow);
+
+                if (aData.IsPriorityClient) {
+                    $(nRow).removeClass('odd');
+                    $(nRow).addClass('changetrbackground');
+                }
+                else {
+                    //$(nRow).removeClass('changetrbackground');
+                    $(nRow).removeClass('changetrbackground');
+                }
+                $(nRow).find("td:eq(1)").attr("hidden", true);
+                $(nRow).find("td:eq(10)").css("color", "blue");
+                $(nRow).find("td:eq(11)").css("color", "blue");
+                $(nRow).find("td:eq(18)").css("padding", "8px 3px");
+                return nRow;
+            },
+
+            "columns": [
+                {
+                    "data": ""
+                },
+                {
+                    "data": "TransactionID"
+                },
+                {
+                    "data": "ClientLoginName"
+                },
+                {
+                    "data": "Address"
+                },
+                {
+                    "data": "ContactNumber"
+                },
+                {
+                    "data": "ZoneName"
+                },
+                {
+                    "data": "PackageName"
+                },
+                //{
+                //    "data": "MonthlyFee"
+                //},
+                {
+                    "data": "FeeForThisMonth"
+                },
+                {
+                    "data": "PaidAmount"
+                },
+                {
+                    "data": "Discount"
+                },
+                {
+                    "data": "PermanentDiscount"
+                },
+                {
+                    "data": ""
+                    @*"@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_Client)) ? 0  : 0"*@
+
+                },
+                {     // fifth column (Edit link)
+                    "data": "StatusThisMonthID"
+
+                },
+                {     // fifth column (Edit link)
+                    "data": "PaidBy"
+
+                },
+                {     // fifth column (Edit link)
+                    "data": "CollectBy"
+
+                },
+                {     // fifth column (Edit link)
+                    "data": "PaidTime"
+
+                },
+                {     // fifth column (Edit link)
+                    "data": "RemarksNo"
+
+                },
+                {     // fifth column (Edit link)
+                    "data": "ReceiptNo"
+
+                },
+                //{
+                //    "data": ""
+                //},
+                {
+                    @*//"data": '@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_Client)) { <button id="btnDelete" type="button" class="btn btn-danger btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForDeletePermently"> <span class="glyphicon glyphicon-remove"></span> </button> }'
+                    "data": 'StatusNextMonthID'*@
+                    "data": ""
+                }]
+        });
+        $('#btnPayBillClose,#clsCrossmdlMakePayment').click(function () {
+            T_ID = "";
+            $("#btnShowBillPaymentWindow").css("visibility", "hidden");
+
+            $("#EmployeeID").prop("selectedIndex",0);
+            $("#txtTotalAmount").val("");
+            $("#txtMoneyResetNo").val("");
+            $("#Discount").val(0);
+            $("#Total").val("");
+            $("#Remarks").val("");
+            $("#txtRegularBillPay").val("");
+            $("input[name='chkBillPay']").prop('checked', false);
+            //$(".chkBillPay").attr('checked',false);
+
+            $("#mdlMakePayment").modal("hide");
+        });
+
+        $("#PopUpClientUpdate").on("click", "#btnUpdateClientDetails", function () {
+
+            if (ClientUpdateManager.UpdateClientDetailsValidation() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <text>
+
+                        console.log($("#lstMikrotik").val());
+                        if ($("#lstMikrotik").val() === '' || $("#lstMikrotik").val() === null) {
+                            AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                            return false;
+                        }
+                        //if (AppUtil.GetIdValue("IP") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert IP.");
+                        //    return false;
+                        //}
+                        //if (AppUtil.GetIdValue("Mac") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert Mac.");
+                        //    return false;
+                        //}
+                    </text>
+                  // <script></script>
+
+                }
+                ClientUpdateManager.UpdateClientDetails();
+            }
+
+        });
+
+        $("#chkPackageFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+            }
+        });
+        //$('.chkBillPay').click(function () {
+        //
+        //    $('.chkBillPay').not(this).attr('checked', false);
+        //});
+
+        $(document).on('click', '.checkGroup1', function () {
+
+            if ($(this).prop("checked") == false) {
+                $("#btnShowBillPaymentWindow").css("visibility","hidden");
+            }
+
+
+            $('input.checkGroup1').not(this).prop('checked', false);
+
+            //var val = $(this).val();
+            //if ($(this).val() == "none") {
+
+            //    $(this).siblings("input[type=checkbox]").attr('checked', false);
+
+            //} else {
+
+            //    $(this).siblings("input[value=none]").attr('checked', false);
+
+            //}
+        });
+
+        //$('input.checkGroup1').on('change', function () {
+        //
+        //    $('input.checkGroup1').not(this).prop('checked', false);
+        //});
+
+
+        $("#btnCollectAdvancePayment").click(function () {
+            TransactionManager.PayRunningMonthBillFromAdvanceAmount(@AppUtils.PamentIsOccouringFromAdvancePaymentAccountPage);
+        });
+
+        $("#btnGenerateBill").click(function () {
+
+            //$("#divShowLodarImage").css("visibility","visible");
+            TransactionManager.GenerateBillForThisMonth();
+            //$("#divShowLodarImage").css("visibility", "hidden");
+        });
+
+        $("#btnShowBillPaymentWindow").click(function () {
+
+
+            //AppUtil.ShowSuccess(T_ID);
+
+            TransactionManager.GetClientPaymentAmountAndRemarksAndSleepNoForPayment(T_ID);
+        });
+
+        //$("#btnShowBillPaymentWindow").click(function () {
+        //
+        //    AppUtil.ShowSuccess(T_ID);
+        //
+        //    TransactionManager.GetClientPaymentAmountAndRemarksAndSleepNoForPayment(T_ID);
+        //});
+
+        $("#btnShowDueBillPaymentWindow").click(function () {
+            $("#tblShowDueBillsList>tbody>tr").each(function () {
+
+                var rowIndex = $(this).index();
+                $("#tblShowDueBillsList>tbody>tr>td>input[name=chkPayDueBills]:radio").each(function () {
+                    if ($(this).is(":checked")) {
+                        $(this).closest("tr").css("border", "1px solid red");
+                    }
+                    else {
+                        //$(this).attr("checked", false);
+                        $(this).closest("tr").css("border", "0px solid red");
+                    }
+                });
+            });
+
+            //AppUtil.ShowSuccess(T_DuePayment_ID);
+
+            TransactionManager.GetClientPaymentAmountAndRemarksAndSleepNoForDuePayment(T_DuePayment_ID);
+        });
+
+        //$("#btnAdjustDueBill").click(function () {
+        //    TransactionManager.AdjustDueBill();
+        //});
+
+        $("#btnPayBill").click(function () {
+
+            if (TransactionManager.PayResellerMonthlyBillValidation()) {
+                TransactionManager.PayMonthlyBillForReseller(T_ID,@AppUtils.PamentIsOccouringFromAccountsPage);
+            }
+
+        });
+
+        $("#btnPayUnpaidBill").click(function () {
+
+            if (TransactionManager.PayResellerDueBillValidation()) {
+                TransactionManager.PayDueBillForReseller(T_DuePayment_ID,@AppUtils.PamentIsOccouringFromAccountsPage);
+            }
+        });
+
+        $("#tblClientMonthlyBill").on('click', "#linkOfShowingDueAmount", function (e) {
+
+            e.preventDefault();
+            var transactionID = $(this).closest("tr").find("td:eq(1) input").val();
+            //AppUtil.ShowSuccess(transactionID);
+            TransactionManager.ShowDueBillDetailssByTransactionID(transactionID);
+        });
+
+        $("#mdlShowDueBillsList").on("click", "#chkPayDueBills", function () {
+
+            var transactionID = $(this).closest("tr").find("td:eq(0) input").val();
+            //AppUtil.ShowSuccess(transactionID);
+        });
+
+        ////$("#tblShowDueBillsList").on("change", "input[name=chkPay111DueBills]:radio", function () {
+
+        ////    T_DuePayment_ID = $(this).closest("tr").find("td:eq(1) input").val();
+        ////    $("#btnShowDueBillPaymentWindow").css("visibility", "visible");
+        ////    //alert(T_DuePayment_ID);
+        ////});
+
+        $("#btnSearch").click(function () {
+            if (TransactionManager.ValidationForArchiveBillsSearch()) {
+                //TransactionManager.GetBillsListBySearchCriteria(byAdmin);
+                table.draw();
+            }
+
+        });
+
+        $("#btnUpnapiBill").click(function () {
+            window.location.href = "/Transaction/ResellerUnpaidBills";
+        });
+
+        $("#btnNewSignUpBill").click(function () {
+            window.location.href = "/Transaction/ResellerSignUpBills";
+        });
+
+
+        $("#btnExportExcel").click(function () {
+            TransactionManager.PrintArchiveBillsList();
+        });
+
+        $("#btnBillPrint").click(function () {
+
+            window.open("/Report/ShoBillReport?ForAllOrSingle=1");
+        });
+
+        $("#tblClientMonthlyBill").on("click", "#btnPrint", function () {
+
+            window.open("/Report/ShoBillReport?ForAllOrSingle=0&TransactionID=" + $(this).closest("tr").find("td:eq(1) input").val() + "");
+            //TransactionManager.PrintAchiveBillIndividually();
+        });
+
+        $("#btnPopUpClientUpdateClose, #btnPopUpClose").click(function () {
+
+
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#tblEmployeeDetails").modal("hide");
+            //ClientDetailsID = "";
+            //ClientLineStatusID = "";
+            //ClientBannedStatusID = "";
+            //ClientTransactionID = "";
+        });
+        $("#closeTblEmployeeDetails").click(function () {
+
+            //ClientDetailsManager.ClearClientDetailsModalInformation();
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#Status").css("display", "none");
+        });
+
+
+        $('#PopsLineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#btnCrossmdlShowDueBillsList,#btnClosemdlShowDueBillsList').click(function () {
+            T_DuePayment_ID = "";
+
+            $("#popName").html("");
+            $("#popLoginName").html("");
+            $("#ClientZone").html("");
+            $("#ClientAddress").html("");
+            $("#ConnectionType").html("");
+            $("#ContactNumber").html("");
+
+            $("#tblShowDueBillsList>tbody>tr").remove();
+            $("#btnShowDueBillPaymentWindow").css("visibility", "hidden");;
+
+            $("#mdlShowDueBillsList").modal("hide");
+        });
+
+        $('#btnPayDueBillClose,#clsCrossmdlMakeDuePayment').click(function () {
+
+            $("#txtDueTotalAmount").val("");
+            $("#txtDueMoneyResetNo").val("");
+            $("#txtDueDiscount").val(0);
+            $("#txtDueTotal").val("");
+            $("#txtDueRemarks").val("");
+            $("#DueEmployeeID").prop("selectedIndex", 0);
+            $("#txtDuePay").val("");
+
+            $("#mdlMakeDuePayment").modal("hide");
+        });
+
+
+        $("#ContactNumber").keyup(function () {
+            var mob = $("#ContactNumber").val();
+            $("#SMSCommunication").val(mob);
+        });
+
+    });
+
+</script>
+
+@using (Html.BeginForm())
+{
+    string Date = ISP_ManagementSystemModel.AppUtils.GetDateTimeNow().ToString("yyyy-MMM");
+
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">Archive Bills</h6>
+                <ol class="breadcrumb">
+                    <li><a href="/Transaction/ResellerAccounts"><i class="fa fa-dashboard"></i> Archive Bills</a></li>
+                    <li class="active"> <a href="/Transaction/ResellerUnpaidBills"> Unpaid Bills </a> </li>
+                </ol>
+            </section>
+        </div>
+
+        <div class="panel-body">
+            @Html.Partial("Partial_Year_Month_Zone")
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading col-sm-2">
+            <h4 class="panel-title ">Archive Bills :</h4>
+        </div><div class="col-sm-10" style="color: #333; background-color: #f5f5f5;border-color: #ddd;padding: 10px 15px; border-bottom: 1px solid transparent;"><div id="dateArchiveBills" style="font-weight: bold">@Date</div></div>
+        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Pay__Bill_Reseller_Clients))
+        {
+            <input type="button" class="btn btn-primary btn-sm" id="btnShowBillPaymentWindow" style="visibility:hidden" value="Bill Pay" />
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.View_Unpaid_Bills_List_Reseller_Clients))
+        {
+            <input type="button" class="btn btn-primary btn-sm" id="btnUpnapiBill" value="Unpaid Bill" />
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.View_Sign_Up_Bills_List_Reseller_Clients))
+        {
+            <input type="button" class="btn btn-primary btn-sm" id="btnNewSignUpBill" value="New SIgnUp Bill" />
+        }
+        <input type="button" class="btn btn-primary btn-sm" id="btnBillPrint" value="Bill Print" />
+        <input type="button" class="btn btn-primary btn-sm" id="btnExportExcel" value="Export Excel" />
+        <div class="panel-body" style="overflow:auto">
+            <table id="tblClientMonthlyBill" class="table table-bordered table-hover table-responsive" style="align-content: center; width: 100%">
+                <thead>
+                    <tr>
+                        <th style="padding:0px;"></th>
+                        <th hidden="hidden"></th>
+                        <th style="padding:10px;">Login_ID</th>
+                        <th style="padding-left:100px;padding-right:100px;">Address</th>
+                        <th style="padding:10px;">Mobile</th>
+                        <th style="padding-left: 45px;padding-right: 45px; ">Zone</th>
+                        <th style="padding:10px;">Package</th>
+                        <th style="padding:10px;">Fee</th>
+                        <th style="padding:10px;">Paid Amount</th>
+                        <th style="padding:10px;">Discount</th>
+                        <th style="padding:10px;">Permanent Discount</th>
+                        <th style="padding:10px;">Old_Due</th>
+                        <th>Status</th>
+                        <th style="padding:10px;">Paid_By</th>
+                        <th style="padding:10px;">Collect_By</th>
+                        <th style="padding:10px;">Paid_Time</th>
+                        <th style="padding:10px;">Remarks</th>
+                        <th style="padding:10px;">Receipt_No</th>
+                        @*<th style="padding:10px;">Status_Activate Date</th>*@
+                        <th style="padding:15px;">Action</th>
+                    </tr>
+                </thead>
+
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mdlShowDueBillsList" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width:90%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="btnCrossmdlShowDueBillsList" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Due Bills</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_ShowDueBillsList")
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUp" style="float:right">
+                        <input type="button" id="btnClosemdlShowDueBillsList" value="Close" class="btn btn-default btn-sm" />
+                        @* <input type="button" id="btnPayUnpaidBill" value="Yes" class="btn btn-primary btn-sm" />*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Pay__Bill_Reseller_Clients))
+    {
+        <div class="modal fade" id="mdlMakePayment" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" style="width:65%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="clsCrossmdlMakePayment" type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Do You want to pay for this client?</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        @Html.Partial("Partial_Reseller_Payment")
+                    </div>
+                    <div class="modal-footer">
+                        @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                        <div id="PopUp" style="float:right">
+                            <input type="button" id="btnPayBillClose" value="No" class="btn btn-default btn-sm" />
+                            <input type="button" id="btnPayBill" value="Yes" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Pay_Due_Bill_By_Reseller))
+    {
+        <div class="modal fade" id="mdlMakeDuePayment" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" style="width:65%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="clsCrossmdlMakeDuePayment" type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Do You want to pay for this client?</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        @Html.Partial("Partial_Reseller_Due_Payment")
+                    </div>
+                    <div class="modal-footer">
+                        @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                        <div id="PopUp" style="float:right">
+                            <input type="button" id="btnPayDueBillClose" value="No" class="btn btn-default btn-sm" />
+                            <input type="button" id="btnPayUnpaidBill" value="Yes" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-heading col-sm-2">
+            <h4 class="panel-title">Archive Bills Summary: </h4>
+        </div><div class="col-sm-10" style="color: #333; background-color: #f5f5f5;border-color: #ddd;padding: 9px 15px; border-bottom: 1px solid transparent;"><div id="dateBillSummary" style="font-weight: bold">@Date</div></div>
+        <div class="panel-body">
+            @Html.Partial("ClientBillSummary")
+        </div>
+    </div>
+
+    <div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Client Information</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_SpecificCLientDetails")
+                </div>
+
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6 class="panel-title">Mikrotik</h6>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("MIkrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    @Html.Label("IP", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("IP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("Mac", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("Mac", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 " })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUpClientUpdate" style="float: right">
+                        <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Client_By_Reseller))
+                        {
+                            <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Employee Permently?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnEmployeeDeletePermently" class="btn btn-success success">Delete Employee</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+<script>
+    //$('#popsBillPaymentDate').datepicker({
+    //    dateFormat: 'mm/dd/yy',
+    //    numberOfMonths: 1,
+    //    changeMonth: true,
+    //    changeYear: true
+    //});
+    $('#popsConnectionDate').datepicker({
+        dateFormat: 'mm/dd/yy',
+        numberOfMonths: 1,
+        changeMonth: true,
+        changeYear: true
+    });
+</script>
+

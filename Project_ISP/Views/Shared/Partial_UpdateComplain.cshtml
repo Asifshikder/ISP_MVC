@@ -1,0 +1,75 @@
+﻿
+<div class="form-group col-sm-3">
+    <div>
+        @Html.Label("Complain Type", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.DropDownList("ComplainTypeUpdate", null, "-- Select Complain Type --", new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Assign To", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.DropDownList("EmployeeIDForUpdate", null, "-- Assign To --", new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div id="divComplainDetails" class="form-group col-sm-6" hidden>
+    <div>
+        @Html.Label("Complain", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+    </div>
+    <div style="clear: both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextArea("ComplainDetails", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Complain " })
+    </div>
+</div>
+
+<div id="divWhichOrWhereUpdate" class="form-group col-sm-6" hidden>
+    <div>
+        @Html.Label("Which/Where", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+    </div>
+    <div style="clear: both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextArea("WhichOrWhereUpdate", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Which/Where " })
+    </div>
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Mobile", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+    </div>
+    <div style="clear: both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtMobile", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Mobile ", @readonly = "readonly" })
+    </div>
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Client Address", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtClientAdress", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Client Address ", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Client Name", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtClientName", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Search Client ", @readonly = "readonly" })
+    </div>
+</div>
+

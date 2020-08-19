@@ -1,0 +1,191 @@
+﻿@model IEnumerable<Project_ISP.Models.AccountOwner>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+        <section class="content-header">
+            <h6 class="panel-title">Owner Lists</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/AccountOwner/index"><i class="fa fa-dashboard"></i> Index</a></li>
+            </ol>
+        </section>
+    </div>
+    <input type="hidden"  id="accountOwnerID"/>
+    <div class="panel-body">
+        <table id="tblOwner" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%;">
+            <thead>
+                <tr>
+                    <th hidden>
+                        id
+                    </th>
+                    <th>
+                        @Html.DisplayName("Owner Name")
+                    </th>
+
+                    <th>
+                        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_Acocunt_Owner))
+                        {
+                            <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                        }
+                    </th>
+                </tr>
+            </thead>
+
+            @foreach (var item in Model)
+            {
+                <tbody>
+                    <tr>
+                        <td hidden>@item.OwnerID</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OwnerName)
+                        </td>
+                        <td>
+                            <a href="#" onclick="ShowForEdit(@item.OwnerID)" class="glyphicon glyphicon-edit btn-circle btn-default"></a>
+                            <a href="#" onclick="ShowForDelete(@item.OwnerID)" class="glyphicon glyphicon-remove btn-circle btn-default"></a>
+                        </td>
+                    </tr>
+                </tbody>
+            }
+
+        </table>
+
+
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_Acocunt_Owner))
+        {
+            <div class="modal fade" id="mdlOwnerInsert" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Insert Account Owner</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Owner Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("InsertOwnerName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Name " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnInsertPopUpClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertConfirm" value="Save" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Account_Owner))
+        {
+            <div class="modal fade" id="mdlUpdateAccountOwner" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="updateModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Account Owner</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("PartialUpdateAccountOwner")
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateConfirm" value="Update" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_Account_Owner))
+        {
+            <div class="modal fade" id="mdlDelteAccountOwner" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="DelteModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Delete Account Owner</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            Are you sure to delete? No data can be recover in future.
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnDeleteClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnDeleteConfirm" value="Confirm Delete" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+<script src="~/Scripts/CustomScripts/AccountOwnerManager.js"></script>
+<script>
+
+    function ShowForEdit(id) {
+        AccountOwnerManager.GetDetailsByID(id);
+        $("#mdlUpdateAccountOwner").modal("show");
+    }
+    
+    function ShowForDelete(id) {
+
+        $("#DeleteOwnerID").val(id);
+        $("#mdlDelteAccountOwner").modal("show");
+    }
+
+
+    $(document).ready(function () {
+
+        $("#createNew").click(function (e) {
+            e.preventDefault();
+            $("#mdlOwnerInsert").modal("show");
+        });
+
+        $("#btnInsertPopUpClose,#btnInsertClose").click(function (e) {
+            AccountOwnerManager.clearForSaveInformation();
+            $("#mdlOwnerInsert").modal("hide");
+        });
+
+
+        $("#btnInsertConfirm").click(function (e) {
+            if (AccountOwnerManager.Validation() === true) {
+                AccountOwnerManager.InsertAccountOwner();
+            }
+        });
+
+        $("#updateModalClose,#btnUpdateClose").click(function () {
+            $("#mdlUpdateAccountOwner").modal("hide");
+        });
+
+        $("#btnUpdateConfirm").click(function () {
+            AccountOwnerManager.UpdateOwner();
+        });
+
+        $("#DelteModalClose,#btnDeleteClose").click(function () {
+            $("#mdlDelteAccountOwner").modal("hide");
+        });
+
+        $("#btnDeleteConfirm").click(function () {
+            AccountOwnerManager.DeleteByID();
+        });
+      
+    });
+</script>

@@ -1,0 +1,20 @@
+﻿
+
+@Html.Hidden("ItemID")
+
+@*<div class="form-group col-sm-12">
+    @Html.Label("Item For", null, new { @class = "control-label col-md-4", Style = "float:left" })
+    <div class="col-md-8" style="padding-left: 0px;">
+        @Html.DropDownList("ItemFors", (IEnumerable<SelectListItem>)ViewBag.ItemFor, "-- Select Item For --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Item For " })
+
+    </div>
+</div>*@
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Item Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("ItemNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Item Name " })
+        </div>
+    </div>
+</div>
+

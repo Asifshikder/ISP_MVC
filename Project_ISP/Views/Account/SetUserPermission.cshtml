@@ -1,0 +1,23 @@
+﻿@model List<ISP_ManagementSystemModel.Models.ISPAccessList>
+@Html.AntiForgeryToken()
+@using (Html.BeginForm("SetUserPermission", "Account", FormMethod.Post))
+{
+
+    <table class="table table-striped table-responsive">
+
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            if (i % 3 == 0)
+            {
+            @:<tr></tr>
+            }
+            <td>@Html.CheckBoxFor(model => model[i].IsGranted)</td>
+                @Html.HiddenFor(model => model[i].ISPAccessListID)
+            @Html.HiddenFor(model => model[i].AccessName)
+
+                <td>@Html.Label(Model[i].AccessName) </td>
+
+        }
+    </table>
+    <input type="submit" value="Save Acccess Right" />
+}

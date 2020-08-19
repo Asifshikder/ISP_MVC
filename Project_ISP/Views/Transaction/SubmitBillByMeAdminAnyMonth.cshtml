@@ -1,0 +1,546 @@
+﻿@using ISP_ManagementSystemModel
+@model  IEnumerable<Project_ISP.Custom_Model.CustomClientLineStatus>
+
+@{
+    ViewBag.Title = "Collect Client Bill By Admin";
+}
+
+<style>
+    .padding {
+        padding: 3px 6px;
+    }
+
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+        /* add padding to account for vertical scrollbar */
+        padding-right: 20px;
+    }
+</style>
+
+
+
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/notify.js"></script>
+@*<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css"
+    rel="Stylesheet" type="text/css" />*@
+<link href="~/Content/CSSReference/jquery-ui1.9.2.css" rel="stylesheet" />
+
+<script src="~/Scripts/CustomScripts/ClientDetailsManager.js"></script>
+<script src="~/Scripts/CustomScripts/CommonManager.js"></script>
+<script src="~/Scripts/CustomScripts/B_P_Manager.js"></script>
+
+<script>
+
+
+    var ClientDetailsID;
+    var ClientLineStatusID;
+    var ClientBannedStatusID;
+    var ClientTransactionID;
+    var _oldDiscount = 0;
+    var T_DuePayment_ID;
+
+    function showWaitingDialog() {
+        //AppUtil.ShowWaitingDialog();
+    }
+    function hideWaitingDialog() {
+        //AppUtil.HideWaitingDialog();
+    }
+
+    $(document).ready(function () {
+
+
+        $('#btnPayDueBillClose,#btnPayDueBillCloseTop').click(function () {
+            B_P_Manager.ClearModalDueBillPageInformation();
+            $('input:radio[name=chkPayDueBills]').each(function () { $(this).prop('checked', false); });
+            $("#mdlMakeDuePayment").modal("hide");
+        });
+
+        ////$("#tblClientDueBillsList").on("change", "input[name=chkPayDueBills]:radio", function () {
+
+        ////    T_DuePayment_ID = $(this).closest("tr").find("td:eq(1) input").val();
+        ////    B_P_Manager.GetClientPaymentAmountAndRemarksAndSleepNoForDuePayment(T_DuePayment_ID);
+        ////});
+
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $('#ConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnExportExcel").click(function () {
+            ClientDetailsManager.PrintEmployeeList();
+        });
+
+        //$("#tblUsers").DataTable();
+
+        $("#btnSearchLineStatusChangeHistoryByClientDetailsID").click(function () {
+
+            var SearchID = $("#SearchByClientDetailsID").val();
+            ClientDetailsManager.LineStatusChangeHistoryByClientDetailsID(SearchID);
+        });
+
+        $("#txtLoginName").autocomplete
+            ({
+            focus: function (event, ui) {
+
+                //_ClientDetailsID = ui.item.val;
+
+                console.log("event focus : " + ui.item.val);
+                console.log("focus : " + ui.item.val);
+                // or $('#autocomplete-input').val(ui.item.label);
+
+                // Prevent the default focus behavior.
+                event.preventDefault();
+                // or return false;
+
+                //B_P_Manager.ShowDueBillDetailssByClientDetailsID(ui.item.val);
+                ClientDetailsID = ui.item.val;
+                B_P_Manager.ShowClientInfoWIthSumOfTotalDueByClientDetailsID(ui.item.val);
+                if ($("#txtTotalBillNeedToPay").val() !== '') {
+                    $("#btnPayBill").css("visibility", "visible");
+                }
+            },
+
+                source: function (request, response) {
+
+                ClientDetailsID = "";
+                $("#btnPayBill").css("visibility", "hidden");
+                $("#txtName").val("");
+                $("#txtZone").val("");
+                $("#txtMobile").val("");
+                $("#txtAddress").val("");
+                $("#txtTotalBillNeedToPay").val("");
+                $("#txtPaymentAmount").val("");
+                $("#txtDicountByAdmin").val("");
+                $("#txtDue").val("");
+                $("#txtAdvance").val("");
+                $("#txtResetNo").val("");
+                $("#txtRemarksNo").val("");
+                $("#tblClientDueBillsList>tbody>tr").empty();
+
+                $.ajax({
+                    url: "/Client/GetAutoCompleateInformationForSearchCriteria",
+                    data: "{ 'SearchText': '" + request.term + "'}",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+
+                        response($.map(data, function (item) {
+                            //
+                            //return {
+                            //    label: item.label,
+                            //    value: item.val
+                            //};
+
+
+                            return item;
+                        }));
+                    },
+                    error: function (data) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+
+
+                });
+            }
+            ,
+            select: function (e, i) {
+
+                console.log("event select : " + e);
+                console.log(" select : " + i.item.val);
+                //$("#hfCustomer").val(i.item.val);
+            },
+            open: function () {
+                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+            },
+            close: function () {
+                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+            }
+            ,
+            minLength: 1
+        });
+        //$("#tblClientDueBillsList").DataTable();
+
+
+        $("#btnPayUnpaidBill").click(function () {
+            if (B_P_Manager.PayBillValidation()) {
+                B_P_Manager.PayDueBill(T_DuePayment_ID,@AppUtils.PamentIsOccouringFromSubmitBillByMe);
+            }
+        });
+
+        $("#tblClientDueBillsList>tbody").on('click','tr',function () {
+            T_DuePayment_ID = $(this).closest("tr").find("td:eq(0) input").val();
+            B_P_Manager.GetClientPaymentAmountAndRemarksAndSleepNoForDuePayment(T_DuePayment_ID);
+        });
+
+        $("#btnPay").click(function () {
+            debugger;
+            if (B_P_Manager.PayValidation()) {
+                var PayAmount = $("#txtPaymentAmount").val();
+                var Discount = $("#txtDicountByAdmin").val() === '' ? 0 : $("#txtDicountByAdmin").val();
+                var ResetNo = $("#txtResetNo").val();
+                var RemarksNo = $("#txtRemarksNo").val();
+                B_P_Manager.PayBill(ClientDetailsID, PayAmount, Discount, ResetNo, RemarksNo);
+
+            }
+        });
+
+        $("#txtPaymentAmount").keyup(function () {
+            //AppUtil.ShowError("a");
+            var txtTotalBill = parseInt(AppUtil.GetIdValue("txtTotalBillNeedToPay"));
+            var txtPaymentAmount = parseInt(AppUtil.GetIdValue("txtPaymentAmount"));
+            var txtDiscount = parseInt(AppUtil.GetIdValue("txtDicountByAdmin"));
+
+            if (!isNaN(txtTotalBill)) {
+                if (!isNaN(txtPaymentAmount)) {
+                    var dueAmount;
+                    var advance;
+                    var discount = isNaN(txtDiscount) ? 0 : txtDiscount;
+                    if ((txtPaymentAmount + discount) <= txtTotalBill) {
+                        advance = 0;
+                        dueAmount = isNaN(txtDiscount) ? (txtTotalBill - txtPaymentAmount) : (txtTotalBill - (txtPaymentAmount + txtDiscount));
+                    }
+                    else {
+                        dueAmount = 0;
+                        advance = isNaN(txtDiscount) ? (txtTotalBill - txtPaymentAmount) : ((txtPaymentAmount + txtDiscount) - txtTotalBill  );
+                    }
+
+                    $("#txtDue").val(dueAmount);
+                    $("#txtAdvance").val(Math.abs(advance));
+                }
+                else {
+                    clearPayment();
+                }
+            }
+            else {
+                clearPayment();
+            }
+        });
+
+        $("#txtDicountByAdmin").keyup(function () {
+            var txtTotalBill = parseInt(AppUtil.GetIdValue("txtTotalBillNeedToPay"));
+            var txtPaymentAmount = parseInt(AppUtil.GetIdValue("txtPaymentAmount"));
+            var txtDiscount = parseInt(AppUtil.GetIdValue("txtDicountByAdmin"));
+
+            if (!isNaN(txtTotalBill)) {
+                if (!isNaN(txtPaymentAmount)) {
+                    if (!isNaN(txtDiscount)) {
+                        if (txtDiscount > txtTotalBill) {
+                            AppUtil.ShowError("Discount Value Is Larger Than Total Bill.");
+                            $("#txtDicountByAdmin").val(_oldDiscount);
+                            return;
+                        }
+                        if (txtDiscount < 0) {
+                            AppUtil.ShowError("Discount Value Can Not Negative Number.");
+                            $("#txtDicountByAdmin").val(_oldDiscount);
+                            return;
+                        }
+
+                        var dueAmount;
+                        var advance;
+                        var discount = isNaN(txtDiscount) ? 0 : txtDiscount;
+                        _oldDiscount = discount;
+                        if ((txtPaymentAmount + discount) < txtTotalBill) {
+                            advance = 0;
+                            dueAmount = isNaN(txtDiscount) ? (txtTotalBill - txtPaymentAmount) : (txtTotalBill - (txtPaymentAmount + txtDiscount));
+                        }
+                        else {
+                            dueAmount = 0;
+                            advance = isNaN(txtDiscount) ? (txtTotalBill - txtPaymentAmount) : ((txtPaymentAmount + txtDiscount) - txtTotalBill);
+                        }
+
+                        $("#txtDue").val(dueAmount);
+                        $("#txtAdvance").val(Math.abs(advance));
+                    }
+                    else {
+                        AppUtil.ShowError("Discount Value Is Not In Correct Format.");
+                        clearPayment();
+                    }
+                }
+                else {
+                    clearPayment();
+                }
+            }
+            else {
+                clearPayment();
+            }
+        });
+
+        $("#btnShowTotalBill").click(function () {
+            if (ClientDetailsID) {
+                B_P_Manager.ShowDueBillDetailssByClientDetailsID(ClientDetailsID);
+            }
+        });
+
+        $('#btnClientDueBillsListClose,#closeMdlShowDueBills').click(function () {
+            $("#tblClientDueBillsList>tbody>tr").remove();
+            $("#mdlClientDueBillsList").modal("hide");
+        });
+    });
+    function checkKey(evt) {
+        var keyID = (evt.charCode) ? evt.charCode : ((evt.which) ? evt.which : evt.keyCode);
+        console.log("Press Key: " + keyID);
+        if (keyID == 8) {
+            ClientDetailsID = "";
+            $("#btnPayBill").css("visibility", "hidden");
+
+            $("#txtTotalBillNeedToPay").val("");
+            $("#txtPaymentAmount").val("");
+            $("#txtDicountByAdmin").val("");
+            $("#txtDue").val("");
+            $("#txtAdvance").val("");
+
+
+            $("#txtName").val("");
+            $("#txtZone").val("");
+            $("#txtMobile").val("");
+            $("#txtAddress").val("");
+            $("#tblClientDueBillsList>tbody>tr").empty();
+
+        }
+    }
+    function clearPayment() {
+        _oldDiscount = "";
+        $("#txtPaymentAmount").val("");
+        $("#txtDicountByAdmin").val("");
+        $("#txtDue").val("");
+        $("#txtAdvance").val("");
+    }
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="container" style="padding-left: 0px; padding-top:0%">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">Search Client For Pay Bill</h6>
+            </section>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtLoginName", null, new { @onkeydown = "checkKey(event);", @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Search Client " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Client Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtName", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Login Name ", @disabled = "disabled" })
+                </div>
+            </div>
+
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Zone", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtZone", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Zone ", @disabled = "disabled" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Mobile", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtMobile", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Mobile ", @disabled = "disabled" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextArea("txtAddress", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Address ", @disabled = "disabled" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-3">
+                <div>
+                    @Html.Label("Total Bill", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-8" style="padding-left: 0px;">
+                    @Html.TextBox("txtTotalBillNeedToPay", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Total Bill With Discount ", @disabled = "disabled" })
+                </div>
+                <div class="col-md-3" style="padding:0px;">
+                    <button id="btnShowTotalBill" type="button" class="btn btn-success btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForDeletePermently"> <i class="fa fa-info"></i> </button>
+                </div>
+            </div>
+
+            <div class="form-group col-sm-2">
+                <div>
+                    @Html.Label("Payment Amount", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtPaymentAmount", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Payment Amount ", @type = "number", @min = "1", @max = "5000" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-2">
+                <div>
+                    @Html.Label("Discount", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtDicountByAdmin", null, new
+                    {
+                        @Style = "max-width: 100%;",
+                        @class = "form-control input-sm col-sm-6",
+                        @placeholder = " Discount ",
+                        @type = "number",
+                        @min = "1"@*, @max = "5000", @disabled = "disabled"*@})
+                </div>
+            </div>
+            <div class="form-group col-sm-2">
+                <div>
+                    @Html.Label("Due", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-10" style="padding-left: 0px;">
+                    @Html.TextBox("txtDue", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Due ", @disabled = "disabled" })
+                </div>
+            </div>
+            <div class="form-group col-sm-2">
+                <div>
+                    @Html.Label("Advance", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-10" style="padding-left: 0px;">
+                    @Html.TextBox("txtAdvance", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Advance ", @disabled = "disabled" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Payment From", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("PaymentFrom", null, "-- Select Payment --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment From " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("ResetNo", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtResetNo", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Reset No " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Remarks", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtRemarksNo", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Remarks No " })
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <input id="btnPayBill" style="visibility:hidden" type="button" value="Pay Bill" data-toggle="modal" data-target="#popModalForPayment" class="btn btn-sm btn-primary" />
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="popModalForPayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm Submit
+            </div>
+            <div class="modal-body">
+                Are you sure you want to Pay This Client ?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a href="#" id="btnPay" class="btn btn-success success">Pay Bill</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdlClientDueBillsList" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="closeMdlShowDueBills" type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Due Bills</h4>
+            </div>
+            <div class="modal-body panel-body">
+                <table id="tblClientDueBillsList" class="table table-hover table-responsive table-striped" style="align-content: center;">
+                    <thead>
+                        <tr>
+                            <th hidden></th>
+                            <th>Month</th>
+                            <th>package</th>
+                            <th>Fee</th>
+                            <th>Paid_Amount</th>
+                            <th>Discount</th>
+                            <th>Due</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                <div id="PopUp" style="float: right">
+                    <input type="button" id="btnClientDueBillsListClose" value="Close" class="btn btn-default btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

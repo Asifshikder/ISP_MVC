@@ -1,0 +1,152 @@
+﻿@model IEnumerable<ISP_ManagementSystemModel.Models.Transaction>
+@{
+    ViewBag.Title = "Get My Payment History";
+}
+
+<script>
+    $(document).ready(function () {
+        $("#tblUsers").DataTable();
+    });
+
+</script>
+
+@using (Html.BeginForm())
+{ 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">Client Details</h4>
+        </div>
+        <div class="panel-body">
+
+            <div class="row col-sm-12">
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Name : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-8" style="padding-left: 0px;">
+                        <div id="popName" style="margin-left:10px; font-weight:bold;">@ViewBag.popName</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Login Name : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="popLoginName" style="margin-left:10px; font-weight:bold;">@ViewBag.popLoginName</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Zone : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ClientZone" style="margin-left:10px; font-weight:bold;">@ViewBag.ClientZone</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row col-sm-12">
+
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Address : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ClientAddress" style="margin-left:10px; font-weight:bold;">@ViewBag.ClientAddress</div>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Connection Type : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ConnectionType" style="margin-left:10px; font-weight:bold;">@ViewBag.ConnectionType</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Contact Number : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ContactNumber" style="margin-left:10px; font-weight:bold;">@ViewBag.ContactNumber</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h6 class="panel-title">Client Bill History: </h6>
+        </div>
+        <div class="panel-body">
+            <div style="height: 100%; width:100%; overflow: auto;">
+
+                <table id="tblUsers" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center;">
+                    <thead>
+                        <tr style="height: 20px;">
+                            <th> Month</th>
+                            <th> Package</th>
+                            <th> Monthly Fee</th>
+                            <th> Paid Amount</th>
+                            <th> Reciept No </th>
+                            <th>Remarks</th>
+                            <th>Paid By</th>
+                            <th>Paid Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ClassTable">
+                        @foreach (var transaction in Model)
+                        {
+
+                            // {
+                            string MonthName = new DateTime(2000, transaction.PaymentMonth, 1).ToString("MMM");
+                            string RemarksNo = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.RemarksNo.ToString() : "---";
+                            string ResetNo = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.ResetNo.ToString() : "---";
+                            string PaidBy = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.Employee.Name : "---";
+                            string PaidTime = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.PaymentDate.ToString() : "---";
+                            string Status = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.PaymentStatus.ToString() : "0";
+                            //}
+
+                            <tr>
+                                <td>@MonthName-@Html.DisplayFor(s => transaction.PaymentYear)</td>
+                                <td>@Html.DisplayFor(s => transaction.Package.PackageName)</td>
+                                <td>@Html.DisplayFor(s => transaction.Package.PackagePrice)</td>
+                                <td>@Html.DisplayFor(s => transaction.PaymentAmount)</td>
+                                <td>@ResetNo</td>
+                                <td>@RemarksNo</td>
+                                <td>@PaidBy</td>
+                                <td>@PaidTime</td>
+
+                                @if (Status == "1")
+                                {
+                                    <td><div id="Status" class="label label-success">Paid</div></td>
+                                }
+                                @if (Status == "0")
+                                {
+                                    <td><div id="Status" class="label label-danger">UnPaid</div></td>
+
+                                    @*<td style="color:red; font-weight:bold">UnPaid</td>*@
+                                }
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div> 
+}
+

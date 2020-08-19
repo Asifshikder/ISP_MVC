@@ -1,0 +1,1820 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<Project_ISP.Custom_Model.ResellerCustomInforamation>
+@{
+    ViewBag.Title = "Reseller List";
+}
+
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+
+    .align-center {
+        text-align: center;
+        justify-content: center;
+    }
+</style>
+<style>
+    .ui-autocomplete {
+        z-index: 2147483647;
+    }
+</style>
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />*@
+<link href="~/Content/CSSReference/bootstrap-select1.13.1.css" rel="stylesheet" />
+<link href="~/Content/select2.min.css" rel="stylesheet" />
+
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Reseller</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Reseller/resellerlist"><i class="fa fa-dashboard"></i> Reseller List</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body" style=" overflow:auto;">
+        @using (Html.BeginForm())
+        {
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+
+            <table id="tblReseller" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;">
+                @* <table id="tblReseller" class="table table-striped table-bordered table-responsive"> *@
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th class="align-center">
+                            @Html.DisplayName(" Reseller Name")
+                        </th>
+                        <th class="align-center">
+                            @Html.DisplayName(" Login Name")
+                        </th>
+                        <th class="align-center">
+                            @Html.DisplayName(" Address")
+                        </th>
+                        <th class="align-center">
+                            @Html.DisplayName(" Reseller Contact")
+                        </th>
+                        <th class="align-center">
+                            @Html.DisplayName(" Reseller Type ")
+                        </th>
+                        <th class="align-center">
+                            @Html.DisplayName(" Balance ")
+                        </th>
+                        <th class="align-center">
+                            @Html.DisplayName("Billing Cycle")
+                        </th>
+                        <th class="align-center">
+                            @Html.DisplayName("Reseller Mikrotik List")
+                        </th>
+                        <th class="align-center" style="width:200px">
+                            @Html.DisplayName("Mac Reseller Package")
+                        </th>
+                        <th class="align-center" style="width:200px">
+                            @Html.DisplayName("Bandwith Reseller Package")
+                        </th>
+                        <th style="width:50px;" class="align-center">
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Reseller))
+                            {
+                                <div>Add Reseller</div><a href="#" style="font-weight:800; padding: 0px 6px;" class="btn btn-sm btn-success" id="createNewMacReseller">Mac  </a><a href="#" style="font-weight:800; padding: 0px 6px;" class="btn btn-sm btn-warning" id="createNewBandwithReseller">Bandwith</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Reseller))
+        {
+            <div class="modal fade" id="mdlMacResellerInsert" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 80%;margin-bottom:5px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Mac Reseller Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+
+                            <div class="">
+
+                                @*@Html.Partial("_PartialMacResellerCreate")*@
+                                @*
+                                    <div class="panel" style="width: 100%;margin-bottom:5px;">  *@
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Contact Person Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertMacResellerName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Business Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertMacResellerBusinessName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("UserID / Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertMacResellerLoginName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Password", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertMacResellerPassword", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                @*</div>*@
+
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertMacResellerAddress", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Contact", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertMacResellerContact", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-left:0px; margin-right:0px;">
+                                    <div class="form-group col-sm-6">
+                                        <div>
+                                            @Html.Label("Billing Cycle", new { @class = "control-label col-md-0", Style = "float:left" })
+                                            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                        </div>
+                                        <div style="clear:both"> </div>
+                                        <div class="col-md-11" style="padding-left: 0px;">
+                                            @Html.DropDownList("ddlInsertMacResellerBillingCycle", null, "-- Select Billing Cycle --", new { @class = "selectpickert bs-select form-control input-sm col-sm-11 ", @multiple = "multiple" })
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <div>
+                                            @Html.Label("Reseller Type", new { @class = "control-label col-md-0", Style = "float:left" })
+                                            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                                </div>
+                                                <div style="clear:both"> </div>
+                                                <div class="col-md-12" style="padding-left: 0px;">*@
+
+                                            @*<div class="col-sm-7">
+                                                    <input type="radio" name="rdbInsertMacResellerType" value="1" checked> <span style=" font-size:20px;"> Bandwith</span>
+                                                </div>*@
+                                            <div class="col-sm-5">
+                                                <input type="radio" name="rdbInsertMacResellerType" value="2" checked> <span style=" font-size:20px;"> Mac </span>
+                                            </div>
+
+                                            @*<input type="radio" class="checkbox checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Bandwith Reseller" />
+                                                <input type="radio" class="checkbox  checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Mac Reseller" />*@
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-6">
+                                    <img id="PreviewMacResellerCreateImage" src="" width="100" height="90">
+                                    <label>
+                                        Reseller Logo
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </label>
+                                    <p>
+                                        <div class="col-sm-9" style="padding-left:0px;">
+                                            <input accept="image/*" class="" id="MacResellerCreateImage" name="MacResellerCreateImage" type="file" onchange="ImageManager.preview(this,'PreviewMacResellerCreateImage')">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#MacResellerCreateImage'),'MacResellerCreateImage')">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </p>
+                                    <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+                                </div>
+
+
+                                @*<div class="form-group col-sm-6">
+                                        <label>Upload NID Image</label>
+                                        <p>
+                                            <div class="col-sm-9" style="padding-left:0px;">
+                                                <input type="file" name="ClientOwnImageBytes" id="ClientOwnImageBytes" onchange="ImageManager.preview(this,'PreviewClientOwnImageBytesPaths')">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#ClientOwnImageBytes'),'ClientOwnImageBytesPaths')">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </p>
+                                    </div>*@
+
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Status", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.DropDownList("ddlInsertMacResellerStatus", null, "-- Select Reseller Status --", new { @class = "form-control input-sm col-sm-12 " })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Add Mikrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.DropDownList("ddlMacReselerMikrotikInsert", null, "-- Select Mac Reseller --", new { @class = "selectpickert bs-select form-control input-sm col-sm-11 ", @multiple = "multiple" })
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class=" panel" style="width: 100%;margin-bottom:5px;margin-top:130px;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        @*<button id="btnUpdateResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>*@
+                                        <h4 class="modal-title">Add Mac Reseller Package</h4>
+                                    </div>
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+                                            <div class="form-group col-sm-6">
+                                                <div>
+                                                    @Html.Label("Add Mac Reseller Package ", new { @class = "control-label col-md-0", Style = "float:left" })
+                                                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                                </div>
+                                                <div style="clear:both"> </div>
+                                                <div class="col-md-11" style="padding-left: 0px;">
+                                                    @Html.DropDownList("ddlMacReselerPackageInsert", null, "-- Mac Reseler Package --", new { @class = "selectpickert bs-select form-control input-sm col-sm-12 " })
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" style="padding-top:30px;">
+                                                <input type="button" name="btnAddMacResellerPackageInTable" id="btnAddMacResellerPackageInTable" value="Add Package" class="btn btn-sm btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+                                            <table id="tblMacResellerPackageInsert" class="table table-striped table-bordered table-responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th hidden></th>
+                                                        <th>
+                                                            @Html.DisplayName("Item Name")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Package Price")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Reseller User Price")
+                                                        </th>
+
+                                                        <th style="text-align: center; width: 5%">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="ResellerUp" style="float:right">
+                                <input type="button" id="btnPopUpMacResellerInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertMacReseller" value="Save Reseller" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Reseller))
+        {
+            <div class="modal fade" id="mdlBandwithResellerInsert" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 80%;margin-bottom:5px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Bandwidth Reseller Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            <div class="modal-body panel-body">
+
+                                @*@Html.Partial("_PartialBandwithResellerCreate")*@
+                                @*
+                                    <div class="panel" style="width: 100%;margin-bottom:5px;">  *@
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Contact Person Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertBandwithResellerName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Business Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertBandwithResellerBusinessName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("UserID / Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertBandwithResellerLoginName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Password", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertBandwithResellerPassword", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                @*</div>*@
+
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertBandwithResellerAddress", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Contact", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtInsertBandwithResellerContact", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Type", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                            </div>
+                                            <div style="clear:both"> </div>
+                                            <div class="col-md-12" style="padding-left: 0px;">*@
+
+                                        <div class="col-sm-7">
+                                            <input type="radio" name="rdbInsertBandwithResellerType" value="1" checked> <span style=" font-size:20px;"> Bandwith</span>
+                                        </div>
+                                        @*<div class="col-sm-5">
+                                                <input type="radio" name="rdbInsertBandwithResellerType" value="2"> <span style=" font-size:20px;"> Mac </span>
+                                            </div>*@
+
+                                        @*<input type="radio" class="checkbox checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Bandwith Reseller" />
+                                            <input type="radio" class="checkbox  checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Mac Reseller" />*@
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-6">
+                                    <img id="PreviewBandwithResellerCreateImage" src="" width="100" height="90">
+                                    <label>
+                                        Reseller Logo
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </label>
+                                    <p>
+                                        <div class="col-sm-9" style="padding-left:0px;">
+                                            <input accept="image/*" class="" id="BandwithResellerCreateImage" name="BandwithResellerCreateImage" type="file" onchange="ImageManager.preview(this,'PreviewBandwithResellerCreateImage')">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#BandwithResellerCreateImage'),'BandwithResellerCreateImage')">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </p>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Status", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.DropDownList("ddlInsertBandwithResellerStatus", null, "-- Select Reseller Status --", new { @class = "form-control input-sm col-sm-12 " })
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class=" panel" style="width: 100%;margin-bottom:5px;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        @*<button id="btnUpdateResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>*@
+                                        <h4 class="modal-title">Update Mac Reseller Package</h4>
+                                    </div>
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+
+                                            <div class="form-group col-sm-6">
+                                                <div>
+                                                    @Html.Label("Bandwith Reseller Item", new { @class = "control-label col-md-0", Style = "float:left" })
+                                                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                                </div>
+                                                <div style="clear:both"> </div>
+                                                <div class="col-md-11" style="padding-left: 0px;">
+                                                    @Html.DropDownList("ddlAddItemsForBandwithReseller", null, "-- Bandwith Reseller Items --", new { @class = "form-control input-sm col-sm-12 " })
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input type="button" name="btnAddItemInTableForBandwithReseller" id="btnAddItemInTableForBandwithReseller" value="Add Package" class="btn btn-sm btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+                                            <table id="tblBandwithResellerItemCreate" class="table table-striped table-bordered table-responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th hidden></th>
+                                                        <th>
+                                                            @Html.DisplayName("Item Name")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Item Price")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Quantity")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Total Amount")
+                                                        </th>
+
+                                                        <th style="text-align: center; width: 5%">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        Total Amount :
+                                                        <div id="divBandwithCreatetotalAmount" style="font-weight:bold; text-align:center; justify-content:center; font-size:20px;"></div>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="ResellerUp" style="float:right">
+                                <input type="button" id="btnPopUpBandwithResellerInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertBandwithReseller" value="Save Reseller" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Reseller))
+        {
+            <div class="modal fade" id="mdlMacResellerUpdate" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 75%;margin-bottom:5px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Mac Reseller Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @*@Html.Partial("_PartialResellerUpdate")*@
+
+                            <div class="row" style="padding-left:20px;">
+
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateMacResellerName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Business Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateMacResellerBusinessName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateMacResellerLoginName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Password", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateMacResellerPassword", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateMacResellerAddress", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Contact", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateMacResellerContact", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Billing Cycle", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.DropDownList("ddlUpdateMacResellerBillingCycle", null, "-- Select Billing Cycle --", new { @class = "selectpickert bs-select form-control input-sm col-sm-12 ", @multiple = "multiple" })
+
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Type", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-12" style="padding-left: 0px;">
+
+                                        @*<div class="col-sm-7">
+                                                <input type="radio" name="rdbUpdateMacResellerType" value="1" checked> <span style=" font-size:20px;"> Bandwith</span>
+                                            </div>*@
+                                        <div class="col-sm-5">
+                                            <input type="radio" name="rdbUpdateMacResellerType" value="2" checked> <span style=" font-size:20px;"> Mac </span>
+                                        </div>
+
+                                        @*<input type="radio" class="checkbox checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Bandwith Reseller" />
+                                            <input type="radio" class="checkbox  checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Mac Reseller" />*@
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-6">
+                                    <img id="PreviewMacResellerUpdateImagePaths" src="" width="100" height="90">
+                                    <label>
+                                        Mac Reseller Logo
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </label>
+                                    <p>
+                                        <div class="col-sm-9" style="padding-left:0px;">
+                                            <input accept="image/*" class="" id="MacResellerUpdateImage" name="MacResellerUpdateImage" type="file" onchange="ImageManager.preview(this,'PreviewMacResellerUpdateImagePaths')">
+                                            <input id="MacResellerUpdateImagePaths" name="MacResellerUpdateImagePaths" type="hidden" value="">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#MacResellerUpdateImage'),'MacResellerUpdateImagePaths')">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </p>
+                                    <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+                                </div>
+
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Add Mikrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.DropDownList("ddlMacReselerMikrotikUpdate", null, "-- Select Mac Reseller --", new { @class = "selectpickert bs-select form-control input-sm col-sm-11 ", @multiple = "multiple" })
+
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Status", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.DropDownList("ddlUpdateMacResellerStatus", null, new { @class = "form-control input-sm col-sm-12 " })
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class=" panel" style="width: 100%;margin-bottom:5px;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        @*<button id="btnUpdateResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>*@
+                                        <h4 class="modal-title">Update Mac Reseller Package</h4>
+                                    </div>
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+                                            <div class="form-group col-sm-6">
+                                                <div>
+                                                    @Html.Label("Update Mac Reseller Package ", new { @class = "control-label col-md-0", Style = "float:left" })
+                                                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                                </div>
+                                                <div style="clear:both"> </div>
+                                                <div class="col-md-11" style="padding-left: 0px;">
+                                                    @Html.DropDownList("ddlMacReselerPackageUpdate", null, "-- Mac Reseler Package --", new { @class = "selectpickert bs-select form-control input-sm col-sm-12 " })
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input type="button" name="btnUpdateMacResellerPackageInTable" id="btnUpdateMacResellerPackageInTable" value="Add Package" class="btn btn-sm btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+                                            <table id="tblMacResellerPackageUpdate" class="table table-striped table-bordered table-responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th hidden></th>
+                                                        <th>
+                                                            @Html.DisplayName("Item Name")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Package Price")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Reseller User Price")
+                                                        </th>
+
+                                                        <th style="text-align: center; width: 5%">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="ResellerUp" style="float:right">
+                                <input type="button" id="btnPopUpResellerUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateMacReseller" value="Update Reseller" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Reseller))
+        {
+            <div class="modal fade" id="mdlBandwithResellerUpdate" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 75%;margin-bottom:5px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Bandwith Reseller Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @*@Html.Partial("_PartialResellerUpdate")*@
+
+                            <div class="row" style="padding-left:20px;">
+
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateBandwithResellerName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Business Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateBandwithResellerBusinessName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateBandwithResellerLoginName", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Password", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateBandwithResellerPassword", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateBandwithResellerAddress", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Contact", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("txtUpdateBandwithResellerContact", null, new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Type", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-12" style="padding-left: 0px;">
+
+                                        <div class="col-sm-7">
+                                            <input type="radio" name="rdbUpdateBandwithResellerType" value="1" checked> <span style=" font-size:20px;"> Bandwith</span>
+                                        </div>
+                                        @*<div class="col-sm-5">
+                                                <input type="radio" name="rdbUpdateResellerType" value="2"> <span style=" font-size:20px;"> Mac </span>
+                                            </div>*@
+
+                                        @*<input type="radio" class="checkbox checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Bandwith Reseller" />
+                                            <input type="radio" class="checkbox  checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Mac Reseller" />*@
+                                    </div>
+                                </div>
+                                @*<div class="form-group col-sm-6">
+                                        <div>
+                                            @Html.Label("Billing Cycle", new { @class = "control-label col-md-0", Style = "float:left" })
+                                            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                        </div>
+                                        <div style="clear:both"> </div>
+                                        <div class="col-md-11" style="padding-left: 0px;">
+                                            @Html.DropDownList("ddlUpdateResellerBillingCycle", null, "-- Select Billing Cycle --", new { @class = "selectpickert bs-select form-control input-sm col-sm-12 ", @multiple = "multiple" })
+
+                                        </div>
+                                    </div>*@
+
+                                <div class="form-group col-sm-6">
+                                    <img id="PreviewBandwithResellerUpdateImagePaths" src="" width="100" height="90">
+                                    <label>
+                                        Reseller Logo
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </label>
+                                    <p>
+                                        <div class="col-sm-9" style="padding-left:0px;">
+                                            <input accept="image/*" class="" id="BandwithResellerUpdateImage" name="BandwithResellerUpdateImage" type="file" onchange="ImageManager.preview(this,'PreviewBandwithResellerUpdateImagePaths')">
+                                            <input id="BandwithResellerUpdateImagePaths" name="BandwithResellerUpdateImagePaths" type="hidden" value="">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#BandwithResellerUpdateImage'),'BandwithResellerUpdateImagePaths')">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </p>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <div>
+                                        @Html.Label("Reseller Status", new { @class = "control-label col-md-0", Style = "float:left" })
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </div>
+                                    <div style="clear:both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.DropDownList("ddlUpdateBandwithResellerStatus", null, new { @class = "form-control input-sm col-sm-12 " })
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class=" panel" style="width: 100%;margin-bottom:5px;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        @*<button id="btnUpdateResellerModalClose" type="button" class="close" data-dismiss="modal">&times;</button>*@
+                                        <h4 class="modal-title">Update Reseller Package</h4>
+                                    </div>
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+                                            <div class="form-group col-sm-6">
+                                                <div>
+                                                    @Html.Label("Bandwith Reseller Item", new { @class = "control-label col-md-0", Style = "float:left" })
+                                                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                                </div>
+                                                <div style="clear:both"> </div>
+                                                <div class="col-md-11" style="padding-left: 0px;">
+                                                    @Html.DropDownList("ddlUpdateItemsForBandwithReseller", null, "-- Bandwith Reseler Items --", new { @class = "selectpickert bs-select form-control input-sm col-sm-12 " })
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input type="button" name="btnUpdateItemInTableForBandwithReseller" id="btnUpdateItemInTableForBandwithReseller" value="Add Item" class="btn btn-sm btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-body panel-body">
+                                        <div class="row col-sm-12">
+                                            <table id="tblBandwithResellerItemUpdate" class="table table-striped table-bordered table-responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th hidden></th>
+                                                        <th>
+                                                            @Html.DisplayName("Item Name")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Item Price")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Quantity")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Total Amount")
+                                                        </th>
+
+                                                        <th style="text-align: center; width: 5%">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        Total Amount :
+                                                        <div id="totalAmount" style="font-weight:bold; text-align:center; justify-content:center; font-size:20px;"></div>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="ResellerUp" style="float:right">
+                                <input type="button" id="btnPopUpResellerUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateBandwithReseller" value="Update Reseller" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_ResellerPayment_List))
+        {
+            <div class="modal fade" id="mdlViewResellerPaymentHistory" role="dialog" style="overflow: hidden; overflow-y: scroll; " data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 95%;margin-bottom:5px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnCloseResellerPaymentHistoryModal" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">View Reseller Payment History </h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+
+                                    <section class="content-header">
+                                        <h6 class="panel-title">Search Bill By Date</h6>
+                                        <ol class="breadcrumb">
+                                            <li><a href="#"><i class="fa fa-dashboard"></i> Bill Payment By Me</a></li>
+                                        </ol>
+                                    </section>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group col-sm-12">
+
+                                        <div class="form-group col-sm-5">
+                                            <div>
+                                                @Html.Label("Payment Start Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-11" style="padding-left: 0px;">
+                                                @Html.TextBox("PaymentStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Start Date " })
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-5">
+                                            <div>
+                                                @Html.Label("Payment End Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-11" style="padding-left: 0px;">
+                                                @Html.TextBox("PaymentEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment End Date " })
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <div style="float: left;margin-top: 25px;">
+                                                <input type="button" id="btnSearch" value="Search By Date" class="btn btn-primary btn-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+
+                                    <section class="content-header">
+                                        <h6 class="panel-title">All Payment History</h6>
+                                    </section>
+                                </div>
+                                <div class="panel-body" style="overflow: auto">
+                                    <table id="tblResellerPayment" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%; overflow:auto;">
+                                        <thead>
+                                            <tr>
+
+                                                <th hidden="hidden"></th>
+                                                <th hidden="hidden"></th>
+                                                <th>
+                                                    @Html.DisplayName("Year")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Month")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("User_Name")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Name")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Address")
+                                                </th>
+                                                @*<th>
+                                                        @Html.DisplayName("Last_Amount")
+                                                    </th>*@
+                                                <th>
+                                                    @Html.DisplayName("Amount")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Payment_From")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Check_Or_ResetNo")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Payment_Status")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Type")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Reseller_Status")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Collect_By")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Entry_By")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Active_By")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Delete_By")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Payment_Time")
+                                                </th>
+                                                <th>
+                                                    @*@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_Package))*@
+                                                    @*{*@
+                                                    <a href="" style="font-weight:800;color: crimson" id="createNewFromHistoryModal">Create_New</a>
+                                                    @*}*@
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUpClientUpdate" style="float: right">
+                                <input type="button" id="btnPopUpViewResellerPaymentClose" value="Close" class="btn btn-default btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_ResellerPayment)
+                                      || ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_ResellerPayment))
+            {
+                <div class="modal fade" id="mdlPayment" role="dialog" style="overflow: auto" data-keyboard="fase" data-backdrop="static">
+                    <div class="modal-dialog modal-lg" style="width: 95%">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button id="btnPopUpModalDefaultPaymentClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Reseller Payment Update</h4>
+                            </div>
+                            <div class="modal-body panel-body">
+
+                                <div class="form-group col-sm-5">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Reseller Login Name", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("txtResellerLoginName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Login Name " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Reseller Type", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("txtResellerType", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Reseller Type " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Business Name", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("txtResellerBusinessName", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Business Name " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-5">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Address", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("txtResellerAddress", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Address " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Phone", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("txtResellerPhone", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Phone " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Logo", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            <img id="ResellerLogoPath" src="" width="100" height="90" onclick="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-3">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Payment Amount", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("txtResellerPaymentAmount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Amount " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-5">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Collect_By", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("ddlResellerCollectBy", null, "-- Select Collect By --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Collect By " })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("CheckNo/ResetNo", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both"> </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("txtCheckSerialOrAnyResetNo", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " CheckNo/ResetNo " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="clear:both">
+                                    <div class="form-group col-sm-4">
+                                        <div>
+                                            <div class="col-md-12" style="padding-left: 0px; float: left">
+                                                @Html.Label("Payment From", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-12" style="padding-left: 0px; float: left">
+                                                @Html.DropDownList("ddlPaymentBy", null, "-- Select Payment From --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Payment From" })
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <div>
+                                            <div class="col-md-12" style="padding-left: 0px; float: left">
+                                                @Html.Label("Payment Type", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-12" style="padding-left: 0px; float: left">
+                                                @Html.DropDownList("ddlPaymentType", null, "-- Select Payment Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Payment Type" })
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <div>
+                                            <div class="col-md-12" style="padding-left: 0px; float: left">
+                                                @Html.Label("Payment Status", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                            </div>
+                                            <div style="clear: both"> </div>
+                                            <div class="col-md-12" style="padding-left: 0px; float: left">
+                                                @Html.DropDownList("ddlPaymentStatus", null, "-- Select Payment Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Payment Status " })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                                <div id="PopUp" style="float: right">
+                                    <input type="button" id="btnPopUpPaymentClose" value="Close" class="btn btn-default btn-sm" />
+                                    <input type="button" id="btnInsertResellerPayment" value="Save Payment" class="btn btn-primary btn-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Confirm Submit
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to Delete This Payment.
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <a href="#" id="btnPaymentDelete" class="btn btn-success success">Delete Payment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>*@
+<script src="~/Scripts/JSReference/bootstrap-select1.13.1.min.js"></script>
+<script src="~/Scripts/CustomScripts/ImageManager.js"></script>
+<script src="~/Scripts/select2.full.js"></script>
+<script src="~/Scripts/CustomScripts/ResellerManager.js"></script>
+
+<script>
+
+    var _resellerID = "";
+    var _resellerPaymentID = "";
+    var tableRsellerPaymentHistory;
+    var table;
+    var _rowIndex;
+    //var _resellerID = '';
+
+    function SetValuesInOthersColtextForBandwithResellerCreate(row) {
+        var index = $(row).index();
+        var itemPrice = $(row).closest("tr").find("td:eq(2) input").val();
+        var itemQuantity = $(row).closest("tr").find("td:eq(3) input").val();
+        var total = itemPrice * itemQuantity;
+        $("#tblBandwithResellerItemCreate>tbody>tr:eq(" + index + ")").find("td:eq(4) input").val(total);
+    }
+
+    function SetValuesInOthersColtextForBandwithResellerUpdate(row) {
+        var index = $(row).index();
+        var itemPrice = $(row).closest("tr").find("td:eq(2) input").val();
+        var itemQuantity = $(row).closest("tr").find("td:eq(3) input").val();
+        var total = itemPrice * itemQuantity;
+        $("#tblBandwithResellerItemUpdate>tbody>tr:eq(" + index + ")").find("td:eq(4) input").val(total);
+    }
+
+    function ShowResellerPaymentHistory() {
+        //var a = tableRsellerPaymentHistory;
+        if (tableRsellerPaymentHistory === undefined || tableRsellerPaymentHistory == "") {
+            tableRsellerPaymentHistory = $("#tblResellerPayment").DataTable
+                ({
+                    "language":
+                    {
+                        "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                    },
+                    "processing": true,
+                    "serverSide": true,
+
+                    "ajax":
+                    {
+                        "url": "/Reseller/GetAllResellerPaymentAJAXData",
+                        "type": "POST",
+                        "dataType": "JSON",
+                        data: function (d) {
+                            d.ResellerID = _resellerID;
+                            d.PaymentStartDate = $("#PaymentStartDate").val();
+                            d.PaymentEndDate = $("#PaymentEndDate").val();
+                            d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                        }
+                    },
+                    //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                    "columnDefs": [{
+                        "orderable": false, "targets": 18
+                    },
+                    { "targets": [0], "width": "5%" },
+                    { "targets": [0], "data": "ResellerPaymentID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='ResellerPaymentID' name='ResellerPaymentID' value=" + row.ResellerPaymentID + "></td>" } },
+                    { "targets": [1], "data": "_resellerID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='_resellerID' name='_resellerID' value=" + row.ResellerID + "></td>" } },
+
+                        //{ "targets": [5], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.PackageUpdate === true ? '<a href="" id="showPackageForUpdate">Show</a>' : "" } }
+                    ],
+                    "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                        //console.log(nRow);
+                        $(nRow).find("td:eq(0)").attr("hidden", true);
+                        $(nRow).find("td:eq(1)").attr("hidden", true);
+                        //$(nRow).find("td:eq(5)").css("color", "darkblue");
+                        return nRow;
+                    },
+
+                    "columns": [
+                        {
+                            "data": ""
+                        },
+                        {
+                            "data": ""
+                        },
+                        {
+                            "data": "PaymentYear"
+                        },
+                        {
+                            "data": "PaymentMonth"
+                        },
+                        {
+                            "data": "ResellerLoginName"
+                        },
+                        {
+                            "data": "ResellerName"
+                        },
+                        {
+                            "data": "ResellerAddress"
+                        },
+                        //{
+                        //    "data": "LastAmount"
+                        //},
+                        {
+                            "data": "PaymentAmount"
+                        },
+                        {
+                            "data": "PaymentBy"
+                        },
+                        {
+                            "data": "PaymentCheckOrAnySerial"
+                        },
+                        {
+                            "data": "PaymentStatus"
+                        },
+                        {
+                            "data": "PaymentTypeID"
+                        },
+                        {
+                            "data": "ResellerStatus"
+                        },
+                        {
+                            "data": "Collectby"
+                        },
+                        {
+                            "data": "CreatedBy"
+                        },
+                        {
+                            "data": "ActiveBy"
+                        },
+                        {
+                            "data": "DeleteBy"
+                        },
+                        {
+                            "data": "PaymentTime"
+                        },
+                        {
+                            "data": "Button"
+                        }
+                    ]
+                });
+        }
+        else {
+            tableRsellerPaymentHistory.draw();
+        }
+    }
+
+    $(document).ready(function () {
+
+
+        $('#ddlPaymentStatus').val("2").select2({ width: '100%' }).trigger('change');
+        $('#ddlPaymentBy').select2({ width: '100%' });
+
+        $('#PaymentStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#PaymentEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+
+
+        $("#txtResellerLoginName").autocomplete({
+            focus: function (event, ui) {
+                _resellerID = "";
+                _resellerPaymentID = "";
+
+                //_ClientDetailsID = ui.item.val;
+
+                console.log("event focus : " + ui.item.val);
+                console.log("focus : " + ui.item.val);
+                // or $('#autocomplete-input').val(ui.item.label);
+
+                // Prevent the default focus behavior.
+                event.preventDefault();
+                // or return false;
+                _resellerID = ui.item.val;
+                ResellerManager.GetResellerDetailsByID(ui.item.val);
+            },
+
+            source: function (request, response) {
+                _resellerID = "";
+                _resellerPaymentID = "";
+                //$("#txtResellerLoginName").val("");
+                $("#txtResellerType").val("");
+                $("#txtResellerBusinessName").val("");
+                $("#txtResellerAddress").val("");
+                $("#txtResellerPhone").val("");
+                $("#ResellerLogoPath").prop("src", "");
+                $("#txtResellerPaymentAmount").val("");
+                $("#ddlResellerCollectBy").val("");
+                $("#txtCheckSerialOrAnyResetNo").val("");
+                $("#ddlPaymentBy").val("").select2({ width: '100%' }).trigger('change');
+                $("#ddlPaymentType").val("").select2({ width: '100%' }).trigger('change');
+                $("#ddlPaymentStatus").val("2").select2({ width: '100%' }).trigger('change');
+
+                $.ajax({
+                    url: "/Reseller/GetAutoCompleateInformationForSearchCriteria",
+                    data: "{ 'SearchText': '" + request.term + "'}",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        response($.map(data, function (item) {
+                            //
+                            //return {
+                            //    label: item.label,
+                            //    value: item.val
+                            //};
+
+                            return item;
+                        }));
+                    },
+                    error: function (data) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+
+
+                });
+            }
+            ,
+            select: function (e, i) {
+
+                console.log("event select : " + e);
+                console.log(" select : " + i.item.val);
+                //$("#hfCustomer").val(i.item.val);
+            },
+            open: function () {
+                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+            },
+            close: function () {
+                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+            }
+            ,
+            minLength: 1
+        });
+
+        $("#createNewFromHistoryModal").click(function (e) {
+            e.preventDefault();
+            ResellerManager.ShowResellerDetailsByIDForCreatingPayment(_resellerID);
+            $("#mdlPayment").modal("show");
+        });
+
+        $("#tblReseller").on("click", "#btnCreatePaymentForAnyOne", function (e) {
+            e.preventDefault();
+            _resellerID = $(this).closest("tr").find("td:eq(0) input").val();
+            _rowIndex = $(this).closest("tr").index();
+            _resellerPaymentID = "";
+            ResellerManager.ShowResellerDetailsByIDForCreatingPayment(_resellerID);
+            //ResellerManager.ClearForPaymentInformationFromResellerPage();
+            //ResellerManager.ClearResellerRowIndexRPIDFromResellerPage();
+            $("#mdlPayment").modal("show");
+        });
+
+        $("#btnInsertResellerPayment").click(function (e) {
+            //if (ResellerManager.CreatePaymentValidation() === true) {
+            ResellerManager.InsertResellerPaymentFromPopUp();
+            ResellerManager.ClearForPaymentInformationFromResellerPage();
+            //ResellerManager.ClearResellerRowIndexRPIDFromResellerPage();
+            //}
+        });
+
+        $("#btnPopUpModalDefaultPaymentClose,#btnPopUpPaymentClose").click(function () {
+            ResellerManager.ClearForPaymentInformationFromResellerPage();
+            $("#mdlPayment").modal("hide");
+        });
+
+        $("#tblResellerPayment").on("click", "#btnPaymentHistoryEdit", function (e) {
+
+            e.preventDefault();
+            _resellerPaymentID = $(this).closest("tr").find("td:eq(0) input").val();
+            _resellerID = $(this).closest("tr").find("td:eq(1) input").val();
+
+            ResellerManager.ShowResellerPaymentDetailsByIDForUpdate(_resellerPaymentID);
+        });
+
+        $("#btnAddMacResellerPackageInTable").on("click", function () {
+            var pckgVal = $("#ddlMacReselerPackageInsert").val();
+            if (pckgVal != '') {
+                ResellerManager.AddMacResellerPackageInList();
+            }
+        });
+
+        $("#btnUpdateMacResellerPackageInTable").on("click", function () {
+            var pckgVal = $("#ddlMacReselerPackageUpdate").val();
+            if (pckgVal != '') {
+                ResellerManager.UpdateMacResellerPackageInList();
+            }
+        });
+
+        $("#btnAddItemInTableForBandwithReseller").on("click", function () {
+            var itemVal = $("#ddlAddItemsForBandwithReseller").val();
+            if (itemVal != '') {
+                ResellerManager.AddBandwithResellerItemInList();
+            }
+        });
+
+        $("#btnUpdateItemInTableForBandwithReseller").on("click", function () {
+            var itemVal = $("#ddlUpdateItemsForBandwithReseller").val();
+            if (itemVal != '') {
+                ResellerManager.UpdateBandwithResellerItemInList();
+            }
+        });
+
+        $("#tblMacResellerPackageInsert").on("click", "#btnDeleteMacUserPackageFromTableCreate", function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tblBandwithResellerItemCreate").on("click", "#btnDeleteBandwithUserItemFromTableCreate", function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tblMacResellerPackageUpdate").on("click", "#btnDeleteMacUserPackageFromTableUpdate", function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tblBandwithResellerItemUpdate").on("click", "#btnDeleteBandwithUserItemFromTableUpdate", function () {
+            $(this).closest("tr").remove();
+        });
+
+        $('.selectpickert').selectpicker({
+            liveSearch: true,
+            showSubtext: true
+        });
+
+        $("#tblReseller").on("click", "#btnShowPayment", function (e) {
+
+            e.preventDefault();
+            //if (tableRsellerPaymentHistory != "" || tableRsellerPaymentHistory != "undefined") {
+            //    tableRsellerPaymentHistory.destroy();
+            //}
+            _resellerID = $(this).closest("tr").find("td:eq(0) input").val();
+            _resellerPaymentID = "";
+            _rowIndex = $(this).closest("tr").index();
+            //ResellerManager.ShowResellerDetailsByIDForUpdate(_resellerID);
+            ShowResellerPaymentHistory();
+            $("#mdlViewResellerPaymentHistory").modal("show");
+        });
+
+        $("#tblReseller").on("click", "#btnEdit", function (e) {
+
+            e.preventDefault();
+            _resellerID = $(this).closest("tr").find("td:eq(0) input").val();
+            ResellerManager.ShowResellerDetailsByIDForUpdate(_resellerID);
+        });
+
+        $("#createNewMacReseller").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlMacResellerInsert").modal("show");
+        });
+
+        $("#createNewBandwithReseller").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlBandwithResellerInsert").modal("show");
+        });
+
+        $("#btnInsertMacReseller").click(function (e) {
+            if (ResellerManager.CreateMacResellerValidation() === true) {
+                ResellerManager.InsertMacResellerFromPopUp();
+            }
+        });
+
+        $("#btnInsertBandwithReseller").click(function (e) {
+            if (ResellerManager.CreateBandwithResellerValidation() === true) {
+                ResellerManager.InsertBandwithResellerFromPopUp();
+            }
+        });
+
+        $("#btnUpdateMacReseller").click(function () {
+            if (ResellerManager.UpdateMacResellerValidation() === true) {
+                ResellerManager.UpdateMacResellerInformation();
+            }
+        });
+
+        $("#btnUpdateBandwithReseller").click(function () {
+            if (ResellerManager.UpdateValidation() === true) {
+                ResellerManager.UpdateBandwithResellerInformation();
+            }
+        });
+
+        $("#btnPopUpResellerInsertClose").click(function (e) {
+            ResellerManager.clearForSaveInformation();
+            $("#mdlResellerInsert").modal("hide");
+        });
+
+        $("#btnPopUpResellerUpdateClose").click(function () {
+            _resellerID = "";
+            ResellerManager.clearForUpdateInformation();
+            $("#mdlResellerUpdate").modal("hide");
+        });
+
+        $('#btnInsertResellerModalClose').click(function () {
+            ResellerManager.clearForSaveInformation();
+        });
+
+        $('#btnUpdateResellerModalClose').click(function () {
+            ResellerManager.clearForUpdateInformation();
+        });
+
+        table = $("#tblReseller").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+
+                "ajax":
+                {
+                    "url": "/Reseller/GetAllResellerAJAXData",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        //d.ZoneID = $("#SearchByZoneID").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    { "width": "5%", "targets": [7] },
+                    { "targets": [0], "data": "", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='' name='' value=" + row.ResellerID + "></td>" } },
+                    { "targets": [1], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.ResellerName } },
+                    { "targets": [2], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.ResellerLoginName } },
+                    { "targets": [3], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.ResellerAddress } },
+                    { "targets": [4], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.ResellerContact } },
+                    { "targets": [5], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.ResellerTypeNameList } },
+                    { "targets": [7], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.ResellerBillingCycleList } },
+                    { "targets": [9], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.MacResellerPackage } },//(row.ShowButton === true && row.ResellerTypeID == 2) ? ' <button id="btnEdit"  type="button" class="btn btn-default btn-circle"><i class="glyphicon glyphicon-pencil"></i></button><button id="btnShowPayment"  type="button" class="btn btn-primary btn-circle"><i class="fa fa-money"></i></button> ' :
+                    { "targets": [10], "orderable": true, "data": "Show", "render": function (data, type, row, meta) { return row.BandwithResellerPackage } },//(row.ShowButton === true) ? ' <button id="btnEdit"  type="button" class="btn btn-default btn-circle"><i class="glyphicon glyphicon-pencil"></i></button> ' : ""
+                    { "targets": [11], "orderable": false, "style": "align='center'", "data": "Action", "render": function (data, type, row, meta) { return (row.ShowButton === true && row.ResellerTypeID == 2) ? ' <button id="btnEdit"  type="button" class="btn btn-default btn-circle"><i class="glyphicon glyphicon-pencil"></i></button><button id="btnShowPayment"  type="button" class="btn btn-primary btn-circle"><i class="fa fa-money"></i></button><button id="btnCreatePaymentForAnyOne"  type="button" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-alt"></i></button> ' : (row.ShowButton === true) ? ' <button id="btnEdit"  type="button" class="btn btn-default btn-circle"><i class="glyphicon glyphicon-pencil"></i></button> ' : "" } }//<button id="btnDelete" type="button" class="btn btn-default btn-circle"><i class="glyphicon glyphicon-remove"></i></button>
+
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+
+                    $(nRow).addClass('align-center');
+                    if (aData.IsPriorityClient) {
+                        $(nRow).removeClass('odd');
+                        $(nRow).addClass('changetrbackground');
+                    }
+                    else {
+                        //$(nRow).removeClass('changetrbackground');
+                        $(nRow).removeClass('changetrbackground');
+                    }
+
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "CurrentBalance"
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "MacResellerAssignMikrotik"
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    }]
+            });
+
+        /// Following code is for filter input to apply filter only on Enter
+        var itm = $("#tblUsers_filter input");
+        itm.unbind();
+        itm.keyup(function (e) {
+            //enter or tab
+
+
+
+            //$('input[type = checkbox]').each(function () {
+            //    var id = this.id;
+            //    if (id.indexOf("chkSMS") >= 0 || id == "chkSendSMSForAll") {
+            //        $("#" + id+"").prop("checked", false);
+            //    }
+            //});
+            //$("input:checkbox").prop("checked", false);
+
+            //  if (e.keyCode == 13) {
+            table.search(this.value).draw();
+            //}
+        });
+
+        $("#btnExportExcel").click(function () {
+            ResellerManager.PrintResellerList();
+        });
+        ////////////////////////////////////for Reseller Payment Historyu///////////////////////////////////
+        $("#btnSearch").click(function () {
+            //ShowResellerPaymentHistory();
+            //$("#mdlViewResellerPaymentHistory").show();
+            tableRsellerPaymentHistory.draw();
+        });
+
+        $("#btnPaymentDelete").on("click", function (e) {
+            e.preventDefault();
+            ResellerManager.DeleteResellerPaymentHistoryByID(_resellerPaymentID);
+        });
+
+        $("#tblResellerPayment").on("click", "tr", function () {
+
+            _resellerPaymentID = $(this).closest("tr").find("td:eq(0) input").val();
+            // ClientDetailsManager.DeleteClientDetails();
+        });
+        ////////////////////////////////////**************////////////////////////
+    });
+
+</script>

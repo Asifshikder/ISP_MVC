@@ -1,0 +1,57 @@
+﻿@*@model ISP_ManagementSystemModel.ViewModel.VM_Item_ClientDetails*@
+@{
+    ViewBag.Title = "Insert Item";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Scripts/CustomScripts/ItemManager.js"></script>
+
+<script>
+    var ItemID;
+    $(document).ready(function () { 
+        $("#btnInsertItem").click(function (e) { 
+            if (ItemManager.CreateValidation() === true) { 
+                ItemManager.InsertItem();
+            }
+        });
+    });
+
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm())
+{
+    <div class="container" style="padding-left: 0px; padding-top:0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">New Item</h6>
+                    <ol class="breadcrumb">
+                        <li><a href="/Item/Index"><i class="fa fa-dashboard"></i> All Item</a></li>
+                        <li class="active"> <a href="/Item/insertItem"> New Item </a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="form-group col-sm-12">
+                    <div>
+                        @Html.Label(" Item Name ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                            @Html.TextBox("ItemName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Item Name " })
+                        </div>
+                    </div>
+                    <input type="button" id="btnInsertItem" value="Save Item" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+

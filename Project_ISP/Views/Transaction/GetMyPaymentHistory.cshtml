@@ -1,0 +1,84 @@
+﻿@model IEnumerable<ISP_ManagementSystemModel.Models.Transaction>
+@{
+    ViewBag.Title = "GetMyPaymentHistory";
+}
+
+<script>
+    $(document).ready(function () {
+        $("#tblUsers").DataTable();
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h6 class="panel-title">My Bill History: </h6>
+        </div>
+        <div class="panel-body">
+            <div style="height: 100%; width:100%; overflow: auto;">
+
+                <table id="tblUsers" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center;">
+                    <thead>
+                        <tr style="height: 20px;">
+                            <th> Month</th>
+                            <th> Package</th>
+                            <th> Fee</th>
+                            <th> Paid Amount</th>
+                            <th> Discount</th>
+                            <th> Total Paid</th>
+                            <th> Reciept No </th>
+                            <th>Remarks</th>
+                            <th>Paid By</th>
+                            <th>Paid Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ClassTable">
+                        @foreach (var transaction in Model)
+                        {
+
+                            // {
+                            string MonthName = new DateTime(2000, transaction.PaymentMonth, 1).ToString("MMM");
+                            string RemarksNo = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.RemarksNo.ToString() : "---";
+                            string ResetNo = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.ResetNo.ToString() : "---";
+                            string PaidBy = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.ResellerID != null ? transaction.Reseller.ResellerBusinessName : transaction.EmployeeID != null ? transaction.Employee.Name :"---": "---";
+                            string PaidTime = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.PaymentDate.ToString() : "---";
+                            string Status = (transaction.PaymentStatus == ISP_ManagementSystemModel.AppUtils.PaymentTypeIsConnection) ? transaction.PaymentStatus.ToString() : "0";
+                            //}
+                            float paidamount = transaction.PaidAmount != null ? transaction.PaidAmount.Value : 0;
+                            float discount = transaction.Discount != null ? transaction.Discount.Value : 0;
+
+                            <tr>
+                                <td>@MonthName-@Html.DisplayFor(s => transaction.PaymentYear)</td>
+                                <td>@Html.DisplayFor(s => transaction.Package.PackageName)</td>
+                                <td>@Html.DisplayFor(s => transaction.PaymentAmount)</td>
+                                <td>@paidamount.ToString()</td>
+                                <td>@discount.ToString()</td>
+                                <td>@(paidamount + discount)</td>
+                                <td>@ResetNo</td>
+                                <td>@RemarksNo</td>
+                                <td>@PaidBy</td>
+                                <td>@PaidTime</td>
+
+                                @if (Status == "1")
+                                {
+                                    <td><div id="Status" class="label label-success">Paid</div></td>
+                                }
+                                @if (Status == "0")
+                                {
+                                    <td><div id="Status" class="label label-danger">UnPaid</div></td> 
+                                }
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+}
+

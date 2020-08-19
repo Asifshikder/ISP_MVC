@@ -1,0 +1,81 @@
+﻿
+
+
+
+
+
+<div class="form-group col-sm-12">
+
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label(" Asset Type ", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px;color: red;"> *</span>
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("lstAssetTypeUpdate", null, "-- Select Asset Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Asset Type " })
+        </div>
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label(" Asset Name ", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px;color: red;"> *</span>
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("AssetNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Asset Name " })
+        </div>
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Asset Value", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px; color: red;"> *</span>
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("AssetValues", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Amount " })
+        </div>
+    </div>
+
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Purchase Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("PurchaseDates", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Purchase Date " })
+
+        </div>
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Serial Number", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("SerialNumbers", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Serial Number " })
+        </div>
+    </div>
+
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Warrenty Start Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("WarrentyStartDates", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Warrenty Start Date " })
+        </div>
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Warrenty End Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("WarrentyEndDates", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Warrenty End Date " })
+        </div>
+    </div>
+</div>
+
+

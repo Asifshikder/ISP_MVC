@@ -1,0 +1,240 @@
+﻿@model Project_ISP.Models.AccountListVsAmountTransfer
+@{
+    ViewBag.Title = "Manage";
+}
+@Html.AntiForgeryToken()
+<head>
+    <style>
+        .panel {
+            border-radius: 10px;
+        }
+
+        .main-form {
+            margin: 0px 15px 0px 15px;
+        }
+
+
+        .padding5 {
+            padding: 20px 5px 0px 5px;
+        }
+    </style>
+</head>
+
+<div class="col-sm-12">
+    <div class="col-md-4 padding5">
+        <div class="panel panel-body ">
+            <div class="">
+                <h4>Update Transfer</h4>
+                <hr />
+            </div>
+            @Html.HiddenFor(model => Model.AccountListVsAmountTransferID)
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("From Account", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("AccountListID", null, "-- Select Account --", new { @disabled = "disabled", @class = "form-control col-sm-11", @placeholder = "From Account" })
+
+                </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("To Account", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("ToAccountID", null, "-- Select Account --", new { @disabled = "disabled", @class = "form-control col-sm-11", @placeholder = "To Account" })
+
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Date", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("TransferDate", null, new { @class = "form-control  col-sm-11", @placeholder = " Date " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Description", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("Description", null, new { @class = "form-control   col-sm-11", @placeholder = " Description " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Currency", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("CurrencyID", null, "BDT", new { @disabled = "disabled", @class = "form-control col-sm-11", @placeholder = " Currency " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Amount", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("Amount", null, new { @disabled = "disabled", @class = "form-control   col-sm-11", @placeholder = " Amount " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Payment Method", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("PaymentByID", null, "-- Select Method --", new { @class = "form-control   col-sm-11", @placeholder = " Payment Method" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("References", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("References", null, new { @class = "form-control   col-sm-11", @placeholder = " Refereces(Optional) " })
+                </div>
+            </div>
+            <div style="float:right; margin-right: 50px;">
+                <input type="button" id="btnUpdateTransfer" value="Submit" class="btn btn-primary btn-sm" />
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-8 padding5">
+        <div class="panel panel-body">
+            <div class="body-content">
+                <div class="">
+                    <h4 class="card-title">Delete Transfer Information:</h4>
+                    <hr />
+                </div>
+
+                @*<div class="panel-body">
+                        Are you sure to delete? No data can be recover in future.
+                    </div>*@
+                <div id="PopUp" style="float: right">
+                    <input type="button" id="btnDeleteTransfer" value="Delete" class="btn btn-danger btn-sm" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_AccountListVsAmountTransfer))
+    {
+        <div class="modal fade" id="mdlDeleteBalanceTransfer" role="dialog" style="overflow: auto">
+            <div class="modal-dialog modal-lg" style="width: 45%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Delete Balance Transfer Information</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                       Are you sure to delete this balance transfer details? No data can be recover in future.
+                    </div>
+                    <div class="modal-footer">
+                        <div id="PopUp" style="float: right">
+                            <input type="button" data-dismiss="modal" id="btnCancelDelete" value="Cancel" class="btn btn-default btn-sm" />
+                            <input type="button" id="btnConfirmDelete" value="Confirm Delete" class="btn btn-danger btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/Scripts/CustomScripts/AccountListVsAmountTranferManager.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnUpdateTransfer").click(function (e) {
+            e.preventDefault();
+            if (AccountListVsAmountTransferManager.UpdateValidation() === true) {
+                AccountListVsAmountTransferManager.UpdateAccountListVsAmountTransfer();
+            }
+        });
+        $("#btnDeleteTransfer").click(function (e) {
+            e.preventDefault();
+            $("#mdlDeleteBalanceTransfer").modal("show");
+           // AccountListVsAmountTransferManager.DeleteByID();
+        });
+
+        $("#btnConfirmDelete").click(function (e) {
+            e.preventDefault();
+            AccountListVsAmountTransferManager.DeleteByID();
+        });
+        $('#TransferDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#Amount").change(function () {
+            debugger;
+            var Amount = $("#Amount").val();
+            var FromAccountID = $("#AccountListID").val();
+            var ToAccountID = $("#ToAccountID").val();
+            var TransferID = $("#AccountListVsAmountTransferID").val();
+            var AmountCheckDetails = { TransferID: TransferID, TransferAmount: Amount, ToAccountID: ToAccountID, FromAccountID: FromAccountID };
+            var AntiForgeryToken = $("input[name='__RequestVerificationToken']").val();
+            var header = {};
+            header['__RequestVerificationToken'] = AntiForgeryToken;
+
+            $.ajax({
+                type: "POST",
+                url: "/AccountListVsAmountTransfer/UpdateAmountCheck",
+                data: JSON.stringify({ amountforchecking: AmountCheckDetails }),
+                dataType: "json",
+                cache: false,
+                headers: header,
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    if (data.InsufficientBalance === true) {
+                        AppUtil.ShowErrorOnControl("Insufficient Balance!", "Amount", "top center");
+                    }
+                    else if (data.InsufficientBalance === false) {
+
+                    }
+                    else {
+                        AppUtil.ShowErrorOnControl("Something went wrong!", "Amount", "top center");
+                    }
+                }
+
+            });
+        });
+
+        $("#ToAccountID").change(function () {
+            debugger;
+            var FromAccountID = $("#AccountListID").val();
+            var ToAccountID = $("#ToAccountID").val();
+            if (FromAccountID == ToAccountID) {
+                AppUtil.ShowErrorOnControl("You can not transfer in the same account!", "ToAccountID", "top center");
+            }
+            else {
+
+            }
+        });
+
+
+
+    });
+
+</script>

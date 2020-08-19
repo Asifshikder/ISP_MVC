@@ -1,0 +1,263 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.Item>
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+<script src="~/Scripts/CustomScripts/ItemManager.js"></script>
+
+<script>
+
+    var ItemID;
+    var table ;
+    $(document).ready(function () {
+
+         table = $("#tblItem").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+
+                "ajax":
+                {
+                    "url": "/Item/GetGeneralItemsAJAXData",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                        //d.ItemFor = $("#ItemForSearch").val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    //{ "targets": [0], "width": "5%" },
+                    //{ "targets": [0], "data": "TransactionID", "render": function (data, type, row, meta) { return '<td hidden><input type="hidden" id="TransactionID" name="TransactionID" value=' + row.TransactionID + ' /></td>' } },
+                    //{ "targets": [1], "data": "Name", "render": function (data, type, row, meta) { return '<a href="#" onclick="GetClientDetailsByClientDetailsID(' + row.ClientDetailsID + ',' + row.TransactionID + ')">' + row.Name + '</a>' } },
+                    //{ "targets": [8], "data": "PaymentDate", "render": function (data, type, row, meta) { return AppUtil.ParseDateTime(row.PaymentDate) } },
+                    { "targets": [0], "render": function (data, type, row, meta) { return '<input type="hidden" id="ItemID" name="ItemID" value=' + row.ItemID + ' />' } },
+                    //{ "targets": [1], "render": function (data, type, row, meta) { return row.ItemFor } },
+                    { "targets": [2], "orderable": false, "render": function (data, type, row, meta) { return row.UpdateStatus === true ? '<a href="" id="showItemForUpdate">Show</a>' : "" } }
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    //{
+                    //    "data": ""
+                    //},
+                    {
+                        "data": "ItemName"
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+        $("#tblItem").on("click", "#showItemForUpdate", function (e) {
+
+            e.preventDefault();
+            ItemID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            ItemManager.ShowItemDetailsByIDForUpdate(ItemID);
+        });
+
+        $("#createNew").click(function (e) {
+            //$("#tblItem").on("click", "#createNew", function (e) {
+
+            e.preventDefault();
+            $("#mdlItemInsert").modal("show");
+        });
+
+        $("#btnInsertItem").click(function (e) {
+            if (ItemManager.CreateValidation() === true) {
+                ItemManager.InsertItemFromPopUp();
+            }
+        });
+
+        $("#btnUpdateItem").click(function () {
+            if (ItemManager.UpdateValidation() === true) {
+                ItemManager.UpdateItemInformation();
+            }
+        });
+        //btnPopUpPackageClose
+
+        $("#btnPopUpItemInsertClose").click(function (e) {
+            ItemManager.clearForSaveInformation();
+            $("#mdlItemInsert").modal("hide");
+        });
+
+        $("#btnPopUpItemUpdateClose").click(function () {
+            ItemID = "";
+            ItemManager.clearForUpdateInformation();
+            $("#mdlItemUpdate").modal("hide");
+        });
+        $('#btnInsertItemModalClose').click(function () {
+            ItemManager.clearForSaveInformation();
+        });
+        $('#btnUpdateItemModalClose').click(function () {
+            ItemManager.clearForUpdateInformation();
+        });
+
+        $("#btnExportExcel").click(function () {
+            ItemManager.PrintItemList(0);
+        });
+
+        $("#btnSearch").click(function () {
+            table.draw();
+        });
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Item</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Item/Index"><i class="fa fa-dashboard"></i> All Item</a></li>
+            </ol>
+        </section>
+    </div>
+
+    @*<div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-sm-4">
+                @Html.DropDownList("ItemForSearch", (IEnumerable<SelectListItem>)ViewBag.ItemFor, "-- ItemFor --", new { @class = "form-control input-sm" })
+            </div>
+            <div class="col-sm-4">
+                <input type="Button" id="btnSearch" value="Search" class="btn btn-primary btn-sm" />
+            </div>
+            <div style="float: right; padding-bottom: 0px;  margin-right: 15px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary  btn-sm" value="Export Excel">
+            </div>
+        </div>
+    </div>*@
+
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+        <div style="float:right;">
+            <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary  btn-sm" value="Export Excel">
+        </div>
+            <table id="tblItem" class="table table-striped table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        @*<th>
+                            @Html.DisplayName(" Item For ")
+                        </th>*@
+                        <th>
+                            @Html.DisplayName(" Item Name")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Item))
+                            {
+                                <a href="#" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                @*<tbody>
+                        @foreach (var item in Model)
+                    {
+                            <tr>
+                                <td hidden="hidden">
+                                    @Html.HiddenFor(s => item.ItemID)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ItemName)
+                                </td>
+                                <td>
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Item))
+                                    {
+                                        <a href="" id="showItemForUpdate">Show</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>*@
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Item))
+        {
+            <div class="modal fade" id="mdlItemInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertItemModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Item Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            @*<div class="form-group col-sm-12">
+                                @Html.Label("Item For", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                <div class="col-md-8" style="padding-left: 0px;">
+                                    @Html.DropDownList("ItemFor", (IEnumerable<SelectListItem>)ViewBag.ItemFor, "-- Select Item For --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Item For " })
+
+                                </div>
+                            </div>*@
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label(" Item Name ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("ItemName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Item Name " })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpItemInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertItem" value="Save Item" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Item))
+        {
+            <div class="modal fade" id="mdlItemUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateItemModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Item Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_Item")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpItemUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateItem" value="Update Item" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

@@ -1,0 +1,306 @@
+﻿@*
+    <div class="panel" style="width: 100%;margin-bottom:5px;">  *@
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Contact Person Name", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtInsertBandwithResellerName", null, new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Reseller Business  Name", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtInsertBandwithResellerBusinessName", null, new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("UserID / Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtInsertBandwithResellerLoginName", null, new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Password", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtInsertBandwithResellerPassword", null, new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+@*</div>*@
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtInsertBandwithResellerAddress", null, new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Reseller Contact", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtInsertBandwithResellerContact", null, new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div class="row" style="margin-left:0px; margin-right:0px;">
+    @*<div class="form-group col-sm-6">
+            <div>
+                @Html.Label("Billing Cycle", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+            </div>
+            <div style="clear:both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("ddlInsertBandwithResellerBillingCycle", null, "-- Select Billing Cycle --", new { @class = "selectpickert bs-select form-control input-sm col-sm-11 ", @multiple = "multiple" })
+
+            </div>
+        </div>*@
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Reseller Type", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-12" style="padding-left: 0px;">*@
+
+            <div class="col-sm-7">
+                <input type="radio" name="rdbInsertBandwithResellerType" value="1" checked> <span style=" font-size:20px;"> Bandwith</span>
+            </div>
+            @*<div class="col-sm-5">
+                    <input type="radio" name="rdbInsertBandwithResellerType" value="2"> <span style=" font-size:20px;"> Mac </span>
+                </div>*@
+
+            @*<input type="radio" class="checkbox checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Bandwith Reseller" />
+                <input type="radio" class="checkbox  checkboxpadding20" name="rdbResellerType" id="rdbResellerType" value="Mac Reseller" />*@
+        </div>
+    </div>
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Reseller Logo", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <input accept="image/*" class="" id="BandwithResellerImage" name="BandwithResellerImage" type="file" value="">
+    <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Reseller Status", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.DropDownList("ddlInsertBandwithResellerStatus", null, "-- Select Reseller Status --", new { @class = "form-control input-sm col-sm-12 " })
+    </div>
+</div>
+
+<div class="modal-body panel-body">
+    <div class="row col-sm-12">
+        <table id="tblBandwithResellerItemCreate" class="table table-striped table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th hidden></th>
+                    <th>
+                        @Html.DisplayName("Item Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Item Price")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Quantity")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Total Amount")
+                    </th>
+
+                    <th style="text-align: center; width: 5%">Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    Total Amount :
+                    <div id="divBandwithCreatetotalAmount" style="font-weight:bold; text-align:center; justify-content:center; font-size:20px;"></div>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+@*<div class="card">
+        <div class="info-head card-title">
+            <h3><i class="fa fa-user-circle" aria-hidden="true"></i>Personal Information</h3>
+        </div>
+        <div class="info-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="ContactPerson">Contact Person Name <span style="color: #f90000;">✱</span></label>
+                        <input class="form-control form-padding" data-val="true" data-val-length="The field ResellerName must be a string with a maximum length of 200." data-val-length-max="200" data-val-required="Contact person is required." id="ContactPerson" name="Reseller.ResellerName" type="text" value="">
+                        <span id="spnContactPersonTxt" style="display: none; color: red;"></span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="Email">Email Address</label>
+                        <input class="form-control form-padding" data-val="true" data-val-email="Invalid Email Address." data-val-length="The field Email must be a string with a maximum length of 100." data-val-length-max="100" id="Email" name="Reseller.Email" type="email" value="">
+                        <span id="spnEmailTxt" class="text-danger" style="display: none;"></span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="MobileNumber">Mobile No. <span style="color: #f90000;">✱</span></label>
+                        <input class="form-control form-padding" data-val="true" data-val-length="The field MobileNumber must be a string with a maximum length of 50." data-val-length-max="50" data-val-regex="Please provide a valid mobile number." data-val-regex-pattern="^\+?(88)?0?[123456789][123456789][0-9]{8}\b$" id="MobileNumber" name="Reseller.MobileNumber" type="text" value="">
+                        <span id="spnMobileNumberTxt" style="display: none; color: red;"></span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="PhoneNumber">Phone No.</label>
+                        <input class="form-control form-padding" data-val="true" data-val-length="The field PhoneNumber must be a string with a maximum length of 50." data-val-length-max="50" id="PhoneNumber" name="Reseller.PhoneNumber" type="text" value="">
+                        <span id="spnPhoneNumberTxt" class="text-danger" style="display: none;"></span>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="NationalId">National ID</label>
+                        <input class="form-control form-padding" data-val="true" data-val-length="The field NationalId must be a string with a maximum length of 50." data-val-length-max="50" id="NationalId" name="Reseller.NationalId" type="text" value="">
+                        <span id="spnNationalIdTxt" class="text-danger" style="display: none;"></span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="Zone">Zone <span style="color: #f90000;">✱</span></label>
+                        <select class="form-control form-padding" data-val="true" data-val-number="The field ZoneId must be a number." id="ZoneId" name="Reseller.ZoneId">
+                            <option value="">Select</option>
+                            <option value="62">Bagan Bari</option>
+                            <option value="86">Shoaib der Goli</option>
+                            <option value="87">ONU USER</option>
+                            <option value="88">Pathager</option>
+                            <option value="89">Adorsho Sorok</option>
+                            <option value="90">Barek Mrider basar samner box</option>
+                            <option value="91">Gym Kuder bazer</option>
+                            <option value="92">Jolil Mrida Bari</option>
+                            <option value="93">Notun A K School Road start</option>
+                            <option value="94">Lautola</option>
+                            <option value="95">Uzzol er Goli</option>
+                            <option value="96">Maruf Vai er dokan</option>
+                            <option value="97">Ahle hadish mosjider pasher goli</option>
+                            <option value="98">Bank colony</option>
+                            <option value="99">Paterbag more</option>
+                            <option value="100">Bondu nibash</option>
+                            <option value="101">Paterbag Jamhe mosjid</option>
+                            <option value="102">Project</option>
+                            <option value="103">Abdul Hamid</option>
+                            <option value="104">Ferdaus vai /Tohader basar samne</option>
+                            <option value="105">Nozu Munshir goli</option>
+                            <option value="107">PCV Office</option>
+                            <option value="108">A.salam Vai er goli</option>
+                            <option value="109">Gas road</option>
+                            <option value="110">mina bag 1no goli</option>
+                            <option value="111">mina bag emran er box</option>
+                            <option value="112">selina apar box</option>
+                            <option value="113">zitu vaider goli</option>
+                            <option value="114">Majeed Vai der goli</option>
+                            <option value="115">nojo kakar golli</option>
+                            <option value="116"> Italy market</option>
+                            <option value="117">Rahmotbag</option>
+                            <option value="118">pozekt</option>
+                            <option value="119">boisakhi school goli</option>
+                            <option value="120">Paterbug pukur</option>
+                            <option value="121">paterbag bondu nibas</option>
+                            <option value="122">Nobin bag</option>
+                            <option value="123">khan company</option>
+                            <option value="124">Rajjak kakar bash</option>
+                            <option value="125">sham go goli</option>
+                            <option value="126">panir pamp</option>
+                            <option value="127">jweel der pasher goli</option>
+                            <option value="128">New AK  school road	</option>
+                            <option value="129">Baitul aman	</option>
+                            <option value="130"> helal er goli</option>
+                            <option value="131">kamal tawor</option>
+                            <option value="132">Al modina mosgider samne</option>
+                            <option value="133">Irfan bari</option>
+                            <option value="134">Modina mosgider samne</option>
+                            <option value="135">mina bag 3 goli</option>
+                            <option value="136">mina bag 2 goli</option>
+                            <option value="137">Kodom babu der golli</option>
+                            <option value="138">Chairman bari</option>
+                            <option value="139">Salam vai golli</option>
+                            <option value="140">Ramim er box</option>
+                        </select>
+                        <span id="spnZoneTxt" style="display: none; color: red;"></span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="Thana">Thana <span style="color: #f90000;">✱</span></label>
+                        <select class="form-control form-padding" data-val="true" data-val-number="The field ThanaId must be a number." id="ThanaId" name="Reseller.ThanaId">
+                            <option value="">Select</option>
+                            <option value="66">Kadomtali</option>
+                        </select>
+                        <span id="spnThanaTxt" style="display: none; color: red;"></span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="District">District <span style="color: #f90000;">✱</span></label>
+                        <select class="form-control form-padding" data-val="true" data-val-number="The field DistrictId must be a number." id="DistrictId" name="Reseller.DistrictId">
+                            <option value="">Select</option>
+                            <option value="65">Dhaka</option>
+                        </select>
+                        <span id="spnDistrictTxt" style="display: none; color: red;"></span>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="Address">Address <span style="color: #f90000;">✱</span></label>
+                        <textarea class="form-control form-padding" cols="20" data-val="true" data-val-length="The field Address must be a string with a maximum length of 200." data-val-length-max="200" id="Address" name="Reseller.Address" rows="3"></textarea>
+                        <span id="spnAddressTxt" style="display: none; color: red;"></span>
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="file">Reseller Logo</label><br>
+                        <input accept="image/*" class="" id="file" name="ImageFile" type="file" value="">
+                        <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@

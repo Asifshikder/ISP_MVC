@@ -1,0 +1,248 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.ComplainType>
+@{
+    ViewBag.Title = "Complain Type";
+}
+
+<style>
+    /*.alignCenter {
+        align
+    }*/
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+<script src="~/Scripts/CustomScripts/ComplainTypeManager.js"></script>
+
+@if (TempData["AlreadyInsert"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["AlreadyInsert"].ToString()');
+    </script>
+
+}
+@if (TempData["SaveSucessOrFail"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["SaveSucessOrFail"].ToString()');
+    </script>
+
+}
+<script>
+    var ComplainTypeID;
+    $(document).ready(function () {
+        //$('#tblComplainType').dataTable({
+        //    "lengthMenu": [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
+        //    "scrollX": true,
+        //    "stateSave": false,
+        //    dom: 'Bfrtip',
+        //    buttons:
+        //    [
+        //        'pageLength',
+
+        //        {
+        //            extend: 'excelHtml5',
+        //            title: 'ComplainType List',
+        //            exportOptions: { columns: [ 1] }
+        //        }
+
+
+        //    ]
+        //});
+
+        $("#tblComplainType").on("click", "#showComplainTypeForUpdate", function (e) {
+
+            e.preventDefault();
+            ComplainTypeID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            ComplainTypeManager.ShowComplainTypeDetailsByIDForUpdate(ComplainTypeID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlComplainTypeInsert").modal("show");
+        });
+
+        $("#btnInsertComplainType").click(function (e) {
+
+            if (ComplainTypeManager.CreateValidation() === true) {
+
+                ComplainTypeManager.InsertComplainTypeFromPopUp();
+            }
+        });
+
+        $("#btnUpdateComplainType").click(function () {
+
+            if (ComplainTypeManager.UpdateValidation() === true) {
+
+                ComplainTypeManager.UpdatePackageInformation();
+            }
+        });
+
+        $("#btnPopUpComplainTypeInsertClose").click(function (e) {
+            ComplainTypeManager.clearForSaveInformation();
+            $("#mdlComplainTypeInsert").modal("hide");
+        });
+
+        $("#btnPopUpComplainTypeUpdateClose").click(function () {
+            ComplainTypeID = "";
+            ComplainTypeManager.clearForUpdateInformation();
+            $("#mdlComplainTypeUpdate").modal("hide");
+        });
+        $('#btnInsertComplainTypeModalClose').click(function () {
+            ComplainTypeManager.clearForSaveInformation();
+        });
+        $('#btnUpdateComplainTypeModalClose').click(function () {
+            ComplainTypeManager.clearForUpdateInformation();
+        });
+
+        $("#tblComplainType").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            ComplainTypeManager.PrintComplainTypeList();
+        });
+
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All ComplainType List</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/ComplainType/Index"><i class="fa fa-dashboard"></i> ComplainType List</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+            <table id="tblComplainType" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;">
+                @*<table id="tblComplainType" class="table table-striped table-bordered table-responsive">*@
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("ComplainType Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Show Message Box")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_ComplainType))
+                            {
+                                <a style="font-weight:800;color: crimson" href="" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        string showMessageBox = "Yes";
+                        if (item.ShowMessageBox == false)
+                        {
+                            showMessageBox = "No";
+                        }
+                        <tr>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => item.ComplainTypeID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ComplainTypeName)
+                            </td>
+                            <td>
+                                @showMessageBox
+                            </td>
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_ComplainType))
+                                {
+                                    <a href="" id="showComplainTypeForUpdate">Show</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_ComplainType))
+        {
+            <div class="modal fade" id="mdlComplainTypeInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertComplainTypeModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add ComplainType Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Complain Type Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("ComplainTypeName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "ComplainType Name " })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Show Message Box ", new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px;">
+                                        @Html.CheckBox("chkMessageBox", false)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpComplainTypeInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertComplainType" value="Save ComplainType " class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>}
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_ComplainType))
+        {
+            <div class="modal fade" id="mdlComplainTypeUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateComplainTypeModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update ComplainType Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_ComplainType")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpComplainTypeUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateComplainType" value="Update ComplainType " class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>

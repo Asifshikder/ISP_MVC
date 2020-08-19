@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="saddam" targetNamespace="http://tempuri.org/saddam.xsd" xmlns:mstns="http://tempuri.org/saddam.xsd" xmlns="http://tempuri.org/saddam.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="saddam" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="saddam" msprop:Generator_UserDSName="saddam">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Image" msprop:Generator_TableClassName="ImageDataTable" msprop:Generator_TableVarName="tableImage" msprop:Generator_TablePropName="Image" msprop:Generator_RowDeletingName="ImageRowDeleting" msprop:Generator_RowChangingName="ImageRowChanging" msprop:Generator_RowEvHandlerName="ImageRowChangeEventHandler" msprop:Generator_RowDeletedName="ImageRowDeleted" msprop:Generator_UserTableName="Image" msprop:Generator_RowChangedName="ImageRowChanged" msprop:Generator_RowEvArgName="ImageRowChangeEvent" msprop:Generator_RowClassName="ImageRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ImageByte" msprop:Generator_ColumnVarNameInTable="columnImageByte" msprop:Generator_ColumnPropNameInRow="ImageByte" msprop:Generator_ColumnPropNameInTable="ImageByteColumn" msprop:Generator_UserColumnName="ImageByte" type="xs:base64Binary" minOccurs="0" />
+              <xs:element name="ImageTitle" msprop:Generator_ColumnVarNameInTable="columnImageTitle" msprop:Generator_ColumnPropNameInRow="ImageTitle" msprop:Generator_ColumnPropNameInTable="ImageTitleColumn" msprop:Generator_UserColumnName="ImageTitle" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

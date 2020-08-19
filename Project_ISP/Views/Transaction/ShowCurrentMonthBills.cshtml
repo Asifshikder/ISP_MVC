@@ -1,0 +1,143 @@
+﻿@model ISP_ManagementSystemModel.ViewModel.VM_ClientLineStatus_Transaction
+
+@{
+    ViewBag.Title = "Show Current Month Bills";
+}
+
+<script src="~/Scripts/CustomScripts/TransactionManager.js"></script>
+
+
+<script>
+
+    var id;
+    function setCompleteStatus(clientLineStatusID) {
+        id = clientLineStatusID;
+        $("#btnShowBillPaymentWindow").css("visibility", "visible");
+    }
+
+    $(document).ready(function () {
+
+        $("#btnShowBillPaymentWindow").click(function () { 
+            TransactionManager.GetClientPaymentAmountAndRemarksAndSleepNoForPayment(id);
+            $("#tblPayment").modal("show");
+        });
+
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $("#tblClientMonthlyBill").DataTable();
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h6 class="panel-title">Show Current Month Bill</h6>
+        </div>
+        <div class="panel-body">
+            <input type="button" id="btnShowBillPaymentWindow" style="visibility:hidden" value="Bill Pay" />
+            <table id="tblClientMonthlyBill" class="table table-bordered table-hover table-responsive table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>Login_Name</th>
+                        <th>Address</th>
+                        <th>Mobile</th>
+                        <th>Zone</th>
+                        <th>Package</th>
+                        <th>Monthly Fee</th>
+                        <th>Paid_Amount</th>
+                        <th>Due</th>
+                        <th>Paid By</th>
+                        <th>CollectBy</th>
+                        <th>Paid_Time</th>
+                        <th>Remarks</th>
+                        <th>Receipt_No</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var clientLineStatus in Model.lstClientLineStatus)
+                    {
+                        <tr>
+                            <td>@Html.CheckBox("chkBillPay", new { @class = "checkGroup1", @onclick = "setCompleteStatus(" + clientLineStatus.ClientLineStatusID + ")" }@*,new { @checked ="checked"}*@)</td>
+                            <td>@Html.HiddenFor(s => clientLineStatus.ClientLineStatusID)</td>
+                            <td>@Html.DisplayFor(s => clientLineStatus.ClientDetails.LoginName)</td>
+                            <td>@Html.DisplayFor(s => clientLineStatus.ClientDetails.Address)</td>
+                            <td>@Html.DisplayFor(s => clientLineStatus.ClientDetails.ContactNumber)</td>
+                            <td>@Html.DisplayFor(s => clientLineStatus.ClientDetails.Zone.ZoneName)</td>
+                            <td>@Html.DisplayFor(s => clientLineStatus.ClientDetails.Package.PackageName)</td>
+                            <td>@Html.DisplayFor(s => clientLineStatus.Package.PackagePrice)</td>
+                            @{bool amountPaid = false;}
+                            @foreach (var transaction in Model.lstTransaction)
+                            {
+                                if (transaction.ClientDetailsID == clientLineStatus.ClientDetailsID)
+                                {
+                                    amountPaid = true;
+                                    <td>@Html.DisplayFor(s => transaction.PaymentAmount)</td>
+                                    <td></td>
+                                    @*<td>@Html.DisplayFor(s => transaction.PaidBy)</td>*@
+                                    <td>@Html.DisplayFor(s => transaction.BillCollectBy)</td>
+                                    <td>@Html.DisplayFor(s => transaction.PaymentDate)</td>
+                                    @*<td>@Html.DisplayFor(s => transaction.Remarks)</td>*@
+                                    <td>@Html.DisplayFor(s => transaction.ResetNo)</td>
+                                }
+                            }
+                            @if (amountPaid == false)
+                            {
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            }
+                            <td>
+                                <div style="width: 30%; float: left">
+                                    <button type="button" id="btnEdit" class="btn btn-success btn-block" style="width: 40px;"><span class="glyphicon glyphicon-ok"></span></button>
+                                </div>
+                                <div style="width: 30%; float: left">
+                                    <button type="button" id="btnDelete" class="btn btn-danger btn-block" style="width: 40px;"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="modal fade" id="tblPayment" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:65%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Do You want to pay for this client?</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_Payment");
+                        </div>
+                        <div class="modal-footer">
+                            @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpClientUpdateClose" value="No" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateClientDetails" value="Yes" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+}

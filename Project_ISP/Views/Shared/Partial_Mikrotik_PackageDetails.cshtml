@@ -1,0 +1,69 @@
+﻿<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Package For", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.DropDownList("ddlUpdatePackageFor", null, "-- Select Package For --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Package For " })
+        </div>
+    </div>
+</div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("PackageName", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("PackageNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Package Name " })
+        </div>
+    </div>
+</div>
+
+<div style="padding-top: 20px;"></div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Package Price", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("PackagePrices", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Package Price " })
+        </div>
+    </div>
+</div>
+
+<div style="padding-top: 20px;"></div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("BandWith", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("BandWiths", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " BandWith " })
+        </div>
+    </div>
+</div>
+                            
+<div style="padding-top: 20px;"></div>
+<div class="form-group col-sm-12">
+    @Html.Label("IP_Pool", new { @class = "control-label col-md-4", Style = "float:left" })
+    @*   <div style="clear: both"> </div>*@
+    <div class="col-md-8" style="padding-left: 0px;">
+        @Html.DropDownList("IPPoolIDs", null, "-- Select Ip Pool --", new { @class = "form-control input-sm col-sm-11", @placeholder = " IP Pool " })
+    </div>
+</div>
+
+<div style="padding-top: 20px;"></div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Local Address", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("LocalAddresss", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Local Address " })
+        </div>
+    </div>
+</div>
+                            
+<div style="padding-top: 20px;"></div>
+<div class="form-group col-sm-12">
+    @Html.Label("Mikrotik", new { @class = "control-label col-md-4", Style = "float:left" })
+    @*   <div style="clear: both"> </div>*@
+    <div class="col-md-8" style="padding-left: 0px;">
+        @Html.DropDownList("MikrotikIDs", null, "-- Select Mikrotik --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+    </div>
+</div>

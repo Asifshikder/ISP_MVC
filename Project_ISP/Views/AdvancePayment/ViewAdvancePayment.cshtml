@@ -1,0 +1,360 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.AdvancePayment>
+@{
+    ViewBag.Title = "View Advance Payment";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .required_field {
+        color: red;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+</style>
+<script src="~/Scripts/CustomScripts/AdvancePaymentManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdataeFromSeveralPageManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdateManager.js"></script>
+
+
+
+<script>
+    var AdvancePaymentID;
+
+
+    var pageID = '@ISP_ManagementSystemModel.AppUtils.View_Advance_Payment_List';
+    var T_ID;
+    var T_DuePayment_ID;
+    var _ClientName;
+    var _ClientLoginName;
+    var tableRowIndexForUpdateClientName;
+
+
+    var _InformationUpdateForWhichPage = "advancepayment";
+    var _tblName = "tblViewAdvancePayment";
+    var _rowIndex = "";
+
+    //function GetClientDetailsByClientDetailsID(clientDetailsID, t_ID) {
+    //    ClientUpdateManager.GetClientDetailsByID(clientDetailsID);
+    //}
+
+    $(document).ready(function () {
+
+        $("#" + _tblName + "").on("click", "tr", function (e) {
+            e.preventDefault();
+            _rowIndex = $(this).index();
+            tableRowIndexForUpdateClientName = $(this).index();
+        });
+
+        $("#tblViewAdvancePayment").on("click", "#showClientDetails", function (e) {
+
+            e.preventDefault();
+            var clientDetailsID = $(this).closest("tr").find("td:eq(1) input").val();
+            ClientUpdateManager.GetClientDetailsByID(clientDetailsID);
+        });
+        //$("#" + _tblName + ">tbody>tr").on("click", "#showClientDetails", function (e) {
+        //    e.preventDefault();
+        //    var clientDetailsID = $(this).closest("tr").find("td:eq(1) input").val();
+        //    //ClientUpdateManager.GetClientDetailsByID(clientDetailsID);
+        //});
+
+        $("#btnPopUpClientUpdateClose").click(function () {
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#tblEmployeeDetails").modal("hide");
+        });
+
+
+        $('#popsConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+
+        $("#PopUpClientUpdate").on("click", "#btnUpdateClientDetails", function () {
+
+            if (ClientUpdateManager.UpdateClientDetailsValidation() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <text>
+
+                        console.log($("#lstMikrotik").val());
+                        if ($("#lstMikrotik").val() === '' || $("#lstMikrotik").val() === null) {
+                            AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                            return false;
+                        }
+                        //if (AppUtil.GetIdValue("IP") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert IP.");
+                        //    return false;
+                        //}
+                        //if (AppUtil.GetIdValue("Mac") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert Mac.");
+                        //    return false;
+                        //}
+                    </text>
+                  // <script></script>
+
+                }
+                ClientUpdateManager.UpdateClientDetails();
+            }
+
+        });
+
+        $("#tblViewAdvancePayment").DataTable();
+
+        $("#tblViewAdvancePayment").on("click", "#ViewAdvancePaymentForUpdate", function (e) {
+
+            e.preventDefault();
+            AdvancePaymentID = $(this).closest("tr").find("td:eq(0) input").val();
+            //alert(AdvancePaymentID);
+            AdvancePaymentManager.ViewAdvancePaymentIDForUpdate(AdvancePaymentID);
+
+
+
+        });
+
+        $("#btnPopUpViewAdvancePaymentClose").click(function () {
+            $("#mdlViewAdvancePaymentForUpdate").modal("hide");
+        });
+
+        $("#btnUpdateViewAdvancePayment").click(function() {
+            if (AdvancePaymentManager.UpdateAdvancePaymentManagerValidation() === true) {
+                AdvancePaymentManager.UpdateAdvancePayment();
+            }
+        });
+
+        $("#chkPackageFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#btnExportExcel").click(function () {
+            AdvancePaymentManager.PrintAdvancePayment();
+        });
+
+        $("#closeTblEmployeeDetails").click(function () {
+            //ClientDetailsManager.ClearClientDetailsModalInformation();
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#Status").css("display", "none");
+        });
+
+        $('#PopsLineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#ContactNumber").keyup(function () {
+            var mob = $("#ContactNumber").val();
+            $("#SMSCommunication").val(mob);
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{ 
+    var createOrUpdateBy = "";
+    var FirstPaymentDateOrUpdatePaymentDate = "";
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-heading">
+
+            <section class="content-header">
+                <h6 class="panel-title">View Advance Payment</h6>
+                <ol class="breadcrumb">
+                    <li class="active"><a href="/AdvancePayment/ViewAdvancePayment"><i class="fa fa-dashboard"></i> View Advance Payment</a></li>
+                </ol>
+            </section>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div style="float:right; margin-right: 15px">
+                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Advance_Payment))
+                    {
+                        <a class="btn btn-sm btn-primary  btn-sm" href="~/AdvancePayment/AddAdvancePayment">Create New</a>
+                    }
+
+                    <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary  btn-sm" value="Export Excel">
+                    <br /><br />
+                </div>
+            </div>
+            <table id="tblViewAdvancePayment" class="table table-bordered table-hover table-responsive " style="align-content: center;">
+                <thead>
+                    <tr style="height: 20px;">
+                        <th hidden="hidden"></th>
+                        <th hidden="hidden"></th>
+                        <th> Login ID</th>
+                        <th> Credit</th>
+                        <th> Action </th>
+
+                    </tr>
+                </thead>
+                <tbody id="ClassTable">
+
+                    @foreach (var item in Model)
+                    {
+
+                        string Name = "";
+
+
+                        int clientDetailsIDFromDB = item.ClientDetailsID;
+                        //// int clientDetailsIDFromDB = @vItem.ClientDetailsID;
+                        if (@item.ClientDetailsID == item.ClientDetailsID)
+                        {
+                            /*onclick='GetClientDetailsByClientDetailsID(" + item.ClientDetailsID + ","+0+")'*/
+                            Name = "<a id='showClientDetails' href='#' >" + item.ClientDetils.LoginName + "</a>";
+                        }
+
+                        <tr class='@(item.ClientDetils.IsPriorityClient == true ? "changetrbackground":"")'>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => item.AdvancePaymentID)
+                            </td>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => item.ClientDetailsID)
+                            </td>
+                            <td>@Html.Raw(Name)</td>
+                            <td>@item.AdvanceAmount</td>
+                            <td>
+                                <a href="" id="ViewAdvancePaymentForUpdate"> Show</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+
+
+            <div class="modal fade" id="mdlViewAdvancePaymentForUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Advance Payment</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_ViewAdvancePaymentIDForUpdate")
+                        </div>
+                        <div class="modal-footer">
+                            @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpViewAdvancePaymentClose" value="Close" class="btn btn-default btn-sm" />
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Advance_Payment))
+                                {
+                                    <input type="button" id="btnUpdateViewAdvancePayment" value="Update Advance Payment" class="btn btn-primary btn-sm" />
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Client Information</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_SpecificCLientDetails")
+                </div>
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6 class="panel-title">Mikrotik</h6>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("MIkrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    @Html.Label("IP", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("IP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("Mac", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("Mac", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 " })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUpClientUpdate" style="float: right">
+                        <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Client))
+                        {
+                            <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Employee Permently?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnEmployeeDeletePermently" class="btn btn-success success">Delete Employee</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

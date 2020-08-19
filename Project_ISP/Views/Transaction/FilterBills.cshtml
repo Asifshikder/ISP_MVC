@@ -1,0 +1,403 @@
+﻿
+@using ISP_ManagementSystemModel
+@model  IEnumerable<ISP_ManagementSystemModel.Models.CustomFilterBills>
+
+<script src="~/Scripts/CustomScripts/TransactionManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdataeFromSeveralPageManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdateManager.js"></script>
+
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+
+    .align {
+        text-align: center;
+    }
+
+    .padding {
+        padding: 1px 4px;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+</style>
+
+<script>
+
+    var pageID = '@ISP_ManagementSystemModel.AppUtils.View_Filter_Bills_List';
+    var T_ID;
+    var T_DuePayment_ID;
+    var _ClientName;
+    var _ClientLoginName;
+    var tableRowIndexForUpdateClientName;
+    var _CID;
+
+    function GetClientDetailsByClientDetailsID(clientDetailsID, t_ID) {
+        // AppUtil.ShowSuccess(clientDetailsID);
+
+        T_ID = t_ID;
+        _CID = clientDetailsID;
+        //ClientUpdataeFromSeveralPageManager.GetClientDetailsByID(clientDetailsID);
+        ClientUpdateManager.GetClientDetailsByID(clientDetailsID);
+    }
+
+    $(document).ready(function () {
+
+        //$('#').find('tr').click(function () {
+        //
+        //  tableRowIndexForUpdateClientName = $(this).index();
+        //  });
+
+        $("#tblFilterBill").on("click", "tr", function (e) {
+            //var index = $(this).index();
+            //alert("clicked :" + index);
+            tableRowIndexForUpdateClientName = $(this).index();
+        });
+        $('#popsConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        //$('#popsBillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+
+        $("#PopUpClientUpdate").on("click", "#btnUpdateClientDetails", function () {
+
+            if (ClientUpdateManager.UpdateClientDetailsValidation() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <text>
+
+                        console.log($("#lstMikrotik").val());
+                        if ($("#lstMikrotik").val() === '' || $("#lstMikrotik").val() === null) {
+                            AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                            return false;
+                        }
+                        //if (AppUtil.GetIdValue("IP") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert IP.");
+                        //    return false;
+                        //}
+                        //if (AppUtil.GetIdValue("Mac") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert Mac.");
+                        //    return false;
+                        //}
+                    </text>
+                  // <script></script>
+
+                }
+                ClientUpdateManager.UpdateClientDetails();
+            }
+
+        });
+        $("#chkPackageFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#btnSearch").click(function () {
+
+            if (TransactionManager.ValidationForFilterBillsSearch())
+            {
+                TransactionManager.GetFilterBillsListBySearchCriteria();
+            }
+        });
+
+        $("#tblFilterBill").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            TransactionManager.PrintArchiveBillsList();
+        });
+        $("#tblFilterBill").on("click", "#btnPrint", function () {
+
+            window.open("/Report/ShowFilterBillReport?TransactionID=" + $(this).closest("tr").find("td:eq(0) input").val() + "");
+            //TransactionManager.PrintAchiveBillIndividually();
+        });
+
+        $("#btnPopUpClientUpdateClose, #btnPopUpClose").click(function () {
+
+
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#tblEmployeeDetails").modal("hide");
+            //ClientDetailsID = "";
+            //ClientLineStatusID = "";
+            //ClientBannedStatusID = "";
+            //ClientTransactionID = "";
+        });
+        $("#closeTblEmployeeDetails").click(function () {
+            //ClientDetailsManager.ClearClientDetailsModalInformation();
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#Status").css("display", "none");
+        });
+
+        $('#PopsLineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+
+        $("#ContactNumber").keyup(function () {
+            var mob = $("#ContactNumber").val();
+            $("#SMSCommunication").val(mob);
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+
+    string Date = ISP_ManagementSystemModel.AppUtils.GetDateTimeNow().ToString("yyyy-MMM");
+
+    @Html.AntiForgeryToken()
+
+    @Html.Partial("Partial_Year_Month_Employee")
+
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-heading">
+            <h4 class="panel-title">Archive Bills @Date</h4>
+        </div>
+
+        <div class="panel-body">
+            <table id="tblFilterBill" class="table table-bordered table-hover table-responsive ">
+                <thead>
+                    <tr>
+                        @*<th style="padding:0px;"></th>*@
+                        <th hidden="hidden"></th>
+                        <th hidden="hidden"></th>
+                        <th style="padding:10px;" class="align">Login_ID</th>
+                        <th style="padding:10px;" class="align">Status Activate Date</th>
+                        <th style="padding:10px;" class="align">Address</th>
+                        <th style="padding:10px;" class="align">Mobile</th>
+                        <th style="padding:10px;" class="align">Zone</th>
+                        <th style="padding:10px;" class="align">Package</th>
+                        <th style="padding:10px;" class="align">Year</th>
+                        <th style="padding:10px;" class="align">Month</th>
+                        <th style="padding:10px;" class="align">Amount</th>
+                        <th style="padding:10px;" class="align">Type</th>
+                        <th style="padding:10px;" class="align">Paid By</th>
+                        <th style="padding: 10px;" class="align">Paid Time</th>
+                        <th style="text-align:center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        string Name = "";
+                        // foreach (var vItem in (IEnumerable<ISP_ManagementSystemModel.Models.ClientSetByViewBag>)ViewData["lstTransaction"])
+
+                        //    Name = "<a href='#' onclick='GetClientDetailsByClientDetailsID(" + item.ClientDetailsID + "," + vItem.TransactionID + ")'>" + item.ClientDetails.Name + "</a>";
+
+                        var cls = "";
+                        if (item.PaymentTypeID == AppUtils.PaymentTypeIsMonthly)
+                        {
+                            cls = item.IsPriorityClient == true ? "changetrbackground" : "";
+                        }
+
+
+                        <tr class="@cls">
+                            @*<td></td>*@
+                            <td hidden="hidden"><input type="hidden" value="@item.ClientDetailsID" /></td>
+                            <td hidden="hidden"><input type="hidden" value="@item.TransactionID" /></td>
+                            @if (item.PaymentTypeID == AppUtils.PaymentTypeIsMonthly)
+                            {
+                                <td>@Html.Raw("<a href='#' onclick='GetClientDetailsByClientDetailsID(" + item.ClientDetailsID + "," + item.TransactionID + ")'>" + item.ClientLoginName + "</a>")</td>
+                            }
+                            else
+                            {
+                                <td>@Html.Raw(item.ClientLoginName)</td>
+                            }
+
+                            <td>@Html.Raw(item.LineStatusActiveDate)</td>
+                            <td>@item.Address</td>
+                            <td>@item.ContactNumber</td>
+                            <td>@item.Zone</td>
+
+                            <td>@item.PackageName</td>
+
+
+                            <td>@item.Year</td>
+
+                            <td>@item.Month</td>
+
+                            <td>@item.Amount</td>
+
+                            <td>@item.PaymentType</td>
+
+
+                            <td>@item.PaidBy</td>
+
+                            <td>@item.PaidTime</td>
+
+                            <td align="center" style="padding: 4px 15px;">
+                                <div style="float:left">
+                                    <button type="button" id="btnPrint" class="btn btn-success  padding"><span class="glyphicon glyphicon-print"></span></button>
+                                </div>
+                                <div style="float:right">
+                                    <button type="button" id="" class="btn btn-danger padding"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+
+
+                    @*@foreach (var item in ViewBag.lstOFTransaction)
+                        {*@
+
+
+                    @*<tr>
+                            <td></td>
+                            <td></td>
+                            <td>item.Login_Name</td>
+                            <td>@item.Address</td>
+                            <td>item.Mobile</td>
+                            <td>item.Zone</td>
+                            <td>item.Package</td>
+                            <td>item.Year</td>
+                            <td>item.Month</td>
+                            <td>item.Amount</td>
+                            <td>item.Type</td>
+                            <td>item.Paid_By</td>
+                            <td>item.Paid_Time</td>
+                        </tr>*@
+
+                    @*<tr>
+                            <td>@Html.DisplayFor(s=>item.ClientDetails.LoginName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.Address)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.ContactNumber)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.Zone.ZoneName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.Package.PackageName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.LoginName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.LoginName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.LoginName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.LoginName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.LoginName)</td>
+                            <td>@Html.DisplayFor(s => item.ClientDetails.LoginName)</td>
+                        </tr>*@
+                    @* } *@
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Client Information</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_SpecificCLientDetails")
+                </div>
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6 class="panel-title">Mikrotik</h6>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("MIkrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    @Html.Label("IP", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("IP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("Mac", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("Mac", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 " })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUpClientUpdate" style="float: right">
+                        <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Client))
+                        {
+                            <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Employee Permently?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnEmployeeDeletePermently" class="btn btn-success success">Delete Employee</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+

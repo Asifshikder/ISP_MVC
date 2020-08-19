@@ -1,0 +1,297 @@
+﻿@model ISP_ManagementSystemModel.Models.CableStock
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+<style>
+    .panel-heading {
+        height: 55px;
+    }
+
+    .required_field {
+        color: red;
+    }
+
+    /*input,
+    select,
+    textarea {
+        max-width: 100%;
+    }*/
+
+    .panel-heading {
+        height: 43px;
+    }
+
+    .padding {
+        padding: 3px 6px;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default" style="padding-bottom: 20px;margin-bottom: 0px;">
+        <div class="panel-heading" style="height:45px;">
+            <section class="content-header" style="padding: 5px 10px 0px 15px;">
+                <h6 class="panel-title">All Search Crieteria</h6>
+                <ol class="breadcrumb" style="padding: 0px 5px;     top: 5px;">
+                    <li class="active"><a href="/stock/stocklist"><i class="fa fa-dashboard"></i> All Stock List</a></li>
+
+                </ol>
+            </section>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Cable Item", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("CableTypeID", null, "-- Select Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Box/Drum Nuber", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+
+                    @Html.TextBox("txtBoxNumber", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Box Number " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Reading Start", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtReadingFrom", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reading From ", @type = "number" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Reading End", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtReadingTo", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reading To ", @type = "number" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Cable Quantity", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtCableQuantity", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Cable Quantity in Meter", @disabled = "disabled" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Brand", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("BrandID", null, "-- Select Brand --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Brand " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Supplier", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("SupplierID", null, "-- Select Supplier --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Supplier " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Supplier Invoice", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtSupplierInvoice", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Supplier Invoice Number " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-1">
+                <div style="margin-top: 25px;">
+                    <input type="button" id="btnAddInCableList" value="Add In List" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-heading">
+            <section class="content-header" style="padding: 0px 0px 0px 0px">
+                <h6 class="panel-title">Stock Item List For Add</h6>
+            </section>
+        </div>
+        <div class="panel-body">
+            <table id="tblStockForCable" class="table table-striped table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Cable Type")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Box Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Reading Start")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Reading End")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Cable Quantity")
+                        </th>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Brand Name")
+                        </th>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Supplier Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Invoice")
+                        </th>
+                        <th style="text-align: center; width: 5%">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div style="margin-left: 15px;">
+                <input type="button" id="btnSave" value="Save" class="btn btn-primary btn-sm" />
+            </div>
+
+        </div>
+    </div>
+
+}
+
+
+
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/CustomScripts/StockManager.js"></script>
+@section scripts{
+    <script>
+        var BoxNameExist = "";
+        var AddedInList = "";
+        var itemArray = [];
+
+        $(document).ready(function () {
+
+            $("#txtReadingTo").change(function () {
+
+                var from = $("#txtReadingFrom").val();
+                var to = $("#txtReadingTo").val();
+
+                if (AppUtil.GetIdValue("txtReadingFrom") === '') {
+                    $("#txtReadingTo").val("");
+                    AppUtil.ShowSuccess("Please Add Reading from .");
+                    return;
+                }
+                if (parseInt(from) >= parseInt(to)) {
+                    AppUtil.ShowSuccess("Reading start is greater then Reading End.");
+                    $("#txtReadingTo").val("");
+                    $("#txtCableQuantity").val("");
+                    return;
+                }
+                else {
+
+                    $("#txtCableQuantity").val(to - from);
+                }
+            });
+
+            $("#btnAddInCableList").click(function () {
+                if (StockManager.CableAddingValidation()) {
+                    StockManager.AddItemInListForCable();
+                }
+
+            });
+
+            $('#ConnectionDate').datepicker({
+                dateFormat: 'mm/dd/yy',
+                numberOfMonths: 1,
+                changeMonth: true,
+                changeYear: true
+            });
+
+            $("#tblStockForCable").on("click", "#btnDelete", function () {
+
+                $(this).closest("tr").remove();
+            });
+
+            $("#btnSave").click(function () {
+                if ($("#tblStockForCable>tbody>tr").length > 0) {
+
+                    $("#tblStockForCable>tbody>tr").each(function () {
+
+
+                        var CableTypeID = $(this).find('td:eq(0) input').val();
+                        var CableBoxName = $(this).find('td:eq(2)').text();
+                        var FromReading = $(this).find('td:eq(3)').text();
+                        var ToReading = $(this).find('td:eq(4)').text();
+                        var CableQuantity = $(this).find('td:eq(5)').text();
+                        var BrandID = $(this).find('td:eq(6) input').val();
+                        var SupplierID = $(this).find('td:eq(8) input').val();
+                        var SupplierInvoice = $(this).find('td:eq(10)').text();
+                        itemArray.push({
+                            "CableTypeID": CableTypeID,
+                            "CableBoxName": CableBoxName,
+                            "FromReading": FromReading,
+                            "ToReading": ToReading,
+                            "CableQuantity": CableQuantity,
+                            "BrandID": BrandID,
+                            "SupplierID": SupplierID,
+                            "SupplierInvoice": SupplierInvoice
+                        });
+                    });
+
+                    if (itemArray.length > 0) {
+                        StockManager.InsertCableInStock(itemArray);
+                    }
+
+                    //$("#tblStock>tbody").each(function () {
+                    //
+                    //    var itemID = $(this);
+                    //    $.each(itemID, function(index,item) {
+                    //
+                    //        var items = item.close;
+                    //    });
+
+                    //    var id = itemID.find('td:eq(0) input').val();
+                    //});
+
+                } else {
+                    AppUtil.ShowError("Please Add Information in table.");
+                }
+            });
+        });
+    </script>
+}

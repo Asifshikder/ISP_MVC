@@ -1,0 +1,280 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@Html.AntiForgeryToken()
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+        <section class="content-header">
+            <h6 class="panel-title">All Head</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Head/Index"><i class="fa fa-dashboard"></i> All Head</a></li>
+
+            </ol>
+        </section>
+
+        <div class="panel-body">
+            @Html.Partial("Partial_SearchByHeadType")
+        </div>
+    </div>
+    <div class="panel-body">
+        <table id="tblHead" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%;">
+            <thead>
+                <tr>
+                    <th hidden="hidden"></th>
+                    <th>
+                        @Html.DisplayName("Head Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Head Type")
+                    </th> 
+                    <th>
+                        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_Head))
+                        {
+                            <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                        }
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          
+        </table>
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_Head))
+        {
+            <div class="modal fade" id="mdlInsertHead" role="dialog" style="overflow: auto" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="insertModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Insert Head Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Head Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("HeadNameInsert", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Head Name " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Head Type", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px; float: left">
+                                        @Html.DropDownList("HeadTypeInsert", null, "-- Select Head Type --", new { @class = "form-control input-sm col-sm-6" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpHeadInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertHead" value="Save Head" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Head))
+        {
+            <div class="modal fade" id="mdlHeadUpdate" role="dialog" style="overflow: auto" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="updateHeadMdl" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Head Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("_Partial_HeadUpdate")
+                        </div>
+                        <div class="modal-footer">
+                          
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpHeadUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateHead" value="Update" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_Head))
+        {
+            <div class="modal fade" id="mdlHeadDelete" role="dialog" style="overflow: auto" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="DeleteHeadMdl" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Delete Head Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            Are you sure to delete? No data can be recover in future!
+                        </div>
+                        <div class="modal-footer">
+                          
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpHeadDeleteClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnDeleteHead" value="Delete" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<script src="~/Scripts/CustomScripts/HeadManager.js"></script>
+<script>
+    var HeadID;
+    var table;
+    $(document).ready(function () {
+
+        table = $("#tblHead").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+                "ajax":
+                {
+                    "url": "/Head/GetAllHeadAJAXData/",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.HeadTypeIDS = $("#SearchHeadTypeID").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    { "targets": [0], "data": "HeadID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='HeadID' name='HeadID' value=" + row.HeadID + "></td>" } },
+                    { "targets": [2], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.HeadTypeId === 1 ? "Expense" : "Income" } },
+                    { "targets": [3], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.UpdateHead === true ? '<a href="" id="showHeadForUpdate" class="glyphicon glyphicon-edit btn-circle btn-default"></a><a href="" id="showHeadForDelete" class="glyphicon glyphicon-remove btn-circle btn-default"></a>' : ""  } }
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    $(nRow).find("td:eq(1)").attr("orderable", false);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "HeadName"
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+        $("#tblHead").on("click", "#showHeadForUpdate", function (e) {
+
+            e.preventDefault();
+            HeadID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            HeadManager.EditHeadGet(HeadID);
+        });
+    
+        $("#tblHead").on("click", "#showHeadForDelete", function (e) {
+
+            e.preventDefault();
+            HeadID = $(this).closest("tr").find("td:eq(0) input").val();
+            $("#mdlHeadDelete").modal("show");
+            
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlInsertHead").modal("show");
+        });
+
+        $("#btnPopUpHeadInsertClose").click(function (e) {
+            HeadManager.clearForSaveInformation();
+            $("#mdlInsertHead").modal("hide");
+        });
+
+        $("#insertModalClose").click(function (e) {
+            HeadManager.clearForSaveInformation();
+            $("#mdlInsertHead").modal("hide");
+        });
+         $("#btnInsertHead").click(function (e) {
+
+            if (HeadManager.CreateValidation() === true) {
+                HeadManager.InsertHeadFromPopUp();
+            }
+         });
+
+
+
+        $("#updateHeadMdl").click(function () {
+            HeadID = "";
+            HeadManager.clearForUpdateInformation();
+            $("#mdlHeadUpdate").modal("hide");
+        });
+
+        $("#btnPopUpHeadUpdateClose").click(function () {
+             HeadID = "";
+            HeadManager.clearForUpdateInformation();
+            $("#mdlHeadUpdate").modal("hide");
+        });
+
+        $("#btnUpdateHead").click(function () {
+            if (HeadManager.Validation() === true) {
+                HeadManager.EditHeadFromPopUp();
+            }
+        });
+        $("#DeleteHeadMdl").click(function () {
+            HeadID = "";
+            $("#mdlHeadDelete").modal("hide");
+        });
+
+        $("#btnPopUpHeadDeleteClose").click(function () {
+             HeadID = "";
+            $("#mdlHeadDelete").modal("hide");
+        });
+
+        $("#btnDeleteHead").click(function () {
+            HeadManager.DeleteHead(HeadID);
+        });
+
+       
+        $("#btnSearch").click(function () {
+            if (HeadManager.SearchValidation()) {
+                table.draw();
+            }
+        });
+
+     
+    });
+
+
+
+</script>

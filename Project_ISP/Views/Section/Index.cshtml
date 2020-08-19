@@ -1,0 +1,197 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.Section>
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Section</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Section/Index"><i class="fa fa-dashboard"></i> All Section</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+            <table id="tblSection" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;">
+                @*     <table id="tblSection" class="table table-striped table-bordered table-responsive">*@
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Section List")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Section))
+                            {
+                                <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => item.SectionID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SectionName)
+                            </td>
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Section))
+                                {
+                                    <a href="" id="showSectionForUpdate">Show</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Section))
+        {
+            <div class="modal fade" id="mdlSectionInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertSectionModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Section Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Section Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("SectionName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Section Name " })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpSectionInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertSection" value="Save Section" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Section))
+        {
+            <div class="modal fade" id="mdlSectionUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateSectionModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Distribution Reason Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_Section")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpSectionUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateSection" value="Update Section" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>
+
+<script src="~/Scripts/CustomScripts/SectionManager.js"></script>
+
+<script>
+
+    var SectionID;
+    $(document).ready(function () {
+
+        $("#tblSection").on("click", "#showSectionForUpdate", function (e) {
+            e.preventDefault();
+            SectionID = $(this).closest("tr").find("td:eq(0) input").val();
+            SectionManager.ShowSectionDetailsByIDForUpdate(SectionID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlSectionInsert").modal("show");
+        });
+
+        $("#btnInsertSection").click(function (e) {
+
+            if (SectionManager.CreateValidation() === true) {
+
+                SectionManager.InsertSectionFromPopUp();
+            }
+        });
+
+        $("#btnUpdateSection").click(function () {
+
+            if (SectionManager.UpdateValidation() === true) {
+
+                SectionManager.UpdateSectionInformation();
+            }
+        });
+
+        $("#btnPopUpSectionInsertClose").click(function (e) {
+            SectionManager.clearForSaveInformation();
+            $("#mdlSectionInsert").modal("hide");
+        });
+
+        $("#btnPopUpSectionUpdateClose").click(function () {
+            SectionID = "";
+            SectionManager.clearForUpdateInformation();
+            $("#mdlSectionUpdate").modal("hide");
+        });
+
+        $('#btnInsertSectionModalClose').click(function () {
+            SectionManager.clearForSaveInformation();
+        });
+
+        $('#btnUpdateSectionModalClose').click(function () {
+            SectionManager.clearForUpdateInformation();
+        });
+
+        $("#tblSection").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            SectionManager.PrintSectionList();
+        });
+
+    });
+
+
+</script>
+

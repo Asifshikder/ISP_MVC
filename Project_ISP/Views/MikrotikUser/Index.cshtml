@@ -1,0 +1,457 @@
+﻿
+@model ISP_ManagementSystemModel.ViewModel.VM_Package_ClientDetails
+
+<style>
+
+    .checkbox {
+        padding-left: 20px;
+    }
+
+        .checkbox label {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .checkbox label::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                left: 0;
+                margin-left: -20px;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                background-color: #fff;
+                -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+            }
+
+            .checkbox label::after {
+                display: inline-block;
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                left: 0;
+                top: 0;
+                margin-left: -20px;
+                padding-left: 3px;
+                padding-top: 1px;
+                font-size: 11px;
+                color: #555555;
+            }
+
+        .checkbox input[type="checkbox"] {
+            opacity: 0;
+        }
+
+            .checkbox input[type="checkbox"]:focus + label::before {
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+
+            .checkbox input[type="checkbox"]:checked + label::after {
+                font-family: 'FontAwesome';
+                content: "\f00c";
+            }
+
+            .checkbox input[type="checkbox"]:disabled + label {
+                opacity: 0.65;
+            }
+
+                .checkbox input[type="checkbox"]:disabled + label::before {
+                    background-color: #eeeeee;
+                    cursor: not-allowed;
+                }
+
+        .checkbox.checkbox-circle label::before {
+            border-radius: 50%;
+        }
+
+        .checkbox.checkbox-inline {
+            margin-top: 0;
+        }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::before {
+        background-color: #428bca;
+        border-color: #428bca;
+    }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::before {
+        background-color: #d9534f;
+        border-color: #d9534f;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::before {
+        background-color: #5bc0de;
+        border-color: #5bc0de;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::before {
+        background-color: #f0ad4e;
+        border-color: #f0ad4e;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::before {
+        background-color: #5cb85c;
+        border-color: #5cb85c;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+</style>
+ 
+<script src="~/Scripts/CustomScripts/MIkrotikUserManager.js"></script>
+
+
+<script>
+    var ClientDetailsID;
+    var table;
+    var strchkMikrotikUser = "chkMikrotikUser";
+    var isCheckAll = false;
+    var ifIsCheckAllThenNonCheckList = [];
+    var ifNotCheckAllThenCheckList = [];
+    var userListFromMikrotik = [];
+
+
+
+
+    $(document).ready(function () {
+     
+
+        $("#tblMikrotik_Client").on("click", "#showMikrotikUserForUpdate", function (e) {
+
+            e.preventDefault();
+            ClientDetailsID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            MIkrotikUserManager.ShowMikrotikUserByIDForUpdate();
+        });
+
+        $("#btnMikrotikUserUpdatePackage").click(function () {
+            if (MIkrotikUserManager.Validation() === true) {
+                MIkrotikUserManager.UpdateMikrotikUserInformation();
+            }
+        });
+
+        $("#btnPopUpMikrotikUserUpdateClose").click(function () {
+
+            MIkrotikUserManager.clearForUpdateInformation();
+            $("#mdlMikrotikUserUpdate").modal("hide");
+        });
+
+        $("#btnSearchClientListByMikrotik").click(function () {
+            //table.draw();
+            MIkrotikUserManager.ShowMikrotikUserByIDForSynchronize();
+
+        });
+
+        $("#btnExportExcel").click(function () {
+            MIkrotikUserManager.PrintMikrotikUserList();
+        });
+
+        $("input[name='chkMikrotikUserAll']").change(function (e) {
+            isCheckAll = false;
+            userListFromMikrotik = [];
+            if (this.checked) {
+                // alert("success");
+                isCheckAll = true;
+                //$("input:checkbox").not(this).prop("checked",true);
+
+                $('input[type = checkbox]').each(function () {
+
+                    var id = this.id;
+                    var aa = id.indexOf(strchkMikrotikUser);
+                    if (aa >= 0) {
+
+                        //  alert(id);
+                        $('#tblMikrotik_Client>tbody').find('tr').each(function () {
+                            var row = $(this).index();
+                            //tr: eq(' + index + ')').find("td:eq(3)")
+                            var chkBoxHtml = $("#tblMikrotik_Client>tbody>tr:eq(" + row + ")>td:eq(0)").html();
+                            //  console.log(test);
+                            var getID = $(chkBoxHtml).find('input').attr("id");
+                            //  console.log(getID);
+                            if (getID == id) {
+                                var loginName = $("#tblMikrotik_Client>tbody>tr:eq(" + row + ")").find("td:eq(3)").text();
+                                var password = $("#tblMikrotik_Client>tbody>tr:eq(" + row + ")").find("td:eq(4)").text();
+                                var mikrotikID = $("#tblMikrotik_Client>tbody>tr:eq(" + row + ")").find("td:eq(1)").text();
+                                var packageName = $("#tblMikrotik_Client>tbody>tr:eq(" + row + ")").find("td:eq(5)").text();
+                                userListFromMikrotik.push({ LoginName: loginName, Password: password, MikrotikID: mikrotikID, PackageName: packageName });
+                            }
+                        });
+
+                    }
+                });
+
+                //console.log("array:" + userListFromMikrotik);
+                $(userListFromMikrotik).each(function (index, item) {
+                    $("input[id='chkMikrotikUser" + item.LoginName + "']").prop("checked", true);
+                    //alert(item);
+                });
+            }
+            else {
+                isCheckAll = false;
+                $("input:checkbox").prop("checked", false);
+                // alert("false");
+            }
+            //ShowOrHideSMSDiv();
+        });
+
+        $("#btnImportClientPermentlyFromMikrotik").on("click", function () {
+            MIkrotikUserManager.ImportClientPermentlyFromMikrotik(userListFromMikrotik);
+        });
+
+        $("#btnDeleteClientPermentlyFromMikrotik").on("click", function () {
+            MIkrotikUserManager.RemoveClientPermentlyFromMikrotik(userListFromMikrotik);
+        });
+    });
+    //LoginName: loginName, Password: password, MikrotikID: mikrotikID, PackageName: packageName
+    function enableDisableMikrotikOption(id, loginName, password, mikrotikID, packageName) {
+        var allCheck = $("input[name='chkMikrotikUserAll']").prop("checked");
+        var a = document.getElementById(id.id);
+        if (a.checked) {
+            userListFromMikrotik.push({ LoginName: loginName, Password: password, MikrotikID: mikrotikID, PackageName: packageName });
+            //if (allCheck) {
+            //    ifIsCheckAllThenNonCheckList = jQuery.grep(ifIsCheckAllThenNonCheckList, function (value) {
+            //        return value != loginName;
+            //    });
+            //}
+            //else {
+            //    ifNotCheckAllThenCheckList.push('' + clnID + '');
+            //}
+        } else {
+            //var res = jQuery.inArray("7028", userListFromMikrotik);
+            var lName = '' + loginName + '';
+
+            //var result;
+            //for (var i = 0, len = userListFromMikrotik.length; i < len; i++) {
+            //    //var logName = userListFromMikrotik[i][0];
+            //    var logName = userListFromMikrotik[i].LoginName;
+            //    if (logName == lName) {
+            //        result = userListFromMikrotik[i];
+            //        break;
+            //    }
+            //}
+            var result = $.grep(userListFromMikrotik, function (v, i) {
+                return v.LoginName === lName;
+            });
+            //var index = findIn2dArray(userListFromMikrotik, lName)
+            //if (jQuery.inArray(aa, userListFromMikrotik.LoginName) != -1) {
+            if (result.length > 0) {
+                userListFromMikrotik = $.grep(userListFromMikrotik, function (v, i) {
+                    return v.LoginName != lName;
+                });
+            }
+            //if (index != -1) {
+            //    userListFromMikrotik = jQuery.grep(userListFromMikrotik.LoginName, function (value) {
+            //        return value != loginName;
+            //    });
+            //}
+
+            //if (allCheck) {
+            //    ifIsCheckAllThenNonCheckList.push(clnID);
+            //}
+            //else {
+            //    ifNotCheckAllThenCheckList = jQuery.grep(ifNotCheckAllThenCheckList, function (value) {
+            //        return value != clnID;
+            //    });
+            //}
+        }
+    }
+
+    function findIn2dArray(arr_2d, val) {
+        var indexArr = $.map(arr_2d, function (arr, i) {
+            if ($.inArray(val, arr.LoginName) != -1) {
+                return 1;
+            }
+
+            return -1;
+        });
+
+        return indexArr.indexOf(1);
+    }
+</script>
+
+@{
+    ViewBag.Title = "All Mikrotik User List";
+}
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+@Html.AntiForgeryToken()
+@*<div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">All Mikrotik List</h6>
+                <ol class="breadcrumb">
+                    <li class="active"><a href="/MikrotikPackage/Index"><i class="fa fa-dashboard"></i> All Packages</a></li>
+                </ol>
+            </section>
+        </div>
+    </div>*@
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h6 class="panel-title">Select Mikrotik</h6>
+        </div>
+
+        <div class="panel-body">
+            <div class="col-sm-4">
+                @Html.DropDownList("lstMikrotiks", null, "-- All Mikrotik --", new { @class = "form-control input-sm" })
+            </div>
+            <div class="col-sm-4">
+                <input type="Button" id="btnSearchClientListByMikrotik" value="Search" class="btn btn-primary btn-sm" />
+            </div>
+            <div class="col-sm-4">
+                <div class="panel-heading" style="padding: 0px 0px;background-color: #f0eded;text-align: center;">
+                    <i class="fa fa-cloud-upload" style="font-size: 36px;color: green;" data-toggle="modal" data-target="#popModalForImportClientFromMikrotik"></i>
+                    <a id="btnDelete" href="#" title="Delete" class="link-delete" data-toggle="modal" data-target="#popModalForDeleteClientFromMikrotik" style="font-size: 36px;color:red;"><i class="fa fa-times"></i></a>
+                </div>
+
+            </div>
+        </div>
+
+        <div style="float: right; padding-bottom:0px; margin-top: 20px; margin-right: 15px;">
+            @*<input type="button" id="btnExportExcel" class="btn btn-sm btn-primary  btn-sm" value="Export Excel">*@
+            <!-- export xl file -->
+            @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+        </div>
+    </div>
+    <div class="panel-body">
+        @*<table id="tblMikrotik_Client" class="table table-bordered table-hover table-responsive table-striped" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("ClientName")
+                        </th>
+                        <th>
+                            @Html.DisplayName("LoginName")
+                        </th>
+                        <th>
+                            @Html.DisplayName("PackageName")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Zone")
+                        </th>
+                        <th>
+                            @Html.DisplayName("ContactNumber")
+                        </th>
+                        <th>
+                            @Html.DisplayName("MikrotikName")
+                        </th>
+                        <th>
+                            @Html.DisplayName("PoolName")
+                        </th>
+                        <th>
+                            @Html.DisplayName("LocalAddress")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Update ")
+                        </th>
+                    </tr>
+                </thead>
+            </table>*@
+        <div style=" overflow-y:auto;height:450px;;">
+            <table id="tblMikrotik_Client" class="table table-bordered table-hover table-responsive table-striped" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th><div class='checkbox checkbox-danger'><input type="checkbox" id="chkMikrotikUserAll" name="chkMikrotikUserAll" /><label for='chkMikrotikUserAll'> </label></div></th>
+                        <th hidden="hidden">MikrotikID</th>
+                        <th hidden="hidden">ProfileID</th>
+                        <th class="">
+                            @Html.DisplayName("Secret Name")
+                        </th>
+                        <th class="">
+                            @Html.DisplayName("Secret Password")
+                        </th>
+                        <th class="">
+                            @Html.DisplayName("Profile")
+                        </th>
+                        <th class="">
+                            @Html.DisplayName("Status")
+                        </th>
+                        <th class="">
+                            @Html.DisplayName("Mikrotik Name")
+                        </th>
+                        @*<th class="col-sm-2">
+                                @Html.DisplayName("Edit")
+                            </th>*@
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+
+
+        @*<div class="panel-body">
+                <div class="col-sm-12">
+                    <input type="Button" id="btnImportSelectedClient" value="Import Selected Client" class="btn btn-primary btn-sm" />
+                </div>
+            </div>*@
+
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="popModalForImportClientFromMikrotik" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm Submit
+            </div>
+            <div class="modal-body">
+                Are you sure you want to Import this Selected Client In your System?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a href="#" id="btnImportClientPermentlyFromMikrotik" class="btn btn-success success">Import Client</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="popModalForDeleteClientFromMikrotik" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm Submit
+            </div>
+            <div class="modal-body">
+                Are you sure you want to Delete this selected client from Mikrotik?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a href="#" id="btnDeleteClientPermentlyFromMikrotik" class="btn btn-danger success">Delete Client</a>
+            </div>
+        </div>
+    </div>
+</div>

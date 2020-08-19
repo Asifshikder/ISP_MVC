@@ -1,0 +1,32 @@
+﻿
+
+
+@Html.Hidden("PopID")
+
+<div class="form-group col-sm-12">
+    <div class="form-group col-sm-12">
+        <div>
+            @Html.Label("Pop Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+            <div class="col-md-8" style="padding-left: 0px;float:left">
+                @Html.TextBox("PopNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Pop Name " })
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-sm-12">
+        <div>
+            @Html.Label("Pop Location", null, new { @class = "control-label col-md-4", Style = "float:left" })
+            <div class="col-md-8" style="padding-left: 0px;float:left">
+                @Html.TextBox("PopLocations", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Pop Location " })
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-sm-12">
+        <div>
+            @Html.Label("Latitude & Longitude", null, new { @class = "control-label col-md-4", Style = "float:left" })
+            <div class="col-md-8" style="padding-left: 0px;float:left">
+                @Html.TextBox("LatitudeLongitudes", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Latitude & Longitude " })
+            </div>
+        </div>
+    </div>
+</div>
+

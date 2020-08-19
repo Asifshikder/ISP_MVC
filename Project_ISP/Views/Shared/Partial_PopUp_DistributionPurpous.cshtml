@@ -1,0 +1,77 @@
+﻿
+
+<div>
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Item Name", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("lstStockIDForPopUp", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Serial", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("StockDetailsIDPopUp", Enumerable.Empty<SelectListItem>(), "-- Select Serial --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Serial  " })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Reason", new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("DistributionReasonIDPopUp", null, "-- Select Distribution Reason --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Distribution Reason ", @disabled = "disabled" })
+        </div>
+    </div>
+
+    <div class="form-group col-sm-5">
+    </div>
+    <div class="row"></div>
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Assign Section", new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("SectionID", null, "-- Select Section --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Distribution Reason " })
+        </div>
+    </div>
+
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Product Status", new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("ProductStatusID", Enumerable.Empty<SelectListItem>(), "-- Product Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Distribution Reason " })
+        </div>
+    </div>
+
+    @*<div class="row">
+            <div class="form-group col-sm-1">
+            </div>
+            <div class="form-group col-sm-6 row">
+                <div id="Status" class="label label-success " style="display:none">Login Name Already Exist</div>
+            </div>
+            <div class="form-group col-sm-5">
+            </div>
+        </div>*@
+
+</div>

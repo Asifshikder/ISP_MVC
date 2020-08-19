@@ -1,0 +1,9 @@
+﻿
+<option value="">All Head</option>
+@if (ViewBag.HeadList != null)
+{
+    foreach (var item in ViewBag.HeadList)
+    {
+        <option value="@item.Value">@item.Text</option>
+    }
+}

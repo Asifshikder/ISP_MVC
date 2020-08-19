@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewBag.Title = "CreateComplain";
+}
+
+<!DOCTYPE html>
+
+
+@{
+    ViewBag.Title = "CreateComplain";
+}
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css"
+      rel="Stylesheet" type="text/css" />
+<script src="~/Scripts/notify.js"></script>
+<script src="~/Scripts/CustomScripts/AppUtil.js"></script>
+
+<script src="~/Scripts/CustomScripts/ComplainManager.js"></script>
+
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+<style>
+    .slow .toggle-group {
+        transition: left 0.7s;
+        -webkit-transition: left 0.7s;
+    }
+
+    .fast .toggle-group {
+        transition: left 0.1s;
+        -webkit-transition: left 0.1s;
+    }
+
+    .quick .toggle-group {
+        transition: none;
+        -webkit-transition: none;
+    }
+</style>
+<script>
+    var _ClientDetailsID;
+    var complainMessage = false;
+    $(document).ready(function () {
+        //$("#myTextBox").change
+        //$("#txtClientName").change(function () {
+        //
+        //    $("#txtMobile").val("");
+        //    $("#txtClientAdress").val("");
+        //});
+        $("input[name='chkSwitch']").change(function (event) {
+
+            //if (this.checked) {
+            //    alert("succcess");
+            //}
+            //else {
+            //    alert("fail");
+            //}
+            if ($(this).is(":checked")) {
+                alert("succcess");
+            }
+            else {
+                alert("fail");
+            }
+        });
+
+        $("#btnClientComplain").click(function () {
+            ComplainManager.AddComplainbyClient();
+            //if (ComplainManager.CreateComplainValidation() === true) {
+            //    ComplainManager.AddComplainbyClient();
+            //}
+
+        });
+
+        $("#txtClientName").autocomplete({
+            focus: function (event, ui) {
+
+                _ClientDetailsID = ui.item.val;
+                console.log("focus : " + ui.item.val);
+                // or $('#autocomplete-input').val(ui.item.label);
+
+                // Prevent the default focus behavior.
+                event.preventDefault();
+                // or return false;
+
+                ComplainManager.getAutoCompleateDetailsInformation(ui.item.val);
+
+            },
+            source: function (request, response) {
+                _ClientDetailsID = "";
+                $("#txtMobile").val("");
+                $("#txtClientAdress").val("");
+                $("#txtCredit").val("");
+                $("#txtRemarks").val("");
+                $.ajax({
+                    url: '/AdvancePayment/getAutoCompleateInformation',
+                    data: "{ 'Name': '" + request.term + "'}",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            //
+                            return item;
+                            //return { label: item.Name, value: item.val };
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                console.log(" select : " + i.item.val);
+                //$("#hfCustomer").val(i.item.val);
+            },
+            minLength: 1
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <div class="container" style="padding-left: 0px; padding-top:0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <section class="content-header">
+                    <h6 class="panel-title">Create Complain</h6>
+                    <ol class="breadcrumb" style="padding: 0px 12px;">
+                        <li><a href="/Complain/GetAllComplainListForSpecificUser"><i class="fa fa-dashboard"></i>All Complain</a></li>
+                        <li class="active"> <a href="/Complain/createcomplainbyclient">  Create Complain </a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+                @Html.Partial("Partial_ComplainByClient")
+            </div>
+
+        </div>
+    </div>
+}

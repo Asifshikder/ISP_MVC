@@ -1,0 +1,600 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.CableDistribution>
+
+@{
+    ViewBag.Title = "Cable Details History";
+}
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default" style="padding-bottom: 20px; margin-bottom: 0px;">
+        <div class="panel-heading" style="height: 45px;">
+            <section class="content-header" style="padding: 5px 10px 0px 15px;">
+                <h6 class="panel-title">Search By</h6>
+                <ol class="breadcrumb" style="padding: 0px 5px; top: 5px;">
+                    <li class="active"><a href="/stock/StockDistribution"><i class="fa fa-dashboard"></i> Distribute Item</a></li>
+
+                </ol>
+            </section>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-3">
+                <div>
+                    @Html.Label("Item Category", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("CableTypeID", null, "-- Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  ", @id = "CableTypeID" })
+
+                </div>
+            </div>
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label(" Box/Drum ", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("CableStockID", Enumerable.Empty<SelectListItem>(), "-- Box/Drum --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                </div>
+            </div>
+            <div class="form-group col-sm-4">
+                <div>
+                    @Html.Label("Client Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-12" style="padding-left: 0px;">
+                    @Html.DropDownList("lstClientDetailsID", null, "-- Select Client --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Brand ", @id = "lstClientDetailsID" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-5">
+                <div>
+                    @Html.Label("From Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("FromDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " From Date " })
+                </div>
+            </div>
+            <div class="form-group col-sm-5">
+                <div>
+                    @Html.Label("To Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("ToDate", null, new { @class = "form-control input-sm col-sm-11", @autocomplete = "off", @placeholder = " To Date " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-1">
+                <div style="float: left; margin-top: 25px">
+                    <input type="button" id="btnSearch" value="Search" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-heading">
+            <h4 class="panel-title">Cable Details List</h4> @*@Date*@
+
+        </div>
+
+        <div class="panel-body" style="overflow: auto">
+            <div class="row">
+                <div style="float: right; padding-bottom: 0px;  margin-right: 15px;">
+                    <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary  btn-sm" value="Export Excel">
+                    <!-- export xl file -->
+                    @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+                </div>
+            </div>
+            <table id="tblCableAssignedList" class="table table-bordered table-hover table-responsive " style="width: 100%">
+                <thead>
+                    <tr>
+                        <th style="" hidden="hidden"></th>
+                        @*cable distribution ID*@
+                        <th style="">Cable Type</th>
+                        <th style=""> Box/Drum Name</th>
+                        <th style=""> Quantity</th>
+                        <th style=""> Calculation</th>
+                        <th>Remarks</th>
+                        <th style="width: auto"> Date</th>
+                        <th>Login_ID</th>
+                        <th>Assigned Employee</th>
+                        @*<th> Cable For Employee </th>*@
+                        <th>Cable Status</th>
+                        @*<th>Status Activate Date</th>*@
+                        <th style="text-align: center; width: 5%">Action</th>
+                    </tr>
+                </thead>
+                @*<tbody>
+                    @foreach (var cableDistribution in Model)
+                    {
+                        string Name = "";
+                        var cableStatus = "";
+                        var dateTime = cableDistribution.UpdateDate == null ? cableDistribution.CreatedDate : cableDistribution.UpdateDate;
+                        var clientLoginName = cableDistribution.ClientDetails == null ? "" : cableDistribution.ClientDetails.LoginName;
+                        var employeeNameWhoWasTookCable = cableDistribution.Employee == null ? "" : cableDistribution.Employee.Name;
+                        var assignEmployeeName = "";
+                        if (cableDistribution.ClientDetails != null)
+                        {
+                            foreach (var vItem in (IEnumerable<ISP_ManagementSystemModel.Models.ClientSetByViewBag>)ViewData["lstTransaction"])
+                            {
+
+                                int clientDetailsIDFromDB = vItem.ClientDetailsID;
+                                //// int clientDetailsIDFromDB = @vItem.ClientDetailsID;
+                                if (@vItem.ClientDetailsID == cableDistribution.ClientDetailsID)
+                                {
+                                    Name = "<a href='#' onclick='GetClientDetailsByClientDetailsID(" + cableDistribution.ClientDetailsID + "," + vItem.TransactionID + ")'>" + cableDistribution.ClientDetails.Name + "</a>";
+                                }
+                            }
+                        }
+
+                        if (cableDistribution.CableForEmployeeID != null)
+                        {
+                            foreach (var item in ViewBag.lstEmployee)
+                            {
+                                if (item.EmployeeID == cableDistribution.CableForEmployeeID)
+                                {
+                                    assignEmployeeName = item.Name;
+                                }
+                            }
+                        }
+                        if (cableDistribution.CableIndicatorStatus == AppUtils.CableIndicatorStatusIsRunning)
+                        {
+                            cableStatus = "Running";
+                        }
+                        else if (cableDistribution.CableIndicatorStatus == AppUtils.CableIndicatorStatusIsOldBox)
+                        {
+                            cableStatus = "Old Box";
+                        }
+                        else if (cableDistribution.CableIndicatorStatus == AppUtils.CableIndicatorStatusIsStolen)
+                        {
+                            cableStatus = "Stolen";
+                        }
+                        else if (cableDistribution.CableIndicatorStatus == AppUtils.CableIndicatorStatusIsNotWorking)
+                        {
+                            cableStatus = "Not Working";
+                        }
+                        <tr>
+                            <td style="padding: 0px" hidden="hidden"><input type="hidden" id="" name="" value="@cableDistribution.CableDistributionID"/></td>
+                            <td>@cableDistribution.CableStock.CableType.CableTypeName</td>
+                            <td>@cableDistribution.CableStock.CableBoxName</td>
+                            <td>@cableDistribution.AmountOfCableUsed M</td>
+                            <td>@dateTime</td>
+                            <td>@Html.Raw(Name)</td>
+                            <td>@assignEmployeeName</td>
+                            <td>@employeeNameWhoWasTookCable</td>
+                            <td>@cableStatus</td>
+                            <td align='center' style="padding: 8px 5px;">
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Change_Cable_Status_To_Other_Such_New_Or_Old_Box_Or_Dead))
+                                {
+                                    <button type="button" id="btnEdit" class="btn btn-success  btn-sm"><span class="glyphicon glyphicon-edit"></span></button>
+                                }
+                                 @*   <button type="button" id="btnDelete" class="btn btn-danger  btn-sm"><span class="glyphicon glyphicon-remove"></span></button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>*@
+            </table>
+        </div>
+    </div>
+
+    if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Change_Cable_Status_To_Other_Such_New_Or_Old_Box_Or_Dead))
+    {
+        <div class="modal fade" id="mdlPopUp_Specific_Cable_Details" role="dialog" style="overflow:auto" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" style="width:45%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="btnPopUpUpdateSectionAndProductStatus" type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Change Section And Product Status </h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        @Html.Partial("Partial_Specific_Cable_Details")
+                    </div>
+                    <div class="modal-footer">
+                        <div id="PopUp" style="float:right">
+                            <input type="button" id="btnPopUpSpecificCableDetailsClose" value="Close" class="btn btn-default btn-sm" />
+                            <input type="button" id="btnUpdateCableStatus" value="Update Cable Status" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Client Information</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_SpecificCLientDetails")
+                </div>
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6 class="panel-title">Mikrotik</h6>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("MIkrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    @Html.Label("IP", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("IP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("Mac", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("Mac", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 " })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUpClientUpdate" style="float: right">
+                        <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Client))
+                        {
+                            <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Employee Permently?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnEmployeeDeletePermently" class="btn btn-success success">Delete Employee</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/Scripts/CustomScripts/ProductCurrentStatusManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdataeFromSeveralPageManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdateManager.js"></script>
+
+<script>
+    var _cableStockID = "";
+    var _cableDistributionID = "";
+
+    var pageID = '@ISP_ManagementSystemModel.AppUtils.View_Cable_Distributed_To_Client_Or_Employee';
+    var T_ID;
+    var T_DuePayment_ID;
+    var _ClientName;
+    var _ClientLoginName;
+    var tableRowIndexForUpdateClientName;
+    var _InformationUpdateForWhichPage = "cabledistributionHistory";
+    var _tblName = "tblCableAssignedList";
+    var _rowIndex = "";
+
+    function GetClientDetailsByClientDetailsID(clientDetailsID, t_ID) {
+        // AppUtil.ShowSuccess(clientDetailsID);
+        T_ID = t_ID;
+        //ClientUpdataeFromSeveralPageManager.GetClientDetailsByID(clientDetailsID);
+        ClientUpdateManager.GetClientDetailsByID(clientDetailsID);
+    }
+
+    $(document).ready(function () {
+
+        $("#"+_tblName+"").on("click","tr", function () {
+            _rowIndex = $(this).index();
+        });
+
+        var table = $("#tblCableAssignedList").DataTable
+        ({
+            "language":
+            {
+                "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+            },
+            "processing": true,
+            "serverSide": true,
+
+
+            "ajax":
+            {
+                "url": "/ProductCurrentStatus/CableUsedByCableStockIDOrClientIDInformation",
+                "type": "POST",
+                "dataType": "JSON",
+                data: function (d) {
+                    d.CableTypeID = $("#CableTypeID").val();
+                    d.CableStockID = $("#CableStockID").val();
+                    d.ClientDetailsID = $("#lstClientDetailsID").val();
+                    d.FromDate = $("#FromDate").val();
+                    d.ToDate = $("#ToDate").val();
+                    d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                }
+            },
+            //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+            "columnDefs": [
+                { "targets": [0], "data": "StockDetailsID", "render": function (data, type, row, meta) { return '<td hidden><input type="hidden" id="" name="" value=' + row.CableDistributionID + '></td>' } },
+                { "targets": [6], "data": "StockDetailsID", "render": function (data, type, row, meta) { return AppUtil.ParseDateTime(row.Date) } },
+                { "targets": [7], "data": "ClientName", "render": function (data, type, row, meta) { return row.ClientName !== "" ? "<a href='#' onclick='GetClientDetailsByClientDetailsID(" + row.ClientDetailsID + "," + row.TransactionID + ")'>" + row.ClientLoginName + "</a>" : "" } },
+                //{ "targets": [9], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.LineStatusActiveDate } },
+                { "targets": [10], "data": "ChangeSectionPermission", "render": function (data, type, row, meta) { return row.ChangeStatus === true ? '  <button type="button" id="btnEdit" class="btn btn-success  btn-sm"><span class="glyphicon glyphicon-edit"></span></button> ' : "" } },
+
+            ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                //console.log(nRow);
+
+                if (aData.IsPriorityClient) {
+                    $(nRow).removeClass('odd');
+                    $(nRow).addClass('changetrbackground');
+                }
+                else {
+                    //$(nRow).removeClass('changetrbackground');
+                    $(nRow).removeClass('changetrbackground');
+                }
+
+                $(nRow).find("td:eq(0)").attr("hidden", true);
+                $(nRow).find("td:eq(7)").css("color", "darkblue");
+                $(nRow).find("td:eq(8)").css("color", "darkblue");
+                $(nRow).find("td:eq(9)").css("color", "darkblue");
+                //$(nRow).find("td:eq(7)").css("padding", "8px 25px");
+                return nRow;
+            },
+
+            "columns": [
+                {
+                    "data": ""
+                },
+                {
+                    "data": "CableTypeName"
+                },
+                {
+                    "data": "CableBoxName"
+                },
+                {
+                    "data": "AmountOfCableUsed"
+                },
+                {
+                    "data": "CableFinishMinusView"
+                },
+                {
+                    "data": "Remarks"
+                },
+                {
+                    "data": "Date"
+                },
+                {
+                    "data": ""
+                },
+                {
+                    "data": "AssignEmployeeName"
+                },
+                //{
+                //    "data": "EmployeeTakenCable"
+                //},
+                {
+                    "data": "cableStatus"
+                },
+                //{
+                //    "data": ""
+                //},
+
+                {
+                    "data": ""
+                }
+            ]
+        });
+
+        $("#btnPopUpSpecificCableDetailsClose").click(function () {
+            $("#mdlPopUp_Specific_Cable_Details").modal("hide");
+        });
+
+        $("#tblCableAssignedList").on("click", "tr", function (e) {
+            //var index = $(this).index();
+            //alert("clicked :" + index);
+            tableRowIndexForUpdateClientName = $(this).index();
+        });
+
+        //$('#tblCableAssignedList').find('tr').click(function () {
+        //
+        //    tableRowIndexForUpdateClientName = $(this).index();
+        //});
+        $('#popsConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        //$('#popsBillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+
+        $("#PopUpClientUpdate").on("click", "#btnUpdateClientDetails", function () {
+
+            if (ClientUpdateManager.UpdateClientDetailsValidation() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <text>
+
+                        console.log($("#lstMikrotik").val());
+                        if ($("#lstMikrotik").val() === '' || $("#lstMikrotik").val() === null) {
+                            AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                            return false;
+                        }
+                        //if (AppUtil.GetIdValue("IP") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert IP.");
+                        //    return false;
+                        //}
+                        //if (AppUtil.GetIdValue("Mac") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert Mac.");
+                        //    return false;
+                        //}
+                    </text>
+                  // <script></script>
+
+                }
+                ClientUpdateManager.UpdateClientDetails();
+            }
+
+        });
+
+        $("#chkPackageFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#btnSearch").click(function() {
+
+            if (ProductCurrentStatusManager.FindCableDetailsByCableTypeOrStockOrClientIDSearch() === true) {
+                //var cableTypeID = $("#CableTypeID").val();
+                //var cableStockID = $("#CableStockID").val();
+                //var clientDetailsID = $("#lstClientDetailsID").val();
+
+                //ProductCurrentStatusManager.FindCableDetailsByCableBoxOrDrumOrByClientDetailsID(cableTypeID, cableStockID, clientDetailsID);
+
+                table.draw();
+            }
+        });
+
+        $("#CableTypeID").change(function () {
+
+            var cableTypeID = $("#CableTypeID").val();
+            ProductCurrentStatusManager.SearchCableBoxOrDrumNameByCableTypeID(cableTypeID);
+        });
+
+        $("#tblCableAssignedList").on("click", "#btnEdit", function () {
+
+            _cableDistributionID = $(this).closest("tr").find("td:eq(0) input").val();
+            $("#mdlPopUp_Specific_Cable_Details").modal("show");
+        });
+
+        //$("#tblCableAssignedList").on("click", "#btnDelete", function () {
+        //
+        //    _cableStockID = $(this).closest("tr").find("td:eq(0) input").val();
+        //    $("#mdlPopUp_Specific_Cable_Details").modal("show");
+        //});
+        $("#btnUpdateCableStatus").click(function () {
+            debugger;
+            var popRdbCableStatus = $("input[name='chkPassedGroup']:checked").val();
+            ProductCurrentStatusManager.ChangeCableStatus(_cableDistributionID, popRdbCableStatus);
+
+        });
+
+
+        $("#btnPopUpClientUpdateClose").click(function () {
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#tblEmployeeDetails").modal("hide");
+        });
+
+
+
+        $("#btnExportExcel").click(function () {
+            ProductCurrentStatusManager.PrintCableUsed(0);
+        });
+        $("#closeTblEmployeeDetails").click(function () {
+            //ClientDetailsManager.ClearClientDetailsModalInformation();
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#Status").css("display", "none");
+        });
+
+        $('#PopsLineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#FromDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#ToDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $("input:text, form").attr("autocomplete", "off");
+
+
+        $("#ContactNumber").keyup(function () {
+            var mob = $("#ContactNumber").val();
+            $("#SMSCommunication").val(mob);
+        });
+    });
+</script>

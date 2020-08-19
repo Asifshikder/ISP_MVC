@@ -1,0 +1,772 @@
+﻿@using ISP_ManagementSystemModel
+@model ISP_ManagementSystemModel.Models.ClientLineStatus
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<style>
+    .maxWidthFor {
+        max-width: 288px;
+    }
+
+    .required_field {
+        color: red;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .panel-heading {
+        height: 43px;
+    }
+
+
+    .padding {
+        padding: 3px 6px;
+    }
+</style>
+
+@*<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>*@
+<script src="~/Scripts/CustomScripts/ClientDetailsManager.js"></script>
+
+<script>
+
+    var itemAssignArray = [];
+    var cableAssignArray = [];
+    var cableLengthFromDB;
+    var cableUsedFromDB;
+    var cableCanBeUseForThisClientFromDB;
+    $(document).ready(function () {
+
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $('#ClientDetails_ConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnUpdateClientDetails").click(function () {
+            if (ClientUpdateManager.UpdateClientDetailsValidationDashBoard() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                 <text>
+                    if ($("#lstMikrotik").val() === '') {
+                        AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                        return false;
+                    }
+                    //if (AppUtil.GetIdValue("IP") === '') {
+                    //    AppUtil.ShowSuccess("Please Insert IP.");
+                    //    return false;
+                    //}
+                    //if (AppUtil.GetIdValue("Mac") === '') {
+                    //    AppUtil.ShowSuccess("Please Insert Mac.");
+                    //    return false;
+                    //}
+                </text> 
+                }
+                ClientDetailsManager.UpdateClientDetailsDashBoard();
+            }
+
+        });
+        $("#chkPackageFromRunningMonth").change(function () {
+              
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+              
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        //$("#btnSave").click(function () {
+        //      
+        //    //   if (ClientDetailsManager.Validation() === true) {
+        //      
+
+        //    ClientDetailsManager.InsertClientDetails(itemAssignArray, cableAssignArray);
+
+
+        //    //   }
+        //});
+
+        //$("#AssignItemToCustomer").change(function () {
+        //      
+        //    if ($(this).is(":checked")) {
+        //        //alert("checked");
+
+        //        // if (ClientDetailsManager.Validation() === true) {
+        //          
+        //        $("#mdlAssignStockToClientFromNewClient").modal("show");
+        //        //} else {
+        //        //      
+        //        //    $("#AssignItemToCustomer").prop('checked', false);
+        //        //}
+
+        //    } else {
+        //        // alert("Unchecked");
+        //        $("#mdlAssignStockToClientFromNewClient").modal("hide");
+        //    }
+        //});
+
+        //$("#lstStockID").change(function () {
+        //      
+        //    var stockID = $("#lstStockID").val();
+        //    ClientDetailsManager.GetStockDetailsItemListByStockID(stockID);
+        //});
+
+        //$("#CableStockID").change(function () {
+        //      
+        //    var cableStockID = $("#CableStockID").val();
+        //    ClientDetailsManager.SearchCableQuantityStockedByCableBoxOrDrumName(cableStockID);
+        //});
+
+        //$("#btnAddInAssignProductTableForCustomer").click(function () {
+        //    if (ClientDetailsManager.ValidationForAddItemInListForAssigningToCustomer() === true) {
+        //        var employeeID = $("#lstEmployeeID").val();
+        //        var stockID = $("#lstStockID").val();
+        //        var stockDetailsID = $("#lstStockDetailsID").val();
+        //        var customerID = "";
+
+        //        var employeeName = $("#lstEmployeeID option:selected").text();
+        //        var customerName = $("#Name").val();
+        //        var itemName = $("#lstStockID option:selected").text();
+        //        var itemSerial = $("#lstStockDetailsID option:selected").text();
+
+        //        var serialExist = false;
+
+        //        $("#tblItemList>tbody>tr").each(function () {
+        //              
+        //            var index = $(this).index();
+        //            var serial = $(this).find("td:eq(1) input").val();
+        //            if (serial == stockDetailsID) {
+        //                serialExist = true;
+        //            }
+        //        });
+        //          
+        //        if (itemAssignArray.filter(e=>e.StockDetailsID == stockDetailsID).length > 0) {
+        //              
+        //            serialExist = true;
+        //        }
+
+        //        if (serialExist) {
+        //            AppUtil.ShowSuccess("Sorry serial Already Added in the list. Choose different serial number.");
+        //        } else {
+        //            $("#tblItemList>tbody").append("<tr><td style='padding:0px;'><input type='hidden' value='" + stockID + "'></td><td style='padding:0px;'><input type='hidden' value='" + stockDetailsID + "'></td>\
+        //            <td style='padding:0px;'><input type='hidden' value='" + employeeID + "'></td><td style='padding:0px;'><input type='hidden' value='" + customerID + "'></td>\
+        //            <td>" + employeeName + "</td><td>" + customerName + "</td><td>" + itemName + "</td><td>" + itemSerial + "</td>\
+        //            <td align='center'><button id='btnDelete' type='button' class='btn btn-danger btn-sm padding' data-toggle='confirmation' data-placement='top'><span class='glyphicon glyphicon-remove'></span></button></td>\
+        //        </tr>");
+        //        }
+        //    }
+        //});
+
+        //$("#btnAddInAssignCableTableForCustomer").click(function () {
+        //    //  if (ClientDetailsManager.ValidationForAddItemInListForAssigningToCustomer() === true) {
+        //    //   var CableTypePopUpID = $("#CableTypePopUpID").val();
+
+        //    if (ClientDetailsManager.CableAddInListValidation()) {
+
+        //        var cableStockID = $("#CableStockID").val();
+        //        var employeeID = $("#lstEmployeeID").val();
+        //        var txtCableQuantity = $("#txtCableQuantity").val();
+        //        var customerID = "";
+
+        //        var employeeName = $("#lstEmployeeID option:selected").text();
+        //        var customerName = $("#Name").val();
+        //        var CableTypeName = $("#CableTypePopUpID option:selected").text();
+        //        var cableBoxOrDrumName = $("#CableStockID option:selected").text();
+
+        //        var cableStockExist = false;
+
+        //        $("#tblCableList>tbody>tr").each(function () {
+        //              
+        //            var index = $(this).index();
+        //            var CableStockID = $(this).find("td:eq(0) input").val();
+        //            if (CableStockID == cableStockID) {
+        //                cableStockExist = true;
+        //            }
+        //        });
+        //          
+        //        if (cableAssignArray.filter(e=>e.CableStockID == cableStockID).length > 0) {
+        //              
+        //            cableStockExist = true;
+        //        }
+
+        //        if (cableStockExist) {
+        //            AppUtil.ShowSuccess("Sorry Cable Already Added in the list. Choose different serial number. Remove first then again agiain.");
+        //        } else {
+        //            $("#tblCableList>tbody").append("<tr><td hidden='hidden' style=''><input type='hidden' value='" + cableStockID + "'></td><td hidden='hidden'><input type='hidden' value='" + txtCableQuantity + "'></td>\
+        //            <td hidden='hidden'><input type='hidden' value='" + employeeID + "'></td>\
+        //            <td>" + employeeName + "</td><td>" + customerName + "</td><td>" + CableTypeName + "</td><td>" + cableBoxOrDrumName + "</td><td>" + txtCableQuantity + "</td>\
+        //            <td align='center'><button id='btnDelete' type='button' class='btn btn-danger btn-sm padding padding' data-toggle='confirmation' data-placement='top'><span class='glyphicon glyphicon-remove'></span></button></td>\
+        //        </tr>");
+
+        //            $("#CableTypePopUpID").prop("selectedIndex", 0);
+        //            $("#CableStockID").find("option").not(":first").remove();
+        //            $("#txtCableQuantity").val("");
+        //            $("#lblTotalCableLength").text("").css("display", "none");
+        //            $("#lblUsedCableLength").text("").css("display", "none");
+        //            $("#lblDueCableLength").text("").css("display", "none");
+
+        //        }
+        //        // }
+        //    }
+
+        //});
+        ////$("#tblPop").DataTable({
+        ////    "pageLength": 3
+        ////});
+
+        //$("#CableTypePopUpID").change(function () {
+        //      
+        //    var cableTypePopUpID = $("#CableTypePopUpID").val();
+        //    ClientDetailsManager.SearchCableBoxOrDrumNameByCableTypeID(cableTypePopUpID);
+        //});
+
+        //$("#btnPopUpAssignItemForEmployee,#btnAssignItemForEmployeeClose").click(function () {
+        //    $("#mdlAssignStockToClientFromNewClient").modal("hide");
+        //});
+
+        //$("#btnAssignItemForEmployee").click(function () {
+        //      
+        //    itemAssignArray = [];
+        //    cableAssignArray = [];
+        //    if ($("#tblItemList>tbody>tr").length > 0 || $("#tblCableList>tbody>tr").length > 0) {
+        //        if ($("#tblItemList>tbody>tr").length > 0) {
+        //              
+        //            $("#tblItemList>tbody>tr").each(function () {
+        //                  
+        //                var stokID = $(this).find('td:eq(0) input').val();
+        //                var stokDetailsID = $(this).find('td:eq(1) input').val();
+        //                var employeeID = $(this).find('td:eq(2) input').val();
+        //                itemAssignArray.push({
+        //                    "StockID": stokID,
+        //                    "StockDetailsID": stokDetailsID,
+        //                    "EmployeeID": employeeID
+        //                });
+        //            });
+        //        }
+        //        if ($("#tblCableList>tbody>tr").length > 0) {
+        //              
+        //            $("#tblCableList>tbody>tr").each(function () {
+        //                  
+
+        //                var cableStockID = $(this).find('td:eq(0) input').val();
+        //                var cableQuantity = $(this).find('td:eq(1) input').val();
+        //                var employeeID = $(this).find('td:eq(2) input').val();
+        //                cableAssignArray.push({
+        //                    "CableStockID": cableStockID,
+        //                    "CableQuantity": cableQuantity,
+        //                    "EmployeeID": employeeID
+        //                });
+        //            });
+        //        }
+
+
+
+        //        //if (itemAssignArray.length > 0) {
+        //        //    StockManager.InsertStockItem(itemArray);
+        //        //}
+
+        //    } else {
+        //        AppUtil.ShowError("Please Add Information in table.");
+        //    }
+        //    $("#mdlAssignStockToClientFromNewClient").modal("hide");
+        //});
+
+        //$("#tblCableList").on("click", "#btnDelete", function () {
+        //      
+        //    var index = $(this).index();
+        //    var removeItemCableStockID = $(this).closest("tr").find("td:eq(1) input").val();
+        //    $("#tblCableList>tbody>tr:eq(" + index + ")").remove();
+
+        //    cableAssignArray = JQuery.grep(cableAssignArray, function (value) {
+        //        return removeItemCableStockID != value.CableStockID;
+        //    });
+
+
+        //});
+        //$("#tblItemList").on("click", "#btnDelete", function () {
+        //      
+        //    var index = $(this).index();
+        //    var removeItemStockDetailsID = $(this).closest("tr").find("td:eq(1) input").val();
+        //    $("#tblItemList>tbody>tr:eq(" + index + ")").remove();
+
+        //    itemAssignArray = jQuery.grep(itemAssignArray, function (value) {
+        //          
+        //        console.log(value);
+        //        return value.StockDetailsID != removeItemStockDetailsID;
+        //    });
+
+        //});
+
+        $('#LineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+
+    @Html.HiddenFor(model => model.ClientDetailsID)
+    @Html.HiddenFor(model => model.ClientLineStatusID)
+    @Html.Hidden("TransactionID", (int)@ViewBag.TransactionID)
+
+
+    <div class="container" id="main-container" style="padding-left: 0px; padding-top: 0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <section class="content-header">
+                    <h6 class="panel-title">
+                        Update Client Information
+                    </h6>
+                    <ol class="breadcrumb">
+                        <li><a href="/Client/GetAllCLients"><i class="fa fa-dashboard"></i> Client</a></li>
+                        <li class="active"> <a href="/Client/Create"> New Client </a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Name, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.Name, new { @class = "form-control input-sm col-sm-11", @placeholder = " Name " })
+                    </div>
+
+                </div>
+
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Email, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.Email, new { @class = "form-control input-sm col-sm-11", @placeholder = " Email " })
+                    </div>
+                </div>
+
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.LoginName, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.LoginName, new { @class = "form-control input-sm col-sm-11", @placeholder = " Login Name " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Password, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.Password("Password", (string)ViewBag.Password, new { @class = "form-control input-sm col-sm-11", @placeholder = " Password " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Address, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.Address, new { @class = "form-control input-sm col-sm-11", @placeholder = " Address " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.ContactNumber, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.ContactNumber, new { @class = "form-control input-sm col-sm-11", @placeholder = " Contact Number " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Zone, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("ZoneID", null, "-- Select Zone --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Zone " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.SMSCommunication, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.SMSCommunication, new { @class = "form-control input-sm col-sm-11", @placeholder = " SMS Communication " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Occupation, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.Occupation, new { @class = "form-control input-sm col-sm-11", @placeholder = " Occupation " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.SocialCommunicationURL, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.SocialCommunicationURL, new { @class = "form-control input-sm col-sm-11", @placeholder = " Social Communication URL " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Remarks, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.Remarks, new { @class = "form-control input-sm col-sm-11", @placeholder = " Remarks " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.ConnectionType, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("ConnectionTypeID", null, "-- Select Connection Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Connection Type " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.BoxNumber, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.BoxNumber, new { @class = "form-control input-sm col-sm-11", @placeholder = " Box Number " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.PopDetails, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.PopDetails, new { @class = "form-control input-sm col-sm-11", @placeholder = " Pop Details " })
+                    </div>
+                </div>
+
+                @*<div class="form-group col-sm-6">
+            <div>
+                @Html.LabelFor(model => model.RequireCable, new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div style="clear: both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.TextBoxFor(model => model.RequireCable, new { @class = "form-control input-sm col-sm-11", @placeholder = " Require Cable " })
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div>
+                @Html.LabelFor(model => model.CableType, new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div style="clear: both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("CableTypeID", null, "-- Select Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Cable Type " })
+            </div>
+        </div>*@
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.Reference, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.Reference, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reference " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.NationalID, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.NationalID, new { @class = "form-control input-sm col-sm-11", @placeholder = " National ID " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.Package, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("PackageID", null, "-- Select Package --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Package " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Signup Fee", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("SingUpFee", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " SingUpFee " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.SecurityQuestionID, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("SecurityQuestionID", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " SecurityQuestion " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.SecurityQuestionAnswer, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.SecurityQuestionAnswer, new { @class = "form-control input-sm col-sm-11", @placeholder = " Security Question Answer " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.MacAddress, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.MacAddress, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mac Address " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Bill Payment/Cycle Date", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @* @Html.TextBox("BillPaymentDate", (DateTime)ViewBag.BillPaymentDate, new { @class = "form-control input-sm col-sm-11", @placeholder = " Bill Payment Date " })*@
+                        @Html.TextBox("BillPaymentDate", (int)ViewBag.BillPaymentDate, new { @class = "form-control input-sm col-sm-11", @placeholder = " Bill Payment/Cycle Date ", @type = "number", @min = "1", @max = "31" })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.ClientSurvey, new { @class = "control-label col-md-0", Style = "float:left" })
+                        @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.ClientSurvey, new { @class = "form-control input-sm col-sm-11", @placeholder = " Client Survey " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.LabelFor(model => model.ClientDetails.ConnectionDate, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.ClientDetails.ConnectionDate, new { @class = "form-control input-sm col-sm-11", @placeholder = " Connection Date " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("LineStatus", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("LineStatusID", null, "-- Select Line Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Connection Date " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Lock/Active Date", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                    </div>
+                    <div style="clear:both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("LineStatusActiveDate", (string)ViewBag.LineStatusActiveDate, new { @class = "form-control input-sm col-sm-11", @placeholder = " Lock/Active Date " })
+                    </div>
+                </div>
+
+
+                <div class="form-group col-sm-6">
+                    <div style="font-weight:bold">@Html.CheckBox("IsPriorityClient", Model.ClientDetails.IsPriorityClient) Is Priority Client? </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Reason", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                    </div>
+                    <div style="clear:both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBoxFor(model => model.StatusChangeReason, null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Change Reason " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-12">
+                    <div>
+                        @Html.Label("Client Items List:", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;width:96%">
+                        <div id="txtItemAndCablesAssign" class="form-control input-sm" style="border:1px solid #DeD6De; height:auto; min-height:30px;">@Html.Raw(ViewBag.TotalProductList)</div>
+                        @*@Html.TextArea("txtItemAndCablesAssign", null,  new { @class = "form-control input-sm col-sm-11", @placeholder = " Employee Given Items " })*@
+                    </div>
+                </div>
+                <div class="form-group col-sm-6" hidden>
+                    <div>
+                        @Html.Label("Reseller", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("ResellerID", null, "-- Select Reseller --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Reseller " })
+                    </div>
+                </div>
+                <div class="row"></div>
+
+                @*<div class="form-group col-sm-6">
+            <div>
+                @Html.Label("Assign Item to Employee ", new { @class = "control-label col-md-0", Style = "float:left" })
+                <div class="col-md-3" style="padding-left: 20px;">
+                    @Html.CheckBox("AssignItemToCustomer", false)
+                </div>
+            </div>
+        </div>*@
+
+
+
+                @*<div class="form-group col-sm-6">
+            <div style="font-weight:bold">@Html.CheckBox("chkFromRunningMonth") Package will Activate from running month </div>
+            <input type="hidden" value="false" name="chkFromRunningMonth" />
+        </div>*@
+
+
+                <div class="form-group col-sm-6">
+                    <div style="font-weight:bold">@Html.CheckBox("chkPackageFromRunningMonth") Package will Activate from running month </div>
+                    <input type="hidden" value="false" name="chkPackageFromRunningMonth" />
+                </div>
+                <div class="form-group col-sm-6">
+                    <div style="font-weight:bold">@Html.CheckBox("chkStatusFromRunningMonth") Status Will Activate From Now </div>
+                    <input type="hidden" value="false" name="chkStatusFromRunningMonth" />
+                </div>
+
+            </div>
+            @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">Mikrotik</h6>
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="form-group col-sm-1"></div>
+                        <div class="form-group col-sm-6">
+                            <div>
+                                @Html.Label("MIkrotik", new {@class = "control-label col-md-0", Style = "float:left"})
+                                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                            </div>
+                            <div style="clear: both"> </div>
+                            <div class="col-md-11" style="padding-left: 0px;">
+                                @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new {@class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik "})
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-5">
+                            <div>
+                                @Html.Label("IP", new {@class = "control-label col-md-0", Style = "float:left"})
+                                @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                            </div>
+                            <div style="clear: both"> </div>
+                            <div class="col-md-11" style="padding-left: 0px;">
+                                @Html.TextBox("IP", null, new {@class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 "})
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-1"></div>
+                        <div class="form-group col-sm-6">
+                            <div>
+                                @Html.Label("Mac", new {@class = "control-label col-md-0", Style = "float:left"})
+                                @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                            </div>
+                            <div style="clear: both"> </div>
+                            <div class="col-md-11" style="padding-left: 0px;">
+                                @Html.TextBox("Mac", null, new {@class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 "})
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+            <div style="margin-left: 30px;">
+                <input type="button" id="btnUpdateClientDetails" value="Update" class="btn btn-primary btn-md" />
+            </div>
+        </div>
+
+    </div>
+
+}
+

@@ -1,0 +1,233 @@
+﻿@model ISP_ManagementSystemModel.Models.Stock
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+<style>
+    .panel-heading {
+        height: 55px;
+    }
+
+    .required_field {
+        color: red;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .panel-heading {
+        height: 43px;
+    }
+
+    .padding {
+        padding: 3px 6px;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_ProductORItem_In_Stock))
+{
+
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.StockID)
+
+        <div class="panel panel-default" style="padding-bottom: 20px;margin-bottom: 0px;">
+            <div class="panel-heading" style=" height 45px;">
+                <section class="content-header" style="padding: 5px 10px 0px 15px;">
+                    <h6 class="panel-title">All Search Crieteria</h6>
+                    <ol class="breadcrumb" style="padding: 0px 5px;     top: 5px;">
+                        <li class="active"><a href="/stock/stocklist"><i class="fa fa-dashboard"></i> All Stock List</a></li>
+
+                    </ol>
+                </section>
+            </div>
+            <div class="panel-body">
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Item Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("ItemID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                    </div>
+                </div>
+
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Brand", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("BrandID", null, "-- Select Brand --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Brand " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Serial Number", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("txtSerialNumber", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Serial Number " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Supplier", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("SupplierID", null, "-- Select Supplier --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Supplier " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Supplier Invoice", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("txtSupplierInvoice", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Supplier Invoice Number " })
+                    </div>
+                </div>
+            </div>
+            <div style="margin-left: 30px;">
+                <input type="button" id="btnAddInList" value="Add In List" class="btn btn-primary btn-sm" />
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-bottom: 0px">
+            <div class="panel-heading">
+                <section class="content-header" style="padding: 0px 0px 0px 0px">
+                    <h6 class="panel-title">Stock Item List For Add</h6>
+                </section>
+            </div>
+            <div class="panel-body">
+                <table id="tblStock" class="table table-striped table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th style="padding:0px"></th>
+                            <th>
+                                @Html.DisplayName("Item Name")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Serial")
+                            </th>
+                            <th style="padding:0px"></th>
+                            <th>
+                                @Html.DisplayName("Brand Name")
+                            </th>
+                            <th style="padding:0px"></th>
+                            <th>
+                                @Html.DisplayName("Supplier Name")
+                            </th>
+                            <th>
+                                @Html.DisplayName("SupplierInvoice")
+                            </th>
+                            <th style="text-align: center; width: 5%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div style="margin-left: 15px;">
+                    <input type="button" id="btnSave" value="Save" class="btn btn-primary btn-sm" />
+                </div>
+
+            </div>
+        </div>
+
+    }
+}
+
+<script src="~/Scripts/CustomScripts/StockManager.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+@section scripts{
+    <script>
+        var SerialExist = "";
+        var AddedInList = "";
+        var itemArray = [];
+        $(document).ready(function () {
+
+            $("#btnAddInList").click(function () {
+                if (StockManager.AddInListForWarrentyProductValidation()) {
+                    StockManager.AddItemInList();
+                }
+            });
+
+            $('#ConnectionDate').datepicker({
+                dateFormat: 'mm/dd/yy',
+                numberOfMonths: 1,
+                changeMonth: true,
+                changeYear: true
+            });
+
+            $("#tblStock").on("click", "#btnDelete", function () {
+
+                $(this).closest("tr").remove();
+            });
+
+            $("#btnSave").click(function () {
+                if ($("#tblStock>tbody>tr").length > 0) {
+
+                    $("#tblStock>tbody>tr").each(function () {
+
+                        var ItemID = $(this).find('td:eq(0) input').val();
+                        var BrandID = $(this).find('td:eq(3) input').val();
+                        var SupplierID = $(this).find('td:eq(5) input').val();
+                        var SupplierInvoice = $(this).find('td:eq(7)').text();
+                        var Serial = $(this).find('td:eq(2)').text();
+                        var WarrentyProduct = true;
+                        itemArray.push({
+                            "ItemID": ItemID,
+                            "BrandID": BrandID,
+                            "SupplierID": SupplierID,
+                            "SupplierInvoice": SupplierInvoice,
+                            "Serial": Serial,
+                            "WarrentyProduct": WarrentyProduct
+                        });
+                    });
+
+                    if (itemArray.length > 0) {
+                        StockManager.InsertStockItem(itemArray);
+                    }
+
+                    //$("#tblStock>tbody").each(function () {
+                    //
+                    //    var itemID = $(this);
+                    //    $.each(itemID, function(index,item) {
+                    //
+                    //        var items = item.close;
+                    //    });
+
+                    //    var id = itemID.find('td:eq(0) input').val();
+                    //});
+
+                } else {
+                    AppUtil.ShowError("Please Add Information in table.");
+                }
+            });
+        });
+    </script>
+}
+
+

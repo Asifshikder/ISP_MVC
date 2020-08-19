@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using System.Web.DynamicData;
+
+using System.ComponentModel.DataAnnotations.Schema;namespace ISP_ManagementSystemModel.Models
+{
+    //[Table("e")]
+    public class BannedStatus
+    {
+        [Key]
+        //[Column("A")]
+        public int BannedStatusID { get; set; }
+        //[Column("B")]
+        public string BannedStatusName { get; set; }
+    }
+}

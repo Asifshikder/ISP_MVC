@@ -1,0 +1,199 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.ProductStatus>
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+@Html.AntiForgeryToken()
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Product Status</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/ProductStatus/Index"><i class="fa fa-dashboard"></i> All Product Status</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+
+            <table id="tblProductStatus" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName(" Product Status List")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Product_Status))
+                            {
+                                <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => item.ProductStatusID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProductStatusName)
+                            </td>
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Product_Status))
+                                {
+                                    <a href="" id="showProductStatusForUpdate">Show</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Product_Status))
+        {
+            <div class="modal fade" id="mdlProductStatusInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertProductStatusModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Product Status Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label(" Status Name ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("ProductStatusName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Product Status Name " })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpProductStatusInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertProductStatus" value="Save Product Status" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Product_Status))
+        {
+
+            <div class="modal fade" id="mdlProductStatusUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateProductStatusModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Product Status Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_ProductStatus")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpProductStatusUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateProductStatus" value="Update Product Status" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>
+
+
+<script src="~/Scripts/CustomScripts/ProductStatusManager.js"></script>
+<script>
+
+    var ProductStatusID;
+    $(document).ready(function () {
+
+        $("#tblProductStatus").on("click", "#showProductStatusForUpdate", function (e) {
+
+            e.preventDefault();
+            ProductStatusID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            ProductStatusManager.ShowProductStatusDetailsByIDForUpdate(ProductStatusID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlProductStatusInsert").modal("show");
+        });
+
+
+        $("#btnInsertProductStatus").click(function (e) {
+
+            if (ProductStatusManager.CreateValidation() === true) {
+
+                ProductStatusManager.InsertProductStatusFromPopUp();
+            }
+        });
+
+        $("#btnUpdateProductStatus").click(function () {
+
+            if (ProductStatusManager.UpdateValidation() === true) {
+
+                ProductStatusManager.UpdateProductStatusInformation();
+            }
+        });
+        //btnPopUpPackageClose
+
+
+
+        $("#btnPopUpProductStatusInsertClose").click(function (e) {
+            ProductStatusManager.clearForSaveInformation();
+            $("#mdlProductStatusInsert").modal("hide");
+        });
+
+        $("#btnPopUpProductStatusUpdateClose").click(function () {
+            ProductStatusID = "";
+            ProductStatusManager.clearForUpdateInformation();
+            $("#mdlProductStatusUpdate").modal("hide");
+        });
+        $('#btnInsertProductStatusModalClose').click(function () {
+            ProductStatusManager.clearForSaveInformation();
+        });
+        $('#btnUpdateProductStatusModalClose').click(function () {
+            ProductStatusManager.clearForUpdateInformation();
+        });
+
+        $("#tblProductStatus").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            ProductStatusManager.PrintProductStatusList();
+        });
+    });
+
+
+</script>

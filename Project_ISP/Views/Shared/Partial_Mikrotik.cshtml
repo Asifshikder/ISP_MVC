@@ -1,0 +1,47 @@
+﻿<div class="form-group col-sm-12">
+
+    <div>
+        @Html.Label("Mikrotik Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("MikrotikNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mikrotik Name " })
+        </div>
+    </div>
+    <div>
+        @Html.Label("Real IP", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("RealIPs", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Real IP " })
+        </div>
+    </div>
+    <div>
+        @Html.Label("Mikrotik User Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("MikUserNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mikrotik User Name " })
+        </div>
+    </div>
+    <div>
+        @Html.Label("Mikrotik Password", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("MikPasswords", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mikrotik Password" })
+        </div>
+    </div>
+    <div>
+        @Html.Label("API Port", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("APIPorts", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " API Port " })
+        </div>
+    </div>
+    <div>
+        @Html.Label("Web Port", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("WebPorts", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Web Port " })
+        </div>
+    </div>
+    
+    @*<div class="form-group col-sm-6">
+        @Html.Label("IP_Pool", new { @class = "control-label col-md-0", Style = "float:left" })
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("IPPoolIDs", null, "-- Select Ip Pool --", new { @class = "form-control input-sm col-sm-11", @placeholder = " IP Pool " })
+        </div>
+    </div>*@
+</div>

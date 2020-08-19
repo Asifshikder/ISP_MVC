@@ -1,0 +1,166 @@
+﻿
+@model List<ISP_ManagementSystemModel.Models.ISPAccessList>
+@*@model List<ISP_ManagementSystemModel.ViewModel.VM_Form_Action_UserRight>*@
+@{
+    //Layout = null;
+}
+
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+<script src="~/Scripts/CustomScripts/AccountManager.js"></script>
+@*<script src="~/Scripts/CustomScripts/Tree.js"></script>*@
+@*<link href="~/Content/tree.css" rel="stylesheet" />*@
+
+<script>
+    $(document).ready(function () {
+        //$("#btnLoad").click(function () {
+        //      
+        //    //$("#B10").prop('checked', false);
+        //    var userRightID = $("#UserRightID").val();
+        //    AccountManager.GetUserPermissionDetailsByUserRightID(userRightID);
+        //});
+        $("#UserRightID").change(function () {
+              
+            //$("#B10").prop('checked', false);
+            $("input:checkbox").prop("checked", false);
+            var userRightID = $("#UserRightID").val();
+            if (userRightID > 0) {
+                AccountManager.GetUserPermissionDetailsByUserRightID(userRightID);
+            }
+
+        });
+        $("#lnkForAddNewUserRightName").click(function (e) {
+            e.preventDefault();
+            $("#mdlUserRightInsert").modal("show");
+        });
+        $("#btnPopUpUserRightInsertClose").click(function () {
+            $("#mdlUserRightInsert").modal("hide");
+        });
+
+        $("#btnInsertUserRight").click(function () {
+              
+            if (AccountManager.ValidationForInserUserRightPermissionName() === true) {
+                var userRightPermissionID = $("#txtUserRightName").val();
+                AccountManager.AddUserRightName(userRightPermissionID);
+            }
+        });
+        $("#chkAllCheckBox").click(function () {
+            $('input[type="checkbox"]').prop("checked", true);
+        });
+        $("#unChkAllCheckBox").click(function () {
+            $('input[type="checkbox"]').prop("checked", false);
+        });
+
+    });
+</script>
+@if (TempData["ShowMessage"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["ShowMessage"].ToString()');
+    </script>
+}
+@if (TempData["UserPermissionSavedSuccessfull"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["UserPermissionSavedSuccessfull"].ToString()');
+    </script>
+}
+
+@if (TempData["Fail"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["Fail"].ToString()');
+    </script>
+}
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm("SetUserPermission", "Account", FormMethod.Post))
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">Permission List<a href="" style="float:right; font-weight:bold;" id="lnkForAddNewUserRightName">New Permission Name</a></h6>
+            </section>
+        </div>
+
+        <div class="panel-body">
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("UserRight", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div style="clear: both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("UserRightID", null, "-- User Right --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Zone " })
+                </div>
+            </div>
+            <div class="form-group col-sm-6" style="margin-top: 25px">
+                @*<button id="btnSave" class="btn btn-default">btnSave</button>*@
+                <input class="btn btn-sm btn-primary" type="submit" value="Save Acccess Right" />
+            </div>
+        </div>
+    </div>
+    <div style="padding: 0px; margin: 0px; padding-left: 30px">
+        <input  class="btn btn-sm btn-primary" type="button" id="chkAllCheckBox" value="Check All CheckBox"/>
+        <input class="btn btn-sm btn-primary" type="button" id="unChkAllCheckBox" value="UnCheck All CheckBox" />
+    </div>
+    <div style="margin-top: 20px; background-color: white; margin-bottom: 0px; border: 1px solid transparent; border-radius: 4px;">
+
+        <table class="table table-striped table-responsive">
+
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                if (i % 3 == 0)
+                {
+                    @:
+                    <tr></tr>
+                }
+                <td style="padding-left: 30px">@Html.CheckBoxFor(model => model[i].IsGranted,new {@id =  Model[i].AccessValue })</td>
+                @Html.HiddenFor(model => model[i].ISPAccessListID)
+                @Html.HiddenFor(model => model[i].AccessValue)
+                @Html.HiddenFor(model => model[i].AccessName)
+
+                <td>@Html.Label(Model[i].AccessName) </td>
+
+            }
+        </table>
+        @*<input type="submit" value="Save Acccess Right" />*@
+
+    </div>
+
+}
+
+<div class="modal fade" id="mdlUserRightInsert" role="dialog" style="overflow:auto" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width:45%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="btnInsertZoneModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Permission Name</h4>
+            </div>
+            <div class="modal-body panel-body">
+
+                <div class="form-group col-sm-12">
+                    <div>
+                        @Html.Label("User Right Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                        <div class="col-md-8" style="padding-left: 0px;float:left">
+                            @Html.TextBox("txtUserRightName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "User Right Name" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+                <div id="PopUp" style="float:right">
+                    <input type="button" id="btnPopUpUserRightInsertClose" value="Close" class="btn btn-default btn-sm" />
+                    <input type="button" id="btnInsertUserRight" value="Save User Right Name" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

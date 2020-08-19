@@ -1,0 +1,625 @@
+﻿@model ISP_ManagementSystemModel.ViewModel.VM_Package_ClientDetails
+@{
+    ViewBag.Title = "Reseller Payment History";
+}
+<style>
+    .ui-autocomplete {
+        z-index: 2147483647;
+    }
+</style>
+<link href="~/Content/select2.min.css" rel="stylesheet" />
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+        <section class="content-header">
+            <h6 class="panel-title">Search Bill By Date</h6>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Bill Payment By Me</a></li>
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        <div class="form-group col-sm-12">
+
+            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_All_ResellerPayment_List))
+            {
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Reseller Login Name", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    <div style="clear: both">
+                    </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("ResellerLoginID", null, "-- All Releller --", new { @class = "form-control input-sm select2" })
+                    </div>
+                </div>
+            }
+
+
+            <div class="form-group col-sm-3">
+                <div>
+                    @Html.Label("Payment Start Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both">
+                </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("PaymentStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Start Date " })
+                </div>
+            </div>
+            <div class="form-group col-sm-3">
+                <div>
+                    @Html.Label("Payment End Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                </div>
+                <div style="clear: both">
+                </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("PaymentEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment End Date " })
+                </div>
+            </div>
+            <div class="form-group col-sm-2">
+                <div style="float: left;margin-top: 25px;">
+                    <input type="button" id="btnSearch" value="Search By Date" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+        <section class="content-header">
+            <h6 class="panel-title">All Payment History</h6>
+            @*<ol class="breadcrumb">
+                    <li class="active"><a href="/Package/Index"><i class="fa fa-dashboard"></i> All Packages</a></li>
+
+                </ol>*@
+        </section>
+    </div>
+    <div class="panel-body" style="overflow: auto">
+
+        @*<div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+
+            </div>*@
+        <table id="tblResellerPayment" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%; overflow:auto;">
+            <thead>
+                <tr>
+
+                    <th hidden="hidden">
+                    </th>
+                    <th hidden="hidden">
+                    </th>
+                    <th>
+                        @Html.DisplayName("Year")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Month")
+                    </th>
+                    <th>
+                        @Html.DisplayName("User_Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Address")
+                    </th>
+                    @*<th>
+                            @Html.DisplayName("Last_Amount")
+                        </th>*@
+                    <th>
+                        @Html.DisplayName("Amount")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Payment_From")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Check_Or_ResetNo")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Payment_Status")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Type")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Reseller_Status")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Collect_By")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Entry_By")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Active_By")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Delete_By")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Payment_Time")
+                    </th>
+                    <th>
+                        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_ResellerPayment))
+                        {
+                            <a href="" style="font-weight:800;color: crimson" id="createNew"> Create_New </a>
+                        }
+                    </th>
+                </tr>
+            </thead>
+        </table>
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_ResellerPayment)
+          || ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_ResellerPayment))
+        {
+            <div class="modal fade" id="mdlPayment" role="dialog" style="overflow: auto" data-keyboard="fase" data-backdrop="static">
+                <div class="modal-dialog modal-lg" style="width: 75%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnPopUpModalDefaultPaymentClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Reseller Payment</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Reseller Login Name", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("txtResellerLoginName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Login Name " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Reseller Type", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("txtResellerType", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Reseller Type " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Business Name", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("txtResellerBusinessName", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Business Name " })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Address", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("txtResellerAddress", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Address " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Phone", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("txtResellerPhone", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Phone " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Logo", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        <img id="ResellerLogoPath" src="" width="100" height="90" onclick="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-3">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Payment Amount", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("txtResellerPaymentAmount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Amount " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("Collect_By", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.DropDownList("ddlResellerCollectBy", null, "-- Select Collect By --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Collect By " })
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.Label("CheckNo/ResetNo", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("txtCheckSerialOrAnyResetNo", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " CheckNo/ResetNo " })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="clear:both">
+                                <div class="form-group col-sm-4">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Payment From", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both">
+                                        </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("ddlPaymentBy", null, "-- Select Payment From --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Payment From" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Payment Type", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both">
+                                        </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("ddlPaymentType", null, "-- Select Payment Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Payment Type" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.Label("Payment Status", null, new { @class = "control-label col-sm-12", Style = "float:left" })
+                                        </div>
+                                        <div style="clear: both">
+                                        </div>
+                                        <div class="col-md-12" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("ddlPaymentStatus", null, "-- Select Payment Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Payment Status " })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpPaymentClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertResellerPayment" value="Save Payment" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm Submit
+            </div>
+            <div class="modal-body">
+                Are you sure you want to Delete This Payment.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a href="#" id="btnPaymentDelete" class="btn btn-success success">Delete Payment</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/CustomScripts/ResellerManager.js"></script>
+<script src="~/Scripts/select2.full.js"></script>
+<script>
+    var _resellerID = '';
+    var _resellerPaymentID = '';
+    var tableRsellerPaymentHistory;
+    $(document).ready(function () {
+        $('#ddlPaymentStatus').val("2").select2({ width: '100%' }).trigger('change');
+        $('#ddlPaymentBy').select2({ width: '100%' });
+        $('#ddlResellerCollectBy').select2({ width: '100%' });
+        //$(".select2").select2();
+        $('#PaymentStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#PaymentEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#ResellerLoginID").on("change", function () {
+            tableRsellerPaymentHistory.draw();
+        });
+
+        tableRsellerPaymentHistory = $("#tblResellerPayment").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+                "ajax":
+                {
+                    "url": "/Reseller/GetAllResellerPaymentAJAXData",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.ResellerID = $("#ResellerLoginID").val();
+                        d.PaymentStartDate = $("#PaymentStartDate").val();
+                        d.PaymentEndDate = $("#PaymentEndDate").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [{
+                    "orderable": false, "targets": 18
+                },
+                { "targets": [0], "width": "5%" },
+                { "targets": [0], "data": "ResellerPaymentID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='ResellerPaymentID' name='ResellerPaymentID' value=" + row.ResellerPaymentID + "></td>" } },
+                { "targets": [1], "data": "RID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='RID' name='RID' value=" + row.ResellerID + "></td>" } },
+
+                    //{ "targets": [5], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.PackageUpdate === true ? '<a href="" id="showPackageForUpdate">Show</a>' : "" } }
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    $(nRow).find("td:eq(1)").attr("hidden", true);
+                    //$(nRow).find("td:eq(5)").css("color", "darkblue");
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "PaymentYear"
+                    },
+                    {
+                        "data": "PaymentMonth"
+                    },
+                    {
+                        "data": "ResellerLoginName"
+                    },
+                    {
+                        "data": "ResellerName"
+                    },
+                    {
+                        "data": "ResellerAddress"
+                    },
+                    //{
+                    //    "data": "LastAmount"
+                    //},
+                    {
+                        "data": "PaymentAmount"
+                    },
+                    {
+                        "data": "PaymentBy"
+                    },
+                    {
+                        "data": "PaymentCheckOrAnySerial"
+                    },
+                    {
+                        "data": "PaymentStatus"
+                    },
+                    {
+                        "data": "PaymentTypeID"
+                    },
+                    {
+                        "data": "ResellerStatus"
+                    },
+                    {
+                        "data": "Collectby"
+                    },
+                    {
+                        "data": "CreatedBy"
+                    },
+                    {
+                        "data": "ActiveBy"
+                    },
+                    {
+                        "data": "DeleteBy"
+                    },
+                    {
+                        "data": "PaymentTime"
+                    },
+                    {
+                        "data": "Button"
+                    }
+                ]
+            });
+
+
+        $("#tblResellerPayment").on("click", "tr", function () {
+
+            _resellerPaymentID = $(this).closest("tr").find("td:eq(0) input").val();
+            // ClientDetailsManager.DeleteClientDetails();
+        });
+        $("#tblResellerPayment").on("click", "#btnEdit", function (e) {
+
+            e.preventDefault();
+            _resellerPaymentID = $(this).closest("tr").find("td:eq(0) input").val();
+            _resellerID = $(this).closest("tr").find("td:eq(1) input").val();
+
+            ResellerManager.ShowResellerPaymentDetailsByIDForUpdate(_resellerPaymentID);
+        });
+
+        $("#btnPaymentDelete").on("click", function (e) {
+            e.preventDefault();
+            ResellerManager.DeleteResellerPaymentHistoryByID(_resellerPaymentID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlPayment").modal("show");
+        });
+
+        $("#btnPopUpPaymentClose,#btnPopUpModalDefaultPaymentClose").click(function (e) {
+            ResellerManager.ClearForPaymentInformation();
+            $("#mdlPayment").modal("hide");
+        });
+
+
+        $("#btnInsertResellerPayment").click(function (e) {
+
+            //if (ResellerManager.CreatePaymentValidation() === true) {
+            ResellerManager.InsertResellerPaymentFromPopUp();
+            //}
+        });
+
+        //$("#btnUpdatePackage").click(function () {
+        //    if (PackageManager.Validation() === true) {
+        //        PackageManager.UpdatePackageInformation();
+        //    }
+        //});
+        //btnPopUpPackageClose
+
+        //$("#btnPopUpPackageClose").click(function () {
+        //    $("#mdlPackageUpdate").modal("hide");
+        //});
+
+        //$("#btnExportExcel").click(function () {
+        //    PackageManager.PrintPackageList();
+        //});
+
+        $("#btnSearch").click(function () {
+            tableRsellerPaymentHistory.draw();
+        });
+
+
+        $("#txtResellerLoginName").autocomplete({
+            focus: function (event, ui) {
+                _resellerID = "";
+                _resellerPaymentID = "";
+
+                //_ClientDetailsID = ui.item.val;
+
+                console.log("event focus : " + ui.item.val);
+                console.log("focus : " + ui.item.val);
+                // or $('#autocomplete-input').val(ui.item.label);
+
+                // Prevent the default focus behavior.
+                event.preventDefault();
+                // or return false;
+                _resellerID = ui.item.val;
+                ResellerManager.GetResellerDetailsByID(ui.item.val);
+            },
+
+            source: function (request, response) {
+                _resellerID = "";
+                _resellerPaymentID = "";
+                //$("#txtResellerLoginName").val("");
+                $("#txtResellerType").val("");
+                $("#txtResellerBusinessName").val("");
+                $("#txtResellerAddress").val("");
+                $("#txtResellerPhone").val("");
+                $("#ResellerLogoPath").prop("src", "");
+                $("#txtResellerPaymentAmount").val("");
+                $("#ddlResellerCollectBy").val("");
+                $("#txtCheckSerialOrAnyResetNo").val("");
+                $("#ddlPaymentBy").val("").select2({ width: '100%' }).trigger('change');
+                $("#ddlPaymentType").val("").select2({ width: '100%' }).trigger('change');
+                $("#ddlPaymentStatus").val("2").select2({ width: '100%' }).trigger('change');
+
+                $.ajax({
+                    url: "/Reseller/GetAutoCompleateInformationForSearchCriteria",
+                    data: "{ 'SearchText': '" + request.term + "'}",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        response($.map(data, function (item) {
+                            //
+                            //return {
+                            //    label: item.label,
+                            //    value: item.val
+                            //};
+
+                            return item;
+                        }));
+                    },
+                    error: function (data) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+
+
+                });
+            }
+            ,
+            select: function (e, i) {
+
+                console.log("event select : " + e);
+                console.log(" select : " + i.item.val);
+                //$("#hfCustomer").val(i.item.val);
+            },
+            open: function () {
+                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+            },
+            close: function () {
+                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+            }
+            ,
+            minLength: 1
+        });
+    });
+
+</script>

@@ -1,0 +1,36 @@
+﻿
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Select By:</h4>
+    </div>
+
+    <div class="panel-body">
+        <div class="form-group col-sm-12">
+            <div class="col-md-4" style="padding-left: 0px;">
+                @Html.DropDownList("ResellerID", null, "-- Select Reseller --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Year " })
+            </div>
+            <div class="col-md-2" style="padding-left: 0px;">
+                @Html.DropDownList("YearID", null, "-- Select Year --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Year " })
+            </div>
+
+            <div class="col-md-2" style="padding-left: 0px;">
+                @Html.DropDownList("MonthID", null, "-- Select Month --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Year " })
+            </div>
+
+            <div class="col-md-2" style="padding-left: 0px;">
+                @Html.DropDownList("ZoneID", null, "  All Zone  ", new { @class = "form-control input-sm col-sm-11", @placeholder = " Year " })
+            </div>
+
+            <div class="col-md-1" style="padding-left: 0px;">
+                <input type="button" class="btn btn-primary btn-sm" id="btnSearch" value="Search" />
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+             
+            
+

@@ -1,0 +1,608 @@
+﻿@model  ISP_ManagementSystemModel.ViewModel.VM_PurchaseAndDetails
+<head>
+    <style>
+        .disableddiv {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .enableddiv {
+            opacity: 1;
+        }
+
+        .tdcolor {
+            background-color: #d9edf7;
+        }
+
+        textarea {
+            resize: none;
+        }
+        /*.table {
+                border-top: 0px solid #ddd;
+            }*/
+        .page-bg {
+            background-color: #EEF5FA;
+            /*background-color: #ecf0f5;*/
+            -webkit-box-shadow: inset 1px 0px 20px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .ibilling-page-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+            .ibilling-page-header:after {
+                content: "";
+                background: -webkit-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: -moz-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: -ms-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: -o-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: linear-gradient(left, #1b49bb, #1f7ee1);
+                width: 22px;
+                height: 6px;
+                border-radius: 2px;
+                display: block;
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+            }
+
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            border-top: 0px solid #ddd
+        }
+
+        .invoice-total > tbody > tr > td:first-child {
+            text-align: right;
+        }
+
+        .invoice-total > tbody > tr > td:last-child {
+            border-bottom: 1px solid #ddd;
+            text-align: right;
+            width: 15%;
+        }
+
+        .main-form {
+            margin: 0px 15px 0px 15px;
+            /*margin-left: 10px;
+            margin-right: 10px;*/
+        }
+
+        .panel {
+            border-radius: 10px;
+        }
+
+        #myInput {
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+        }
+    </style>
+
+    <link href="~/Content/bootstrap-datepicker.min.css" rel="stylesheet" />
+</head>
+
+@Html.AntiForgeryToken()
+@Html.HiddenFor(x => x.purchase.PurchaseID)
+
+<div class="main-form animated fadeIn page-bg">
+    <div class="row" id="ibox_form">
+        <div class="col-md-12">
+            <div style="">
+                <h4 class="ibilling-page-header" style="font-size:16px; font-weight:600;">
+                    New Purchase Order
+                    <span style="float:right; font-size:14px; font-weight:normal" class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Purchase</a></li>
+                        <li class="active"> <a href="/Purchase/PurchaseList"> Purchase List </a> </li>
+                    </span>
+                </h4>
+            </div>
+        </div>
+
+        <form id="invform" method="post">
+            <div class="col-md-12">
+                <div class="alert alert-danger" id="emsg" style="display: none;">
+                    <span id="emsgbody"></span>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h4><span id="divInvoicePrefix">PA-</span><span id="divInvoiceSerial">@(Model.purchase != null ? Model.purchase.InvoiceID : "")</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="text-right">
+                                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Purchase))
+                                            {
+                                                <button type="button" class="btn btn-primary" id="btnSavePurchase"> Save</button>
+                                                @*<button class="btn btn-info" id="save_n_close"> Save &amp; Close</button>*@
+                                            } 
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <hr>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="subject">Subject</label>
+                                            @Html.TextBox("Subject", Model.purchase.Subject, new { @class = "form-control", @id = "subject", @name = "subject" })
+                                            @*<input type="text" class="form-control" name="subject" id="subject">*@
+                                        </div>
+                                        <hr>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="user_title">Supplier</label>
+                                            @Html.DropDownList("ddlSupplierID", (IEnumerable<SelectListItem>)ViewBag.lstSupplier, "-- Select Supplier --", new { @class = "form-control select2-hidden-accessible", @placeholder = " Zone " })
+
+                                            <span class="help-block"><a href="#" id="btnAddSupplier">| Add Supplier</a> </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="status">Publish Status</label>
+                                            @Html.DropDownList("PublishStatus", (IEnumerable<SelectListItem>)ViewBag.PublishStatus, "-- Select Publish Status --", new { @class = "form-control select2-hidden-accessible", @placeholder = " Publish Status " })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="Currency">Currency</label>
+                                            @Html.DropDownList("CurrencyID", (IEnumerable<SelectListItem>)ViewBag.lstCurrencyID, "-- Select Currency --", new { @disabled = "disabled", @class = "form-control select2-hidden-accessible", @placeholder = " Currency " })
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="address">Address</label>
+                                            @Html.TextArea("address", Model.purchase.Supplier.SupplierAddress, new { @Style = "max-width: 100%;", @rows = "5", @class = "form-control input-sm col-sm-6", @placeholder = " Remarks ", @readonly = "readonly" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="invoicenum">Invoice Prefix</label>
+                                            @Html.TextBox("txtInvoicePrefix", null, new { @class = "form-control", @name = "txtInvoicePrefix", @onKeyUp = "setINvoicePrefixAndInvoiceID()", @Value = "PA-" })
+                                            @*<input type="text" class="form-control" id="txtInvoicePrefix" name="txtInvoicePrefix" value="PA-" onKeyUp="setINvoicePrefixAndInvoiceID()">*@
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cn">Invoice #</label>
+                                            @Html.TextBox("InvoiceID", Model.purchase != null ? Model.purchase.InvoiceID : "", new { @class = "form-control", @placeholder = "Invoice No", @onKeyUp = "setINvoicePrefixAndInvoiceID()" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="hidden" name="receipt_number" id="receipt_number" value="">
+
+                                        <div class="form-group">
+                                            <label for="show_quantity_as">Show quantity as</label>
+                                            <input type="text" class="form-control" id="show_quantity_as" name="show_quantity_as" value="Qty" disabled>
+                                        </div>
+
+                                        <input type="hidden" name="repeat" id="repeat" value="0">
+
+                                        <div class="form-group">
+                                            @*<label for="add_discount"><a href="#" id="add_discount" class="btn btn-info btn-xs" style="margin-top: 5px;"><i class="fa fa-minus-circle"></i> Set Discount</a></label>*@
+
+                                            @Html.Label("Discount Type", null, new { @class = "form-group" })
+
+
+                                            <input type="radio" name="rdoDiscount" value="percent" @((Model.purchase.DiscountType == 1) ? "checked" : "") /> Percent
+                                            <input type="radio" name="rdoDiscount" value="fixed" @((Model.purchase.DiscountType == 2) ? "checked" : "") /> Fixed
+                                            </br>
+                                            @Html.TextBox("txtDiscountAmount", Model.purchase.Discount, new { @type = "number", @class = "form-control", @placeholder = "Discount Amount" })
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="idate">Issued at</label>
+                                            @*@Html.DropDownList("IssuedAt", null, "-- Select Issue Date --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Issue Date " })*@
+                                            @Html.TextBox("IssuedAt", Model.purchase.IssuedAt.Date.ToString("MM/dd/yyyy"), new { @class = "form-control input-sm col-sm-11", @placeholder = " Issue At " })
+
+                                            @*<input type="text" class="form-control" id="IssuedAt" name="IssuedAt" datepicker="" data-date-format="yyyy-mm-dd" data-auto-close="true" value="">*@
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="user_title">Purchase Status</label>
+                                            @Html.DropDownList("ddlPurchaseStatus", (IEnumerable<SelectListItem>)ViewBag.lstPurchaseStatus, "-- Select Purchase Status --", new { @class = "form-control select2-hidden-accessible", @placeholder = " Purchase Status " })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="table-responsive m-t">
+                            <table class="table invoice-table" id="tblPurchaseItems">
+                                <thead>
+                                    <tr>
+                                        <th hidden>PDID</th>
+                                        <th hidden>Code</th>
+                                        <th width="15%">Item Name</th>
+                                        <th width="5%">Warrenty</th>
+                                        <th width="15%">Warrenty start</th>
+                                        <th width="15%">Warrenty End</th>
+                                        <th width="10%">Serial</th>
+                                        <th width="5%">Price</th>
+                                        @*<th width="15%">Total</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.purchasedeatils.Count() > 0)
+                                    {
+                                        foreach (var item in Model.purchasedeatils)
+                                        {
+                                            <tr>
+                                                <td hidden=""><input type="hidden" value='@item.PurchaseDeatilsID'></td>
+                                                <td hidden=""><input type="hidden" value='@item.ItemID'></td>
+                                                <td><textarea id="ItemDescription" class="form-control" cols="5" rows="2" disabled>@item.Item.ItemName</textarea></td>
+                                                <td><input type="checkbox" name="chkHasWarrentyOrNot" style="width:30px; height:30px;" @(item.HasWarrenty ? "checked" : "") /></td>
+                                                <td><div id="divWarrentyStart" class="input-group date examDate @(item.HasWarrenty ? "enableddiv" : "disableddiv" )" data-provide="datepicker"><input type="text" id="dtpWarrentyStart" name="dtpWarrentyStart" class="form-control" value="@(item.HasWarrenty ? item.WarrentyStart.Value.ToString("MM/dd/yyyy") : "" )"><div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div></div></td>
+                                                <td><div id="divWarrentyEnd" class="input-group date examDate @(item.HasWarrenty ? "enableddiv" : "disableddiv" )" data-provide="datepicker"><input type="text" id="dtpWarrentyEnd" name="dtpWarrentyEnd" class="form-control" value="@(item.HasWarrenty ? item.WarrentyEnd.Value.ToString("MM/dd/yyyy") : "" )"><div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div></div></td>
+                                                <td><input type="text" class="form-control" id="serial" name="serial" value='@item.Serial'></td>
+                                                <td><input type="text" class="form-control item_price" id="amount" name="amount" value="@item.Price" onkeyup="SetAmmountInTotalField()"> </td>
+                                            </tr>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <tr id="tblFirstRow" disabled>
+                                            <td hidden></td>
+                                            <td hidden></td>
+                                            <td>
+                                                <textarea id="ItemDescription" name="ItemDescription" class="form-control" cols="5" rows="2" readonly=""></textarea>
+                                            </td>
+                                            <td>
+                                                <input id="chkHasWarrentyOrNot" name="chkHasWarrentyOrNot" type="checkbox" disabled style="width:30px; height:30px;" />
+                                            </td>
+                                            <td>
+                                                <input id="dtpWarrentyStart" name="dtpWarrentyStart" type="text" class="form-control qty" value="" readonly="">
+                                            </td>
+                                            <td>
+                                                <input id="dtpWarrentyEnd" name="dtpWarrentyEnd" type="text" class="form-control qty" value="" readonly="">
+                                            </td>
+                                            <td>
+                                                <input id="serial" name="serial" type="text" class="form-control qty" value="" readonly="">
+                                            </td>
+                                            <td>
+                                                <input id="amount" name="amount" type="text" class="form-control qty" value="" readonly="">
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <!-- /table-responsive -->
+                        @*<button type="button" class="btn btn-primary" id="blank-add" style="display:none"><i class="fa fa-plus"></i> Add blank Line</button>*@
+                        <button type="button" class="btn btn-primary" id="btnShowItem"><i class="fa fa-search"></i> Add Product OR Service</button>
+                        <button type="button" class="btn btn-danger" id="btnItemRemove" style="display: none;"><i class="fa fa-minus-circle"></i> Delete</button>
+
+                        <br>
+                        <br>
+                        <hr>
+
+                        <table class="table invoice-total">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Total :</strong></td>
+                                    <td id="sub_total" class="amount">@(Model.purchase != null ? Model.purchase.Total.ToString() : "0.00")</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Discount <span id="is_pt"></span> : </strong>
+                                    </td>
+                                    <td id="discount_amount_total" class="amount">@(Model.purchase != null ? Model.purchase.DiscountAmount.ToString() : "0.00")</td>
+                                </tr>
+                                @*<tr>
+                                        <td><strong>TAX :</strong></td>
+                                        <td id="taxtotal" class="amount">0.00</td>
+                                    </tr>*@
+                                <tr>
+                                    <td><strong>Sub TOTAL :</strong></td>
+                                    <td id="total" class="amount">@(Model.purchase != null ? Model.purchase.SubTotal.ToString() : "0.00")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+                        <hr>
+                        <div class="redactor-box" role="application">
+                            <textarea id="SupplierNotes" class="form-control" cols="5" style="width:100%">@Model.purchase.SupplierNoted</textarea>
+                        </div>
+                        <br>
+                        <input type="hidden" id="is_recurring" value="no">
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <div id="ajax-modal" class="modal container fade-scale" tabindex="-1" style="display: none;"></div>
+</div>
+
+
+@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Supplier))
+{
+    <div class="modal fade" id="mdlSupplierInsert" role="dialog" style="overflow:auto">
+        <div class="modal-dialog modal-lg" style="width:45%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="btnInsertSupplierModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Supplier Information</h4>
+                </div>
+                <div class="modal-body panel-body">
+
+                    <div class="form-group col-sm-12">
+                        @Html.Partial("Partial_SupplierCreate")
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                    <div id="SupplierUp" style="float:right">
+                        <input type="button" id="btnPopUpSupplierInsertClose" value="Close" class="btn btn-default btn-sm" />
+                        <input type="button" id="btnInsertSupplier" value="Save Supplier" class="btn btn-primary btn-sm" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="modal fade" id="mdlItemDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="closeAddProductInListClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Select Item</h4>
+            </div>
+            <div class="modal-body panel-body">
+                <input type="text" id="myInput" onkeyup="filtserPS()" placeholder="Search for Product Name..">
+                <table class="table table-striped" id="tblItemsTable">
+                    <thead>
+                        <tr>
+                            <th width="10%">#</th>
+                            <th width="20%">Item Code</th>
+                            <th width="50%">Item Name</th>
+                            <th width="5%"> Quantity </th>
+                            <th hidden>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*<tr>
+                                <td><input type="checkbox" class="si"></td>
+                                <td>4</td>
+                                <td>Business Suite</td>
+                                <td><input type="text" value="" placeholder="Quantity"/></td>
+                                <td hidden class="price">99.00</td>
+                            </tr>*@
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <div id="" style="float: right">
+                    <input type="button" id="btnPopUpAddProductInListClose" value="Close" class="btn btn-default btn-sm" />
+                    <input type="button" id="btnAddProductInList" value="Add Product" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/CustomScripts/SupplierManager.js"></script>
+<script src="~/Scripts/CustomScripts/PurchaseManager.js"></script>
+<script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+@*<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>*@
+
+<script>
+    var rowIndex;
+    var _totalAmount;
+    //var _discount = 0;
+    //var _discountType = 0;
+
+    function setINvoicePrefixAndInvoiceID() {
+        var txtInvoicePrefix = $("#txtInvoicePrefix").val();
+        $("#divInvoicePrefix").text(txtInvoicePrefix);
+        var txtInvoiceID = $("#InvoiceID").val();
+        $("#divInvoiceSerial").text(txtInvoiceID);
+    }
+
+    function SetAmmountInTotalField() {
+        _totalAmount = 0;
+
+        $("#sub_total").text("");
+        $("#discount_amount_total").text("");
+        $("#total").text("");
+
+
+        $("#tblPurchaseItems>tbody>tr").each(function () {
+            var inputval = parseInt($(this).closest("tr").find("td:eq(7) input").val());
+            var value = (isNaN(inputval) ? 0 : inputval);
+            _totalAmount += value;
+            //alert(amount);
+        });
+        $("#sub_total").text(_totalAmount);
+
+        var givenDiscount = $("#txtDiscountAmount").val();
+        var discountValueAfterCalculation = 0;
+        if (givenDiscount != "") {
+            var discountType = $("input[name='rdoDiscount']:checked").val();
+            if (discountType == "percent") {
+                discountValueAfterCalculation = Math.round((_totalAmount / 100) * givenDiscount);
+            }
+            else {
+                discountValueAfterCalculation = givenDiscount;
+            }
+        }
+        $("#discount_amount_total").text(discountValueAfterCalculation);
+        $("#total").text(_totalAmount - discountValueAfterCalculation);
+        var discount = 0.00;
+
+    }
+
+    $(document).ready(function () {
+
+        $("#btnSavePurchase").on("click", function (e) {
+           e.preventDefault();
+            if (PurchaseManager.SavePurchaseValidation()) {
+                PurchaseManager.SavePurchase();
+            };
+        });
+
+        $("#btnPopUpAddProductInListClose,#closeAddProductInListClose").on("click", function () {
+            $("#tblItemsTable>tbody>tr").remove();
+        });
+
+        //$('body').on('focus', ".examDate", function () {
+        //    $(this).datetimepicker({
+        //        format: 'DD/MM/YYYY',
+        //        ignoreReadonly: true,
+        //        showTodayButton: true
+        //    });
+        //});
+
+        $("#txtDiscountAmount").on("keyup", function () {
+            SetAmmountInTotalField();
+        });
+
+        $("input[name='rdoDiscount']").change(function () {
+            SetAmmountInTotalField();
+        });
+
+        $(document).on("change", "input[name='chkHasWarrentyOrNot']", function () {
+            if ($(this).is(":checked")) {
+                $(this).closest("tr").find("td:eq(4) #divWarrentyStart").removeClass("disableddiv").addClass("enableddiv");
+                $(this).closest("tr").find("td:eq(5) #divWarrentyEnd").removeClass("disableddiv").addClass("enableddiv");
+
+                $(this).closest("tr").find("td:eq(4) input").val("");
+                $(this).closest("tr").find("td:eq(5) input").val("");
+            }
+            else {
+                $(this).closest("tr").find("td:eq(4) #divWarrentyStart").removeClass("enableddiv").addClass("disableddiv");
+                $(this).closest("tr").find("td:eq(5) #divWarrentyEnd").removeClass("enableddiv").addClass("disableddiv");
+
+                $(this).closest("tr").find("td:eq(4) input").val("");
+                $(this).closest("tr").find("td:eq(5) input").val("");
+            }
+        });
+
+        $('#IssuedAt').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnItemRemove").on("click", function () {
+            $("#tblPurchaseItems>tbody>tr:eq(" + rowIndex + ")").remove();
+            $("#btnItemRemove").css("display", "none");
+            rowIndex = "";
+            SetAmmountInTotalField();
+        });
+
+        $("#tblPurchaseItems>tbody").on("click", "tr", function () {
+            $("#tblPurchaseItems>tbody>tr").removeClass("tdcolor");
+            $(this).addClass("tdcolor");
+            rowIndex = $(this).index();
+            $("#btnItemRemove").css("display", "inline-block");
+        });
+
+        $("#btnAddProductInList").click(function () {
+            var addedAllQuantity = true;
+            $('#tblItemsTable>tbody').find('tr').each(function () {
+                var row = $(this);
+                if (row.find('input[type="checkbox"]').is(':checked') && row.find('input[type="text"]').val().length <= 0) {
+                    alert('Please Add Quantity.');
+                    addedAllQuantity = false;
+                }
+            });
+            if (addedAllQuantity === false) {
+                return;
+            }
+            else {
+                $('#tblItemsTable>tbody').find('tr').each(function () {
+                    $("#tblFirstRow").remove();
+                    var row = $(this);
+                    if (row.find('input[type="checkbox"]').is(':checked')) {
+                        var quantity = row.find('input[type="text"]').val();
+                        var itemID = row.closest("tr").find("td:eq(1)").html();
+                        var itemName = row.closest("tr").find("td:eq(2)").html();
+                        for (i = 0; i < quantity; i++) {
+                            var date = Date.now();
+                            var serial = itemID + "_" + Math.random().toString(36).substr(2, 9);
+                            $("#tblPurchaseItems>tbody").append('<tr> <td hidden=""><input type="hidden" value=""></td><td hidden=""><input type="hidden" value=' + itemID + '></td> <td> <textarea id="ItemDescription" name="ItemDescription"  class="form-control" cols="5" rows="2"  disabled>' + itemName + '</textarea> </td><td> <input type="checkbox" name="chkHasWarrentyOrNot" style="width:30px; height:30px;"/> </td> <td> <div id="divWarrentyStart"  class="input-group date examDate disableddiv" data-provide="datepicker" > <input type="text" id="dtpWarrentyStart" name="dtpWarrentyStart" class="form-control"> <div class="input-group-addon"> <span class="glyphicon glyphicon-th"></span> </div> </div> </td> <td>   <div id="divWarrentyEnd" class="input-group date examDate disableddiv" data-provide="datepicker" > <input type="text" id="dtpWarrentyEnd" name="dtpWarrentyEnd" class="form-control"> <div class="input-group-addon"> <span class="glyphicon glyphicon-th"></span> </div> </div> </td> <td> <input type="text" class="form-control" id ="serial" name="serial" value=' + serial + '  > </td> <td> <input type="text" class="form-control item_price" id="amount" name="amount" value="" onkeyup ="SetAmmountInTotalField()" > </td>   </tr>');
+                        }/*<td> <input type="text" class="form-control qty" name="qty" value=""  > </td>*/
+                    }
+                });
+            }
+
+            $("#tblItemsTable>tbody>tr").remove();
+            $("#mdlItemDetails").modal("hide");
+        });
+
+        $("#btnShowItem").click(function () {
+            PurchaseManager.ShowItemListForPurchase();
+        });
+
+        $("#btnAddSupplier").on("click", function () {
+            $("#mdlSupplierInsert").modal("show");
+        });
+
+        $("#btnInsertSupplier").click(function (e) {
+            if (SupplierManager.CreateValidation() === true) {
+                SupplierManager.InsertSupplierFromPurchasePopUp();
+            }
+        });
+
+        $("#ddlSupplierID").on("change", function () {
+            $("#address").val("");
+            var supplierID = $("#ddlSupplierID").val();
+            if (supplierID > 0) {
+                SupplierManager.ShowSupplierAddresssFromPurchaseByID(supplierID);
+            }
+        });
+    });
+</script>

@@ -1,0 +1,29 @@
+﻿
+
+
+
+
+@Html.Hidden("ResellerID")
+
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Reseller Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("ResellerNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reseller Name " })
+        </div>
+    </div>
+    <div>
+        @Html.Label("Reseller Address", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("ResellerAddresss", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reseller Addresss " })
+        </div>
+    </div>
+    <div>
+        @Html.Label("Reseller Contact", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("ResellerContacts", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reseller Contact " })
+        </div>
+    </div>
+</div>
+
+

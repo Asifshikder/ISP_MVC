@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "CreateComplain";
+}
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css"
+      rel="Stylesheet" type="text/css" />
+<script src="~/Scripts/notify.js"></script>
+<script src="~/Scripts/CustomScripts/AppUtil.js"></script>
+
+<script src="~/Scripts/CustomScripts/ComplainManager.js"></script>
+
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+<style>
+    .slow .toggle-group {
+        transition: left 0.7s;
+        -webkit-transition: left 0.7s;
+    }
+
+    .fast .toggle-group {
+        transition: left 0.1s;
+        -webkit-transition: left 0.1s;
+    }
+
+    .quick .toggle-group {
+        transition: none;
+        -webkit-transition: none;
+    }
+</style>
+@{
+    bool userIsResellerOrNot = false;
+}
+@using (Html.BeginForm())
+{
+    userIsResellerOrNot = ISP_ManagementSystemModel.AppUtils.GetLoginRoleID() == ISP_ManagementSystemModel.AppUtils.ResellerRole ? true : false;
+
+    @Html.AntiForgeryToken();
+
+    <div class="container" style="padding-left: 0px; padding-top:0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <section class="content-header">
+                    <h6 class="panel-title">Create Complain</h6>
+                    <ol class="breadcrumb" style="padding: 0px 12px;">
+                        <li><input name="chkSwitch" type="checkbox" data-toggle="toggle" data-on="SMS/Yes" data-off="SMS/No" data-size="mini" data-style="slow" checked></li>
+                        <li><a href="/Complain/GetAllComplainList"><i class="fa fa-dashboard"></i>All Complain</a></li>
+                        <li class="active"> <a href="/Complain/CreateComplain">  Create Complain </a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+                @Html.Partial("Partial_ClientComplain")
+            </div>
+
+        </div>
+    </div>
+}
+
+
+<script>
+    var _ClientDetailsID;
+    var complainMessage = false;
+    var whichOrWhere = false;
+    $(document).ready(function () {
+        $("input[name='chkSwitch']").change(function (event) {
+
+            //if (this.checked) {
+            //    alert("succcess");
+            //}
+            //else {
+            //    alert("fail");
+            //}
+            if ($(this).is(":checked")) {
+                alert("succcess");
+            }
+            else {
+                alert("fail");
+            }
+        });
+        $("#ComplainType").change(function () {
+
+            ComplainManager.ClearComplainAndWhichOrWhereCreate();
+            var selectedText = $("#ComplainType option:selected").text().toLowerCase();
+            if (selectedText === "compose") {
+                complainMessage = true;
+                $("#txtComplain").prop("disabled", false);
+                //$("#txtWhichWhere").val('');
+                //$("#txtWhichWhere").prop("disabled", true);
+            }
+            //else {
+
+            //    $("#txtComplain").prop("disabled", true);
+            //}
+            var complainTypeID = $("#ComplainType").val();
+            //if (selectedText !== "compose") {
+            ComplainManager.ShowMessageBoxOrNotByComplainTypeID(complainTypeID);
+            // }
+        });
+        $("#btnAddComplain").click(function () {
+            if (ComplainManager.CreateComplainValidation(false,"@userIsResellerOrNot.ToString().ToLower()" == "true" ? false : true) === true) {
+                ComplainManager.AddComplain();
+            }
+
+        });
+        $("#txtClientName").autocomplete({
+            focus: function (event, ui) {
+
+                _ClientDetailsID = ui.item.val;
+                console.log("focus : " + ui.item.val);
+                // or $('#autocomplete-input').val(ui.item.label);
+
+                // Prevent the default focus behavior.
+                event.preventDefault();
+                // or return false;
+
+                ComplainManager.getAutoCompleateDetailsInformation(ui.item.val);
+
+            },
+            source: function (request, response) {
+                _ClientDetailsID = "";
+                $("#txtMobile").val("");
+                $("#txtClientAdress").val("");
+                $("#txtTotalItemGivenForThisClient").val("");
+                $("#txtCredit").val("");
+                $("#txtRemarks").val("");
+                $.ajax({
+                    url: '/AdvancePayment/getAutoCompleateInformation',
+                    data: "{ 'Name': '" + request.term + "'}",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            //
+                            return item;
+                            //return { label: item.Name, value: item.val };
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                console.log(" select : " + i.item.val);
+                //$("#hfCustomer").val(i.item.val);
+            },
+            minLength: 1
+        });
+    });
+    $(window).on("load", function () {
+        if (@userIsResellerOrNot.ToString().ToLower().ToString() == true) {
+            $("#divEmployeeID").css("display", "none");
+            alert("true");
+        }
+    });
+</script>

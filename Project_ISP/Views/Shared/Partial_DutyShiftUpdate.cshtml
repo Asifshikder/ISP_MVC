@@ -1,0 +1,24 @@
+﻿
+
+<table class="table table-striped table-bordered">
+    <tbody>
+        <tr>
+            <th hidden></th>
+            <th>Start (Hour - Min)</th>
+            <th>End (Hour - Min)</th>
+        </tr>
+        <tr>
+            <td hidden><input type="hidden" id="DutyShiftID" /></td>
+            <td>
+                @Html.DropDownList("StartHourUpdate", null, "", new { })
+
+                @Html.DropDownList("StartMinuteUpdate", null, "", new { })
+            </td>
+            <td>
+                @Html.DropDownList("EndHourUpdate", null, "", new { })
+
+                @Html.DropDownList("EndMinuteUpdate", null, "", new { })
+            </td>
+        </tr>
+    </tbody>
+</table>

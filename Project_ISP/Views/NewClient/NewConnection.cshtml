@@ -1,0 +1,54 @@
+﻿@model ISP_ManagementSystemModel.Models.ClientDetails
+
+@{
+    ViewBag.Title = "New Connection Request";
+}
+<script src="~/Scripts/CustomScripts/NewConnectionManager.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            if (NewConnectionManager.Validation() == true) {
+                NewConnectionManager.InsertNewConnection();
+            }
+        });
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.ClientDetailsID)
+    
+    
+        <div class="container" style="padding-left: 0px; padding-top:0%">
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                   
+                    <section class="content-header">
+                        <h6 class="panel-title">New Connection Request</h6>
+                        <ol class="breadcrumb">
+                            <li><a href="/NewClient/GetAllNewClientList"><i class="fa fa-dashboard"></i> New Client</a></li>
+                            <li class="active"> <a href="/Client/GetAllActiveClient"> New Connection </a> </li>
+                        </ol>
+                    </section>
+                </div>
+
+                <div class="panel-body">
+                   @* @Html.HiddenFor(s=>s.ClientDetailsID);*@
+
+                   @Html.Partial("Partial_newConnection")
+
+                    <div style="float: right;margin-right: 62px;"> <input type="button" id="btnSave" value="Save" class="btn btn-primary btn-sm" /></div>
+                </div>
+
+            </div>
+        </div>
+ 
+    <div style="clear:both"></div>
+}
+
+
+
+

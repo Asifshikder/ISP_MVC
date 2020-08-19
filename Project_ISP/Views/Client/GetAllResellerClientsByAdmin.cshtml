@@ -1,0 +1,1246 @@
+﻿@using ISP_ManagementSystemModel
+@model  IEnumerable<ISP_ManagementSystemModel.Models.ClientCustomInformation>
+
+@{
+    ViewBag.Title = "All Client List";
+}
+
+<style>
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+    .padding {
+        padding: 3px 6px;
+    }
+
+    .padding03 {
+        padding: 0px 3px;
+    }
+
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+
+    .checkbox {
+        padding-left: 20px;
+    }
+
+        .checkbox label {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .checkbox label::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                left: 0;
+                margin-left: -20px;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                background-color: #fff;
+                -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+                transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+            }
+
+            .checkbox label::after {
+                display: inline-block;
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                left: 0;
+                top: 0;
+                margin-left: -20px;
+                padding-left: 3px;
+                padding-top: 1px;
+                font-size: 11px;
+                color: #555555;
+            }
+
+        .checkbox input[type="checkbox"] {
+            opacity: 0;
+        }
+
+            .checkbox input[type="checkbox"]:focus + label::before {
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+
+            .checkbox input[type="checkbox"]:checked + label::after {
+                font-family: 'FontAwesome';
+                content: "\f00c";
+            }
+
+            .checkbox input[type="checkbox"]:disabled + label {
+                opacity: 0.65;
+            }
+
+                .checkbox input[type="checkbox"]:disabled + label::before {
+                    background-color: #eeeeee;
+                    cursor: not-allowed;
+                }
+
+        .checkbox.checkbox-circle label::before {
+            border-radius: 50%;
+        }
+
+        .checkbox.checkbox-inline {
+            margin-top: 0;
+        }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::before {
+        background-color: #428bca;
+        border-color: #428bca;
+    }
+
+    .checkbox-primary input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::before {
+        background-color: #d9534f;
+        border-color: #d9534f;
+    }
+
+    .checkbox-danger input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::before {
+        background-color: #5bc0de;
+        border-color: #5bc0de;
+    }
+
+    .checkbox-info input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::before {
+        background-color: #f0ad4e;
+        border-color: #f0ad4e;
+    }
+
+    .checkbox-warning input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::before {
+        background-color: #5cb85c;
+        border-color: #5cb85c;
+    }
+
+    .checkbox-success input[type="checkbox"]:checked + label::after {
+        color: #fff;
+    }
+
+    .radio {
+        padding-left: 20px;
+    }
+
+        .radio label {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .radio label::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: 17px;
+                height: 17px;
+                left: 0;
+                margin-left: -20px;
+                border: 1px solid #cccccc;
+                border-radius: 50%;
+                background-color: #fff;
+                -webkit-transition: border 0.15s ease-in-out;
+                -o-transition: border 0.15s ease-in-out;
+                transition: border 0.15s ease-in-out;
+            }
+
+            .radio label::after {
+                display: inline-block;
+                position: absolute;
+                content: " ";
+                width: 11px;
+                height: 11px;
+                left: 3px;
+                top: 3px;
+                margin-left: -20px;
+                border-radius: 50%;
+                background-color: #555555;
+                -webkit-transform: scale(0, 0);
+                -ms-transform: scale(0, 0);
+                -o-transform: scale(0, 0);
+                transform: scale(0, 0);
+                -webkit-transition: -webkit-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                -moz-transition: -moz-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                -o-transition: -o-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+                transition: transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+            }
+
+        .radio input[type="radio"] {
+            opacity: 0;
+        }
+
+            .radio input[type="radio"]:focus + label::before {
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+
+            .radio input[type="radio"]:checked + label::after {
+                -webkit-transform: scale(1, 1);
+                -ms-transform: scale(1, 1);
+                -o-transform: scale(1, 1);
+                transform: scale(1, 1);
+            }
+
+            .radio input[type="radio"]:disabled + label {
+                opacity: 0.65;
+            }
+
+                .radio input[type="radio"]:disabled + label::before {
+                    cursor: not-allowed;
+                }
+
+        .radio.radio-inline {
+            margin-top: 0;
+        }
+
+    .radio-primary input[type="radio"] + label::after {
+        background-color: #428bca;
+    }
+
+    .radio-primary input[type="radio"]:checked + label::before {
+        border-color: #428bca;
+    }
+
+    .radio-primary input[type="radio"]:checked + label::after {
+        background-color: #428bca;
+    }
+
+    .radio-danger input[type="radio"] + label::after {
+        background-color: #d9534f;
+    }
+
+    .radio-danger input[type="radio"]:checked + label::before {
+        border-color: #d9534f;
+    }
+
+    .radio-danger input[type="radio"]:checked + label::after {
+        background-color: #d9534f;
+    }
+
+    .radio-info input[type="radio"] + label::after {
+        background-color: #5bc0de;
+    }
+
+    .radio-info input[type="radio"]:checked + label::before {
+        border-color: #5bc0de;
+    }
+
+    .radio-info input[type="radio"]:checked + label::after {
+        background-color: #5bc0de;
+    }
+
+    .radio-warning input[type="radio"] + label::after {
+        background-color: #f0ad4e;
+    }
+
+    .radio-warning input[type="radio"]:checked + label::before {
+        border-color: #f0ad4e;
+    }
+
+    .radio-warning input[type="radio"]:checked + label::after {
+        background-color: #f0ad4e;
+    }
+
+    .radio-success input[type="radio"] + label::after {
+        background-color: #5cb85c;
+    }
+
+    .radio-success input[type="radio"]:checked + label::before {
+        border-color: #5cb85c;
+    }
+
+    .radio-success input[type="radio"]:checked + label::after {
+        background-color: #5cb85c;
+    }
+</style>
+<style>
+    .textaligncenter {
+        text-align: center;
+    }
+
+    .my_div {
+        /*width: 100px;
+        max-height: 250px;
+        overflow-y: auto;*/
+        /*max-height: 250px;*/
+        /*border: 1px solid red;*/
+        overflow: auto;
+    }
+
+    #myImg {
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        #myImg:hover {
+            opacity: 0.7;
+        }
+
+    /* The Modal (background) */
+    .modals {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
+
+    /* Modal Content (image) */
+    .modal-contents {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+
+    /* Caption of Modal Image */
+    #caption {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+        text-align: center;
+        color: #ccc;
+        padding: 10px 0;
+        height: 150px;
+    }
+
+    /* Add Animation */
+    .modal-contents, #caption {
+        -webkit-animation-name: zoom;
+        -webkit-animation-duration: 0.6s;
+        animation-name: zoom;
+        animation-duration: 0.6s;
+    }
+
+    @@-webkit-keyframes zoom {
+        from {
+            -webkit-transform: scale(0)
+        }
+
+        to {
+            -webkit-transform: scale(1)
+        }
+    }
+
+    @@keyframes zoom {
+        from {
+            transform: scale(0)
+        }
+
+        to {
+            transform: scale(1)
+        }
+    }
+
+    /* The Close Button */
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #aaa;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    /* 100% Image Width on Smaller Screens */
+    @@media only screen and (max-width: 700px) {
+        .modal-contents {
+            width: 100%;
+        }
+    }
+</style>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px;">
+
+    @*<div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">Active Client</h6>
+                <ol class="breadcrumb">
+                    <li class="active"><a href="/Client/GetAllCLients"><i class="fa fa-dashboard"></i> Client</a></li>
+
+                </ol>
+            </section>
+        </div>*@
+
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">Active Client</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Client/GetAllResellerClientsByAdmin"><i class="fa fa-dashboard"></i> Client</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title">Select Zone</h6>
+            </div>
+
+            <div class="panel-body">
+                <div class="col-sm-4">
+                    @Html.DropDownList("ResellerID", null, "-- Select Reseller --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Reseller " })
+                </div>
+                <div class="col-sm-3">
+                    @Html.DropDownList("SearchByClientType", null, "-- All Client --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-sm-3">
+                    @Html.DropDownList("SearchByZoneID", null, "-- All Zone --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-sm-2">
+                    <input type="Button" id="btnSearchClientListByZone" value="Search" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+
+        </div>
+        <div style="float: right; padding-bottom:0px;">
+            <a class="btn btn-primary btn-sm" href="\Client\ResellerClientCreateByAdmin">New Client</a> 
+            <input type="button" id="btnExportExcel" class="btn btn-primary btn-sm" value="Export Excel">
+            <!-- export xl file -->
+            @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class=""><h4>All_Client</h4> </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class='checkbox checkbox-danger'>
+                            <input type="checkbox" id="chkRealIpUser" name="chkRealIpUser" /><label for='chkRealIpUser'>Real Ip User </label>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="panel-body" style="overflow: auto">
+
+                <table id="tblUsers" class="table table-bordered table-hover table-responsive " style="align-content: center; width: 100%">
+                    <thead>
+                        <tr style="height: 20px;">
+                            <th style="" hidden="hidden"></th>
+                            @*<th >ClientDetailsID</th>*@
+                            <th hidden="hidden"><div class='checkbox checkbox-danger'><input type="checkbox" id="chkSendSMSForAll" name="chkSendSMSForAll" /><label for='chkSendSMSForAll'> </label></div></th>
+                            <th> Name</th>
+                            <th> Login_Name</th>
+                            <th>Permanent_Discount</th>
+                            <th> This_Month</th>
+                            <th> Next_Month</th>
+                            <th style="padding-left:100px; padding-right:100px;"> Address</th>
+                            <th style="padding-left:50px; padding-right:50px;"> Email </th>
+                            <th style="padding-left:45px; padding-right:45px;">Zone</th>
+                            <th>Contact</th>
+                            <th>Profile</th>
+                            <th>This_Month</th>
+                            <th>Latest</th>
+                            <th>Effect_Date</th>
+                            <th>Show</th>
+                            <th align="center">Action</th>
+                        </tr>
+                    </thead>
+
+
+                    @*<tbody id="ClassTable">
+                            @foreach (var client in Model)
+                            {
+                                <tr>
+                                    <td hidden="hidden">@Html.HiddenFor(s => client.ClientDetailsID)</td>
+                                    <td>@Html.DisplayFor(s => client.Name)</td>
+                                    <td>@Html.DisplayFor(s => client.LoginName)</td>
+                                    <td>@Html.DisplayFor(s => client.PackageNameThisMonth)</td>
+                                    <td>@Html.DisplayFor(s => client.PackageNameNextMonth)</td>
+                                    <td>@Html.DisplayFor(s => client.Address)</td>
+                                    <td>@Html.DisplayFor(s => client.Email)</td>
+                                    <td>@Html.DisplayFor(s => client.Zone)</td>
+                                    <td>@Html.DisplayFor(s => client.ContactNumber)</td>
+
+                                    @if (client.StatusThisMonthID == "3")
+                                    {
+                                        <td style="color: green; font-weight:bold">Active</td>
+                                    }
+                                    else if (client.StatusThisMonthID == "5")
+                                    {
+                                        <td style="color: red; font-weight:bold">Lock</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="color: red; font-weight:bold"></td>
+                                    }
+
+                                    @if (client.StatusNextMonthID == "3")
+                                    {
+                                        <td style="color: green; font-weight:bold">Active</td>
+                                    }
+                                    else if (client.StatusNextMonthID == "5")
+                                    {
+                                        <td style="color: red; font-weight:bold">Lock</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="color: red; font-weight:bold"></td>
+                                    }
+                                    <td>
+                                        <a href="" id="ShowPopUps">Show</a>
+                                    </td>
+                                    <td align="center">
+
+
+                                        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_Client))
+                                        {
+                                            <button id="btnDelete" type="button" class="btn btn-danger btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForDeletePermently">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        }
+
+                                    </td>
+                                </tr>
+
+                            }
+                        </tbody>*@
+                </table>
+
+                @Html.Partial("SMSSendDiv")
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Client_By_Reseller))
+{
+
+    <div class="modal fade" id="tblEmployeeDetails" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 65%;margin-bottom:5px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="closeTblEmployeeDetails" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Client Information <span id="divProfileUpdatePercentage"></span></h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_SpecificResellerCLientDetails")
+                </div>
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6 class="panel-title">Mikrotik</h6>
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("MIkrotik", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.DropDownList("lstMikrotik", null, "--Select Mikrotik--", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Mikrotik " })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <div>
+                                    @Html.Label("IP", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("IP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 131.33.14.35 " })
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-1"></div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    @Html.Label("Mac", new { @class = "control-label col-md-0", Style = "float:left" })
+                                    @*<span class="required_field col-md-0" style="padding-left: 5px"> *</span>*@
+                                </div>
+                                <div style="clear: both"> </div>
+                                <div class="col-md-11" style="padding-left: 0px;">
+                                    @Html.TextBox("Mac", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " 01:1e:ed:34:45:89 " })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div class="modal-footer">
+                    <div id="PopUp" style="float: right">
+                        <input type="button" id="btnPopUpClientUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                        @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Client_By_Reseller))
+                        {
+                            <input type="button" id="btnUpdateClientDetails" value="Update Client Information" class="btn btn-primary btn-sm" />
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm Submit
+            </div>
+            <div class="modal-body">
+                Are you sure you want to Delete This Client Permently From the system? In future no information will able to retrieve.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a href="#" id="btnEmployeeDeletePermently" class="btn btn-success success">Delete Client From System</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal modals" tabindex="0" style="z-index: 1600;" data-keyboard="true">
+    <button id="closeMDLimage" type="button" style="z-index: 1600;opacity:.8; " class="close" data-dismiss="modal">×</button>
+    <img class="modal-content modal-contents" id="img01">
+    <div id="caption"></div>
+</div>
+
+
+<div class="modal fade" id="mdlShowProfileUpdatePoints" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="width: 30%;margin-bottom:5px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Profile Update Points List With Status</h4>
+
+                <button id="closeShowProfileUpdatePoints" type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table id="tblShowProfileUpdatePoints" class="table table-bordered table-hover table-responsive " style="align-content: center; width: 100%">
+                    <thead>
+                        <tr style="height: 20px;">
+                            <th class="aligncontentcenter" style="width:50px;">Information</th>
+                            <th class="aligncontentcenter"> Point Name </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button id="clsShowProfileUpdatePoints" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/CustomScripts/ClientDetailsManager.js"></script>
+<script src="~/Scripts/CustomScripts/ClientUpdateManager.js"></script>
+<script src="~/Scripts/CustomScripts/CommonManager.js"></script>
+@*<script src="~/Scripts/CustomScripts/waitingDialogManager.js"></script>*@
+<script src="~/Scripts/CustomScripts/ImageManager.js"></script>
+
+@*<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js" type="text/javascript"></script>*@
+
+<script>
+
+    //var innerHTML;
+    //function getLocation() {
+    //    if (navigator.geolocation) {
+    //        navigator.geolocation.getCurrentPosition(showPosition);
+    //    } else {
+    //        x.innerHTML = "Geolocation is not supported by this browser.";
+    //    }
+    //}
+    //function showPosition(position) {
+    //
+    //    innerHTML = "Latitude: " + position.coords.latitude +
+    //        "<br>Longitude: " + position.coords.longitude;
+    //}
+
+
+
+
+    //$(document).ready(function () {
+    //    window.history.pushState(null, "", window.location.href);
+    //    window.onpopstate = function () {
+    //        window.history.pushState(null, "", window.location.href);
+    //    };
+    //});
+    var ClientDetailsID;
+    var ClientLineStatusID;
+    var ClientBannedStatusID;
+    var ClientTransactionID;
+    var searchType = 0;
+    var strchksms = "chkSMS";
+    var smsSendAry = [];
+    var isCheckAll = false;
+    var ifIsCheckAllThenNonCheckList = [];
+    var ifNotCheckAllThenCheckList = [];
+
+    //var zoneIDs = 3;
+
+    function showWaitingDialog() {
+        //AppUtil.ShowWaitingDialog();
+    }
+
+    function hideWaitingDialog() {
+        //AppUtil.HideWaitingDialog();
+    }
+
+    function enableDisableSMSSendOption(id,clnID) {
+
+        var allCheck = $("input[name='chkSendSMSForAll']").prop("checked");
+
+        var a = document.getElementById(id.id);
+        if (a.checked) {
+            smsSendAry.push('' + clnID + '');
+            if (allCheck) {
+                ifIsCheckAllThenNonCheckList = jQuery.grep(ifIsCheckAllThenNonCheckList, function (value) {
+                    return value != clnID;
+                });
+            }
+            else {
+                ifNotCheckAllThenCheckList.push(''+clnID+'');
+            }
+        }
+        else {
+            //var res = jQuery.inArray("7028", smsSendAry);
+            var aa = '' + clnID + '';
+            if (jQuery.inArray(aa, smsSendAry) != -1) {
+                smsSendAry = jQuery.grep(smsSendAry, function (value) {
+                    return value != clnID;
+                });
+            }
+
+            if (allCheck) {
+                ifIsCheckAllThenNonCheckList.push(clnID);
+            }
+            else {
+                ifNotCheckAllThenCheckList = jQuery.grep(ifNotCheckAllThenCheckList, function (value) {
+                    return value != clnID;
+                });
+            }
+        }
+
+        ShowOrHideSMSDiv();
+    }
+
+    function ShowOrHideSMSDiv() {
+
+        var totalRecords = $("#tblUsers").DataTable().page.info().recordsTotal;
+
+        if (isCheckAll && totalRecords > 0) {
+            $("#SMSDiv").show();//prop("visible", true)
+        }
+        else if (ifNotCheckAllThenCheckList.length > 0) {
+            $("#SMSDiv").show();
+        }
+        else {
+            $("#SMSDiv").hide();
+        }
+        //var lnth = $("#tblUsers>tbody>tr").length;
+        //if (isCheckAll && lnth > 0) {
+        //    $("#SMSDiv").show();//prop("visible", true)
+        //}
+        //else if (ifNotCheckAllThenCheckList.length > 0) {
+        //    $("#SMSDiv").show();
+        //}
+        //else {
+        //    $("#SMSDiv").hide();
+        //}
+    }
+
+    function makeEmptyForSendingSMS() {
+
+        smsSendAry = [];
+        isCheckAll = false;
+        ifIsCheckAllThenNonCheckList = [];
+        ifNotCheckAllThenCheckList = [];
+    }
+
+    function ShowProfileListDoneOrNot(cdid) {
+        ClientDetailsManager.ShowProfileListDoneOrNot(cdid);
+    }
+
+    $(document).ready(function ()
+    {
+
+        $("#closeShowProfileUpdatePoints,#clsShowProfileUpdatePoints").on("click", function () {
+            $("#tblShowProfileUpdatePoints>tbody>tr").remove();
+            $("#mdlShowProfileUpdatePoints").modal("hide");
+        });
+
+        $("#SearchByZoneID").change(function () {
+
+            zoneIDs = $("#SearchByZoneID").val();
+        });
+
+        var table = $("#tblUsers").DataTable
+        ({
+            "language":
+            {
+                "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+            },
+            "processing": true,
+            "serverSide": true,
+
+
+            "ajax":
+            {
+                "url": "/Client/GetAllResellerClientsByAdminAJAXData",
+                "type": "POST",
+                "dataType": "JSON",
+                data: function (d) {
+                    d.SearchTypeForAll = searchType;
+                    d.ResellerID = $("#ResellerID").val();
+                    d.ZoneID = $("#SearchByZoneID").val();
+                    d.SearchClientType = $("#SearchByClientType").val();
+                    d.IsCheckAll = isCheckAll;
+                    d.IfIsCheckAllThenNonCheckList = ifIsCheckAllThenNonCheckList;
+                    d.IfNotCheckAllThenCheckList = ifNotCheckAllThenCheckList;
+                    d.checkedRealIpUser = $("input[name='chkRealIpUser']").prop("checked") ? true : false;
+                    d.test = 3;
+                    d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                }
+            },
+            //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+            "columnDefs": [
+                { "targets": [0], "width": "5%" },
+                { "width": "5%", "targets": [6] },
+                { "targets": [0], "data": "ClientDetailsID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='EmployeeDetailsID' name='EmployeeDetailsID' value=" + row.ClientDetailsID + "></td>" } },
+                { "targets": [1], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.chkSMS } },
+                { "targets": [12], "data": "Show", "render": function (data, type, row, meta) { return row.StatusThisMonthID == '3' ? "<div style='color: green; font-weight:bold'>Active</td>" : "<div style='color: red; font-weight:bold'>Lock</td>" } },
+                { "targets": [13], "data": "Show", "render": function (data, type, row, meta) { return row.StatusNextMonthID == '5' ? "<div style='color: red; font-weight:bold'>Lock</td>" : "<div style='color: green; font-weight:bold'>Active</td>" } },
+                { "targets": [14], "orderable": false, "data": "Show", "render": function (data, type, row, meta) { return row.LineStatusActiveDate } },
+                { "targets": [15], "data": "Show", "render": function (data, type, row, meta) { return "<a href='#' id='ShowPopUps'>Edit</a>" } },
+                { "targets": [16], "style": "align='center'", "data": "Action", "render": function (data, type, row, meta) { return (row.Button === true && row.StatusThisMonthID == '5') ? ' <button id="btnDelete" type="button" class="btn btn-danger btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForDeletePermently"> <span class="glyphicon glyphicon-remove"></span> </button> ' : "" } }
+
+            ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                //console.log(nRow);
+
+                if (aData.IsPriorityClient) {
+                    $(nRow).removeClass('odd');
+                    $(nRow).addClass('changetrbackground');
+                }
+                else {
+                    //$(nRow).removeClass('changetrbackground');
+                    $(nRow).removeClass('changetrbackground');
+                }
+
+                $(nRow).find("td:eq(0)").attr("hidden", true);
+                $(nRow).find("td:eq(1)").attr("hidden", true);
+                return nRow;
+                },
+            "columns": [
+                {
+                    "data": "ClientDetailsID"
+                },
+                {
+                    "data": "chkSMS"
+                },
+                {
+                    "data": "Name"
+                },
+                {
+                    "data": "LoginName"
+                },
+                {
+                    "data": "PermanentDiscount"
+                },
+                {
+                    "data": "PackageNameThisMonth"
+                },
+                {
+                    "data": "PackageNameNextMonth"
+                },
+                {
+                    "data": "Address"
+                },
+                {
+                    "data": "Email"
+                },
+                {
+                    "data": "Zone"
+                },
+                {
+                    "data": "ContactNumber"
+                },
+                {
+                    "data": "ProfileStatusUpdateInPercent"
+                },
+                {
+                    "data": "StatusThisMonthID"
+                },
+                {
+                    "data": "StatusNextMonthID"
+                },
+                {     // fifth column (Edit link)
+                    "data": ""
+
+                },
+                {     // fifth column (Edit link)
+                    "data": ""
+
+                },
+                {
+                    @*//"data": '@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_Client)) { <button id="btnDelete" type="button" class="btn btn-danger btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForDeletePermently"> <span class="glyphicon glyphicon-remove"></span> </button> }'
+                    "data": 'StatusNextMonthID'*@
+                    "data": ""
+                }]
+        });
+
+        /// Following code is for filter input to apply filter only on Enter
+        var itm = $("#tblUsers_filter input");
+        itm.unbind();
+        itm.keyup(function (e) {
+            //enter or tab
+
+
+            makeEmptyForSendingSMS();
+            ShowOrHideSMSDiv();
+            //$('input[type = checkbox]').each(function () {
+            //    var id = this.id;
+            //    if (id.indexOf("chkSMS") >= 0 || id == "chkSendSMSForAll") {
+            //        $("#" + id+"").prop("checked", false);
+            //    }
+            //});
+            //$("input:checkbox").prop("checked", false);
+
+            //  if (e.keyCode == 13) {
+            table.search(this.value).draw();
+            //}
+        });
+
+        $("#tblEmployeeDetails").on("hidden", function () {
+
+        });
+
+        $("#closeTblEmployeeDetails").click(function () {
+
+            ClientDetailsManager.ClearClientDetailsModalInformation();
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#Status").css("display", "none");
+        });
+
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $('#ConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#LineStatusActiveDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnExportExcel").click(function () {
+
+            //getLocation();
+
+            //if (navigator.geolocation) {
+            //    navigator.geolocation.getCurrentPosition(
+            //        function (position) {
+            //            // Get current cordinates.
+            //            positionCords = { "lat": position.coords.latitude, "lng": position.coords.longitude };
+            //        },
+            //        function (error) {
+            //            // On error code..
+            //        },
+            //        { timeout: 30000, enableHighAccuracy: true, maximumAge: 75000 }
+            //    );
+            //}
+
+            ClientDetailsManager.PrintEmployeeList();
+        });
+
+
+        $("#btnSearchClientListByZone").click(function () {
+
+
+            makeEmptyForSendingSMS();
+            ShowOrHideSMSDiv();
+            var SearchID = $("#SearchByZoneID").val();
+            var searchType = 0;
+            //ClientDetailsManager.SearchClientListByZone(SearchID, searchType);
+
+            // var mytable = $('#tblUsers').DataTable();
+
+
+            //var mytable = $('#tblUsers')
+            //.DataTable({
+            //  //  "destroy": true, "filter": false,
+            //    "deferRender": true,
+            //    "paging": true,
+            //    "lengthChange": false,
+            //    "searching": false,
+            //    "ordering": true,
+            //    "info": true,
+            //    "autoWidth": false,
+            //    "sDom": 'lfrtip'
+            //});
+            table.draw();
+        });
+
+        $("#tblUsers").on("click", "#ShowPopUp", function () {
+
+            // e.preventDefault();
+            var data = $(this).closest("tr").find("td:eq(0) input").val();
+            alert("Hidden: " + data);
+            $("#tblEmployeeDetails").modal("show");
+        });
+
+        $("#tblUsers").on("click", "#ShowPopUps", function (e) {
+            e.preventDefault();
+            ClientDetailsID = $(this).closest("tr").find("td:eq(0) input").val();
+            ClientUpdateManager.GetClientDetailsByIDForResellerUserByAdmin(ClientDetailsID);
+        });
+
+        $("#btnPopUpClientUpdateClose, #btnPopUpClose").click(function () {
+
+
+            $("#chkStatusFromRunningMonth").prop("checked", false);
+            $("#chkPackageFromRunningMonth").prop("checked", false);
+            $("#tblEmployeeDetails").modal("hide");
+            ClientDetailsID = "";
+            ClientLineStatusID = "";
+            ClientBannedStatusID = "";
+            ClientTransactionID = "";
+        });
+
+        $("#PopUp2").on("click", "#btnPopUpClose", function () {
+
+            $("#tblEmployeeDetails").modal("hide");
+            ClientDetailsID = "";
+            ClientLineStatusID = "";
+            ClientBannedStatusID = "";
+            ClientTransactionID = "";
+        });
+
+        $("#PopUp").on("click", "#btnUpdateClientDetails", function () {
+
+            if (ClientUpdateManager.UpdateClientDetailsValidation() === true) {
+                @if ((bool)HttpContext.Current.Session["MikrotikOptionEnable"])
+                {
+                    <text>
+
+                        console.log($("#lstMikrotik").val());
+                        if ($("#lstMikrotik").val() === '' || $("#lstMikrotik").val() === null) {
+                            AppUtil.ShowSuccess("Please Insert Mikrotik Information.");
+                            return false;
+                        }
+                        //if (AppUtil.GetIdValue("IP") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert IP.");
+                        //    return false;
+                        //}
+                        //if (AppUtil.GetIdValue("Mac") === '') {
+                        //    AppUtil.ShowSuccess("Please Insert Mac.");
+                        //    return false;
+                        //}
+                    </text>
+                  // <script></script>
+
+                }
+                ClientDetailsManager.UpdateResellerClientDetails();
+            }
+
+        });
+
+
+        //$("#tblUsers").on("click", "#btnDelete", function () {
+        //
+        //    ClientDetailsID = $(this).closest("tr").find("td:eq(0) input").val();
+        //    ClientDetailsManager.DeleteClientDetails();
+        //});
+
+
+        $("#tblUsers").on("click", "tr", function () {
+
+            ClientDetailsID = $(this).closest("tr").find("td:eq(0) input").val();
+            // ClientDetailsManager.DeleteClientDetails();
+        });
+
+        $("#btnEmployeeDeletePermently").click(function () {
+            ClientDetailsManager.DeleteClientDetails();
+            $("#popModalForDeletePermently").modal("hide");
+        });
+
+        //$("#LoginName").change(function () {
+        //
+        //    var loginName = $("#LoginName").val();
+        //    CommonManager.ClientLoginExistOrNot(loginName);
+        //});
+
+        $("#LoginName").change(function () {
+            var loginName = $("#LoginName").val();
+            // var ClientDetailsID = $("#ClientDetailsID").val();
+            ClientDetailsManager.ClientLoginExistOrNotIncludeID(loginName, ClientDetailsID);
+        });
+
+        $("#chkPackageFromRunningMonth").change(function () {
+
+            if ($(this).is(":checked")) {
+                $("#chkStatusFromRunningMonth").prop("checked", false);
+            }
+        });
+
+        $("#chkStatusFromRunningMonth").change(function () {
+
+
+            if ($(this).is(":checked")) {
+                $("#chkPackageFromRunningMonth").prop("checked", false);
+                //convert month to 2 digits
+                var fullDate = new Date()
+                //var twoDigitMonth = fullDate.getMonth() + ""; if (twoDigitMonth.length == 1) twoDigitMonth = "0" + twoDigitMonth;
+
+                //var currentDate = twoDigitMonth + "/" +fullDate.getDate() + "/" +  fullDate.getFullYear();
+
+                var month = fullDate.getMonth() + 1;
+                var day = fullDate.getDate();
+
+                var output =
+                    (month < 10 ? '0' : '') + month + '/' +
+                    (day < 10 ? '0' : '') + day + '/' + fullDate.getFullYear() ;
+
+                $("#LineStatusActiveDate").val(output);
+            }
+            else {
+                $("#LineStatusActiveDate").val("Invalid date");
+            }
+        });
+
+        $("input[name='chkRealIpUser']").change(function (e) {
+            table.draw();
+        });
+
+        $("input[name='chkSendSMSForAll']").change(function (e) {
+
+
+            isCheckAll = false;
+            ifNotCheckAllThenCheckList = [];
+            ifIsCheckAllThenNonCheckList = [];
+            smsSendAry = [];
+            if (this.checked) {
+               // alert("success");
+                isCheckAll = true;
+                //$("input:checkbox").not(this).prop("checked",true);
+
+                $('input[type = checkbox]').each(function () {
+
+                    var id = this.id;
+                    var aa = id.indexOf(strchksms);
+                    if (aa>= 0) {
+
+                      //  alert(id);
+                        $('#tblUsers>tbody').find('tr').each(function () {
+                            var row = $(this).index();
+                            //tr: eq(' + index + ')').find("td:eq(3)")
+                            var chkBoxHtml = $("#tblUsers>tbody>tr:eq(" + row + ")>td:eq(1)").html();
+                          //  console.log(test);
+                            var getID = $(chkBoxHtml).find('input').attr("id");
+                          //  console.log(getID);
+                            if (getID == id) {
+                                var clnID = $("#tblUsers>tbody>tr:eq(" + row + ")").find("td:eq(0) input").val();
+                                smsSendAry.push(clnID);
+                            }
+                        });
+
+                    }
+                });
+
+                console.log("array:" + smsSendAry);
+                $(smsSendAry).each(function (index, item) {
+                    $("input[id='chkSMS"+item+"']").prop("checked", true);
+                    //alert(item);
+                });
+            }
+            else {
+                isCheckAll = false;
+                $('input[type = checkbox]').each(function () {
+                var id = this.id;
+                if (id.indexOf("chkSMS") >= 0 || id == "chkSendSMSForAll") {
+                    $("#" + id+"").prop("checked", false);
+                }
+            });
+                //$("input:checkbox").prop("checked",false);
+               // alert("false");
+            }
+            ShowOrHideSMSDiv();
+        });
+
+        $("#btnSendMessage").click(function () {
+
+
+            if (ClientDetailsManager.SMSSendValidations()) {
+                ClientDetailsManager.SendMessageToClient(isCheckAll, ifIsCheckAllThenNonCheckList, ifNotCheckAllThenCheckList)
+            }
+
+        });
+
+        $("#ContactNumber").keyup(function () {
+            var mob = $("#ContactNumber").val();
+            $("#SMSCommunication").val(mob);
+        });
+
+        $("#closeMDLimage").click(function () {
+            $("#myModal").css('display', 'none');
+        });
+    });
+</script>

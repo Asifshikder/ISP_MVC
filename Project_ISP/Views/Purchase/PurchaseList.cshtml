@@ -1,0 +1,855 @@
+﻿<head>
+    <style>
+        .disableddiv {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .enableddiv {
+            opacity: 1;
+        }
+
+        .tdcolor {
+            background-color: #d9edf7;
+        }
+
+        textarea {
+            resize: none;
+        }
+        /*.table {
+                border-top: 0px solid #ddd;
+            }*/
+        .page-bg {
+            background-color: #EEF5FA;
+            /*background-color: #ecf0f5;*/
+            -webkit-box-shadow: inset 1px 0px 20px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .ibilling-page-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+            .ibilling-page-header:after {
+                content: "";
+                background: -webkit-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: -moz-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: -ms-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: -o-linear-gradient(left, #1b49bb, #1f7ee1);
+                background: linear-gradient(left, #1b49bb, #1f7ee1);
+                width: 22px;
+                height: 6px;
+                border-radius: 2px;
+                display: block;
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+            }
+
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            border-top: 0px solid #ddd
+        }
+
+        .invoice-total > tbody > tr > td:first-child {
+            text-align: right;
+        }
+
+        .invoice-total > tbody > tr > td:last-child {
+            border-bottom: 1px solid #ddd;
+            text-align: right;
+            width: 15%;
+        }
+
+        .main-form {
+            margin: 0px 15px 0px 15px;
+            /*margin-left: 10px;
+            margin-right: 10px;*/
+        }
+
+        .panel {
+            border-radius: 0px;
+        }
+
+        #myInput {
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+        }
+
+
+        .dashboard-stat2, .dashboard-stat2 .display {
+            margin-bottom: 20px;
+        }
+
+        .dashboard-stat2 {
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            border-radius: 2px;
+            background: #fff;
+            padding: 15px 15px 30px;
+            box-shadow: 0 0 30px rgba(69, 101, 173, 0.1);
+            -webkit-box-shadow: 0 0 30px rgba(69, 101, 173, 0.1);
+            -moz-box-shadow: 0 0 30px rgba(69, 101, 173, 0.1);
+        }
+
+            .dashboard-stat2, .dashboard-stat2 .display {
+                margin-bottom: 20px;
+            }
+
+                .dashboard-stat2 .display .number {
+                    float: left;
+                    display: inline-block;
+                }
+
+                    .dashboard-stat2 .display .number h3 {
+                        margin: 0 0 2px;
+                        padding: 0;
+                        font-size: 30px;
+                        font-weight: 400;
+                    }
+
+        .font-green-meadow {
+            color: #1bbc9b !important;
+        }
+
+        .font-red {
+            color: #e7505a !important;
+        }
+
+        .font-blue {
+            color: #2196f3 !important;
+        }
+
+        .font-blue-hoki {
+            color: #67809f !important;
+        }
+
+        .dashboard-stat2 .display .icon {
+            display: inline-block;
+            float: right;
+            padding: 7px 0 0;
+        }
+
+            .dashboard-stat2 .display .icon > i {
+                color: #cbd4e0;
+                font-size: 26px;
+            }
+
+        .fa {
+            display: inline-block;
+            font: normal normal normal 14px/1 FontAwesome;
+            font-size: inherit;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .fa-calendar-check-o:before {
+            content: "\f274";
+        }
+
+        .dashboard-stat2 .progress-info {
+            clear: both;
+        }
+
+            .dashboard-stat2 .progress-info .progress {
+                margin: 0;
+                height: 4px;
+                clear: both;
+                display: block;
+            }
+
+        .form-control, .form-control:focus, .has-error .form-control:focus, .has-success .form-control:focus, .has-warning .form-control:focus, .navbar-collapse, .navbar-form, .navbar-form-custom .form-control:focus, .navbar-form-custom .form-control:hover, .open .btn.dropdown-toggle, .panel, .popover, .progress, .progress-bar {
+            box-shadow: none;
+        }
+
+        .progress-bar {
+            float: left;
+            width: 0;
+            height: 100%;
+            font-size: 12px;
+            line-height: 20px;
+            color: #fff;
+            text-align: center;
+            background-color: #428bca;
+            -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+            -webkit-transition: width .6s ease;
+            -o-transition: width .6s ease;
+            transition: width .6s ease;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .dashboard-stat2 .progress-info .status {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #aab5bc;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+            .dashboard-stat2 .progress-info .status .status-title {
+                float: left;
+                display: inline-block;
+            }
+
+            .dashboard-stat2 .progress-info .status .status-number {
+                float: right;
+                display: inline-block;
+            }
+
+        .dashboard-stat2 .display .number small {
+            font-size: 14px;
+            color: #aab5bc;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    </style>
+
+    <link href="~/Content/bootstrap-datepicker.min.css" rel="stylesheet" />
+</head>
+
+<div class="main-form animated fadeIn page-bg">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="ibilling-page-header" style="font-size:16px; font-weight:600;">
+                Purchase List
+                <span style="float:right; font-size:14px; font-weight:normal" class="breadcrumb">
+                    <li><a href="/Purchase/PurchaseList"><i class="fa fa-dashboard"></i> Purchase</a></li>
+                    <li class="active"> <a href="/Purchase/add">New Purchase</a> </li>
+                </span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-sm-3">
+                <div class="input-group date examDate " data-provide="datepicker">
+                    <input type="text" id="StartDate" name="StartDate" class="form-control" placeholder="Start Date">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="input-group date examDate " data-provide="datepicker">
+                    <input type="text" id="EndDate" name="EndDate" class="form-control" placeholder="End Date">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group"> 
+                    @Html.DropDownList("ddlPurchaseStatus", (IEnumerable<SelectListItem>)ViewBag.lstPurchaseStatus, "-- Purchase Status --", new { @class = "form-control select2-hidden-accessible", @placeholder = " Purchase Status " })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group"> 
+                    @Html.DropDownList("ddlTableStatus", (IEnumerable<SelectListItem>)ViewBag.lstTableStatus, "-- Information Status --", new { @class = "form-control select2-hidden-accessible", @placeholder = " Information Status " })
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <input type="button" id="btnSearch" class="btn btn-primary" value="Search" />
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="dashboard-stat2 ">
+                <div class="display">
+                    <div class="number">
+                        <h3 class="font-green-meadow">
+                            <span id="TotalAmount" class="amount" data-a-sign="$">0.00 </span>
+                        </h3>
+                        <small>Total</small>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-calendar-check-o"></i>
+                    </div>
+                </div>
+                <div class="progress-info">
+
+                    <div class="progress">
+                        <span id="spnTotalAmount" style="width: 0%;" class="progress-bar progress-bar-primary bg-green-meadow">
+                            <span id="spnProgressInsideTotalAmount" class="sr-only">0%</span>
+                        </span>
+                    </div>
+                    <div class="status">
+                        <div class="status-title"> Percentage </div>
+                        <div id="spnProgressTotalAmountTextInside" class="status-number"> 0% </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat2 ">
+                <div class="display">
+                    <div class="number">
+                        <h3 class="font-red">
+                            <span id="UnPaidAmount" class="amount" data-a-sign="$ ">$ 0.00</span>
+                        </h3>
+                        <small>Unpaid</small>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-calendar-check-o"></i>
+                    </div>
+                </div>
+                <div class="progress-info">
+                    <div class="progress">
+                        <span id="spnProgressUnPaid" style="width: 0%;" class="progress-bar progress-bar-primary bg-red">
+                            <span id="spnProgressInsideUnPaid" class="sr-only">0%</span>
+                        </span>
+                    </div>
+                    <div class="status">
+                        <div class="status-title"> Percentage </div>
+                        <div id="spnProgressUnPaidTextInside" class="status-number"> 0% </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat2 ">
+                <div class="display">
+                    <div class="number">
+                        <h3 class="font-blue">
+                            <span id="PartiallyPaidAmount" class="amount" data-a-sign="$ "> 0.00</span>
+                        </h3>
+                        <small>Partially Paid</small>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-calendar-check-o"></i>
+                    </div>
+                </div>
+                <div class="progress-info">
+
+                    <div class="progress">
+                        <span id="spnProgressPartiallyPaid" style="width: 0%;" class="progress-bar progress-bar-primary green-sharp">
+                            <span id="spnProgressPartiallyInsidePaid" class="sr-only">0%</span>
+                        </span>
+                    </div>
+                    <div class="status">
+                        <div class="status-title"> Percentage </div>
+                        <div id="spnProgressPartiallyPaidTextInside" class="status-number"> 0% </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-stat2 ">
+                <div class="display">
+                    <div class="number">
+                        <h3 class="font-blue-hoki">
+                            <span class="amount" data-a-sign="$ ">$ 0.00</span>
+                        </h3>
+                        <small>Cancelled</small>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-calendar-check-o"></i>
+                    </div>
+                </div>
+                <div class="progress-info">
+
+
+                    <div class="progress">
+                        <span id="spnProgressCancel" style="width: 0%;" class="progress-bar progress-bar-primary bg-blue-hoki">
+                            <span id="spnProgressCancelInside" class="sr-only">0%</span>
+                        </span>
+                    </div>
+                    <div class="status">
+                        <div class="status-title"> Percentage </div>
+                        <div id="spnProgressCancelTextInside" class="status-number"> 0% </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body" style="overflow-x:auto">
+            <table id="tblPurchaseList" class="table table-bordered table-hover table-responsive table-striped " style="align-content: center; width: 100%">
+                <thead>
+                    <tr style="height: 20px;">
+                        <th style="" hidden="hidden"></th>
+                        <th> Invoice </th>
+                        <th> Account </th>
+                        <th> Amount </th>
+                        <th>Issued At </th>
+                        <th> Product Status </th>
+                        <th> Status </th>
+                        @*<th hidden> Type </th>*@
+                        <th align="center" style="width:130px">Manage</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mdlViewResellerPaymentHistory" role="dialog" style="overflow: hidden; overflow-y: scroll; " data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 95%;margin-bottom:5px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="btnCloseResellerPaymentHistoryModal" type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">View Reseller Payment History </h4>
+                </div>
+                <div class="modal-body panel-body">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <section class="content-header">
+                                <h6 class="panel-title">Search Bill By Date</h6>
+                                <ol class="breadcrumb">
+                                    <li><a href="#"><i class="fa fa-dashboard"></i> Bill Payment By Me</a></li>
+                                </ol>
+                            </section>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group col-sm-12">
+
+                                <div class="form-group col-sm-5">
+                                    <div>
+                                        @Html.Label("Payment Start Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("PaymentStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Start Date " })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-5">
+                                    <div>
+                                        @Html.Label("Payment End Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                                    </div>
+                                    <div style="clear: both"> </div>
+                                    <div class="col-md-11" style="padding-left: 0px;">
+                                        @Html.TextBox("PaymentEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment End Date " })
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-2">
+                                    <div style="float: left;margin-top: 25px;">
+                                        <input type="button" id="btnSearchPaymentHistoryByDate" value="Search By Date" class="btn btn-primary btn-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <section class="content-header">
+                                <h6 class="panel-title">Purchase Payment History</h6>
+                            </section>
+                        </div>
+                        <div class="panel-body" style="overflow: auto">
+                            <table id="tblPurchasePaymentHistory" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%; overflow:auto;">
+                                <thead>
+                                    <tr>
+
+                                        <th hidden="hidden"></th>
+                                        <th>
+                                            @Html.DisplayName("Amount")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Payment_From")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Payment_Method")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Check_Or_ResetNo")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Payment_Status")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Entry_By")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Payment Date")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Delete_By")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Delete_Date")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Action")
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="" style="float: right">
+                        <input type="button" id="btnPopUpViewPurchasePaymentHistoryClose" value="Close" class="btn btn-default btn-sm" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePerchasePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Purchase.
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnPurchaseDelete" class="btn btn-success success">Delete Purchase</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This Payment.
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnPaymentDelete" class="btn btn-success success">Delete Payment</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+<script src="~/Scripts/CustomScripts/PurchaseManager.js"></script>
+<script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+<script>
+    var table;
+    var _totalAmount = 0;
+    var _UnpaidAmount = 0;
+    var _PartiallyPaid = 0;
+    var _Cancel = 0;
+
+    var _pID = "";
+    var _pphid = "";
+    var tablePurchasePaymentHistory;
+    var _rowIndexPurchase;
+    var _rowIndexPaymentHistory;
+
+    function ShowPurchasePaymentHistory() {
+        if (tablePurchasePaymentHistory === undefined || tablePurchasePaymentHistory == "") {
+            tablePurchasePaymentHistory = $("#tblPurchasePaymentHistory").DataTable
+                ({
+                    "language":
+                    {
+                        "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                    },
+                    "processing": true,
+                    "serverSide": true,
+
+                    "ajax":
+                    {
+                        "url": "/Purchase/GetAllPurchasePaymentAJAXData",
+                        "type": "POST",
+                        "dataType": "JSON",
+                        data: function (d) {
+                            d.pid = _pID;
+                            d.PaymentStartDate = $("#PaymentStartDate").val();
+                            d.PaymentEndDate = $("#PaymentEndDate").val();
+                            d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                        }
+                    },
+                    //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                    "columnDefs": [
+                                {
+                                    "orderable": false, "targets": 8
+                                },
+                                { "targets": [0], "width": "5%" },
+                                { "targets": [0], "data": "pphid", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='pphid' name='pphid' value=" + row.pphid + "></td>" } },
+                                { "targets": [7], "data": "", "render": function (data, type, row, meta) { return AppUtil.ParseDateTime(row.PaymentDate) } },
+                            { "targets": [9], "data": "", "render": function (data, type, row, meta) { return row.DeleteDate != "" ? AppUtil.ParseDateTime(row.DeleteDate) : "" } },
+                           ],
+                    "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                        //console.log(nRow);
+                        $(nRow).find("td:eq(0)").attr("hidden", true);
+                        return nRow;
+                    },
+
+                    "columns": [
+                        {
+                            "data": ""
+                        },
+                        {
+                            "data": "PaymentAmount"
+                        },
+                        {
+                            "data": "PaymentFrom"
+                        },
+                        {
+                            "data": "PaymentMethod"
+                        },
+                        {
+                            "data": "CheckOrResetNo"
+                        },
+                        {
+                            "data": "Status"
+                        },
+                        {
+                            "data": "EntryBy"
+                        },
+                        {
+                            "data": ""
+                        },
+                        {
+                            "data": "Delete_By"
+                        },
+                        {
+                            "data": ""
+                        },
+                        {
+                            "data": "Button"
+                        }
+                    ]
+                });
+        }
+        else {
+            tablePurchasePaymentHistory.draw();
+        }
+    }
+
+    $(document).ready(function () {
+
+        $('#PaymentStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#PaymentEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        table = $("#tblPurchaseList").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+
+                "processing": true,
+
+                "serverSide": true,
+
+                "ajax":
+                {
+                    "url": "/Purchase/GetAllPurchaseAJAXData",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                         totalAmount = 0;
+                         UnpaidAmount = 0;
+                         PartiallyPaid = 0;
+                         Cancel = 0;
+                        d.StartDate = $("#StartDate").val();
+                        d.EndDate = $("#EndDate").val();
+                        d.PurchaseStatus = $("#ddlPurchaseStatus").val();
+                        d.TableStatus = $("#ddlTableStatus").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    { "targets": [0], "data": "PID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='PID' name='PID' value=" + row.PID + "></td>" } },
+                    { "targets": [7], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.Button } }
+                ],
+
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    //$(nRow).find("td:eq(6)").attr("hidden", true);
+
+                    //PurchaseManager.GetPurcahsePercentageData();
+
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "InvoiceID"
+                    },
+                    {
+                        "data": "AccountName"
+                    },
+                    {
+                        "data": "Amount"
+                    },
+                    {
+                        "data": "IssuedAt"
+                    },
+                    {
+                        "data": "ProductStatus"
+                    },
+                    {
+                        "data": "TableStatus"
+                    },
+                    //{
+                    //    "data": "Type"
+                    //},
+                    {
+                        "data": ""
+                    }
+                ],
+
+                "initComplete": function (settings, json) {
+                    //this initcompleate worked when only reaload the page but not for search by button. so we have move in fndrawcompleate below.
+                    //if (json.data.length > 0) {
+
+                    //    $("#TotalAmount").html( json.data[0].TotalAmount);
+                    //    $("#spnTotalAmount").css("width", json.data[0].PaidPercent);
+                    //    $("#spnProgressInsideTotalAmount").html(json.data[0].PaidPercent + "%");
+                    //    $("#spnProgressTotalAmountTextInside").html(json.data[0].PaidPercent + "%");
+
+
+                    //    $("#UnPaidAmount").html( json.data[0].TotalUnPaidAmount);
+                    //    $("#spnProgressUnPaid").css("width", json.data[0].UnPaidPercent);
+                    //    $("#spnProgressInsideUnPaid").html(json.data[0].UnPaidPercent + "%");
+                    //    $("#spnProgressUnPaidTextInside").html(json.data[0].UnPaidPercent + "%");
+
+                    //    $("#PartiallyPaidAmount").html( json.data[0].TotalPaidAmount);
+                    //    $("#spnProgressPartiallyPaid").css("width", json.data[0].PartiallyPaidPercent);
+                    //    $("#spnProgressPartiallyInsidePaid").html(json.data[0].PartiallyPaidPercent + "%");
+                    //    $("#spnProgressPartiallyPaidTextInside").html(json.data[0].PartiallyPaidPercent + "%");
+                    //}
+
+
+                },
+
+                "fnDrawCallback": function(  ) {
+                    var oSettings = this.fnSettings();
+                    if (oSettings.aoData.length > 0) {
+
+                        var forstRow = oSettings.aoData[0]._aData;
+
+                        if (forstRow != null) {
+
+                            //$("#TotalAmount").html( forstRow.TotalAmount);
+                            //$("#spnTotalAmount").css("width", forstRow.PaidPercent);
+                            //$("#spnProgressInsideTotalAmount").html(forstRow.PaidPercent + "%");
+                            //$("#spnProgressTotalAmountTextInside").html(forstRow.PaidPercent + "%");
+                            $("#TotalAmount").html(forstRow.TotalAmount);
+                            $("#spnTotalAmount").css("width", "100%");
+                            $("#spnProgressInsideTotalAmount").html("100%");
+                            $("#spnProgressTotalAmountTextInside").html("100%");
+
+
+                            $("#UnPaidAmount").html(forstRow.TotalUnPaidAmount);
+                            $("#spnProgressUnPaid").css("width", forstRow.UnPaidPercent + "%");
+                            $("#spnProgressInsideUnPaid").html(forstRow.UnPaidPercent + "%");
+                            $("#spnProgressUnPaidTextInside").html(forstRow.UnPaidPercent + "%");
+
+                            $("#PartiallyPaidAmount").html(forstRow.TotalPaidAmount);
+                            $("#spnProgressPartiallyPaid").css("width", forstRow.PartiallyPaidPercent + "%");
+                            $("#spnProgressPartiallyInsidePaid").html(forstRow.PartiallyPaidPercent + "%");
+                            $("#spnProgressPartiallyPaidTextInside").html(forstRow.PartiallyPaidPercent + "%");
+                        }
+                    }
+                    else {
+                         $("#TotalAmount").html("0.00");
+                            $("#spnTotalAmount").css("width", "0%");
+                            $("#spnProgressInsideTotalAmount").html("0%");
+                            $("#spnProgressTotalAmountTextInside").html("0%");
+
+
+                            $("#UnPaidAmount").html("0.00");
+                            $("#spnProgressUnPaid").css("width", "0%");
+                            $("#spnProgressInsideUnPaid").html("0%");
+                            $("#spnProgressUnPaidTextInside").html("0%");
+
+                            $("#PartiallyPaidAmount").html("0.00");
+                            $("#spnProgressPartiallyPaid").css("width", "0%");
+                            $("#spnProgressPartiallyInsidePaid").html("0%");
+                            $("#spnProgressPartiallyPaidTextInside").html("0%");
+                    }
+                }
+            });
+
+        $("#btnSearch").on("click", function () {
+            table.draw();
+        });
+
+        $("#btnSearchPaymentHistoryByDate").click(function () {
+            tablePurchasePaymentHistory.draw();
+        });
+
+        $("#tblPurchaseList").on("click", "#btnShowPurchasePaymentHistory", function (e) {
+            e.preventDefault();
+            _pID = $(this).closest("tr").find("td:eq(0) input").val();
+            _rowIndexPurchase = $(this).closest("tr").index();
+            ShowPurchasePaymentHistory();
+            $("#mdlViewResellerPaymentHistory").modal("show");
+        });
+
+        $("#tblPurchasePaymentHistory").on("click", "#btnPaymentHistoryDelete", function (e) {
+            e.preventDefault();
+            _pphid = $(this).closest("tr").find("td:eq(0) input").val();
+            _rowIndexPaymentHistory = $(this).closest("tr").index();
+        });
+
+        $("#btnPaymentDelete").on("click", function (e) {
+            e.preventDefault();
+            PurchaseManager.DeletePurchasePaymentHistoryByID(_pphid);
+        });
+
+        $("#tblPurchaseList").on("click", "#btnDeletePurchase", function (e) {
+            e.preventDefault();
+            _pID = $(this).closest("tr").find("td:eq(0) input").val();
+            _rowIndexPurchase = $(this).closest("tr").index();
+            $("#popModalForDeletePerchasePermently").modal("show");
+        });
+
+        $("#btnPurchaseDelete").on("click", function (e) {
+            e.preventDefault();
+            PurchaseManager.DeletePurchaseByID(_pID);
+        });
+    });
+</script>

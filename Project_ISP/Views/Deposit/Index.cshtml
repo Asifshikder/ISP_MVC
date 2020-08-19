@@ -1,0 +1,293 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@Html.AntiForgeryToken()
+<head>
+    <style>
+        .panel {
+            border-radius: 10px;
+            /*margin: 0px 5px 0px 5px;*/
+        }
+
+        .main-form {
+            margin: 0px 15px 0px 15px;
+            /*margin-left: 10px;
+            margin-right: 10px;*/
+        }
+
+        /*.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+
+            padding:5px 5px 0px 5px;
+        }*/
+        .padding5 {
+            padding: 20px 5px 0px 5px;
+        }
+    </style>
+</head>
+<div class="col-sm-12">
+    <div class="col-md-4 padding5">
+        <div class="panel panel-body ">
+            <div class="panel panel-heading">
+                <h4>Add New Deposit</h4> 
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Account", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("AccountList", null, "-- Select Account --", new { @class = "form-control col-sm-11", @placeholder = " Account" })
+
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Date", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("Date", null, new { @class = "form-control  col-sm-11", @placeholder = " Date " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Description", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("Descriptions", null, new { @class = "form-control   col-sm-11", @placeholder = " Description " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <img id="PreviewDescriptionFile" src="" width="100" height="90" onclick="">
+                <label>
+                    Description File
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </label>
+                <p>
+                    <div class="col-sm-9" style="padding-left:0px;">
+                        <input class="" id="DescriptionFile" name="DescriptionFile" type="file" onchange="ImageManager.preview(this,'PreviewDescriptionFile')">
+
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#DescriptionFile'),'DescriptionFile')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </p>
+                <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Amount", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("Amount", null, new { @class = "form-control   col-sm-11", @placeholder = " Amount " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Category", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("Head", null, "-- Select Category --", new { @class = "form-control   col-sm-11", @placeholder = " Category" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Company", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("Company", null, "-- Select Company --", new { @class = "form-control   col-sm-11", @placeholder = " Company" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Payer", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("PayerID", new SelectList(""), "--Select Payer--", new { @class = "form-control   col-sm-11", @placeholder = " Payer" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Payment Method", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("PaymentBy", null, "-- Select Method --", new { @class = "form-control   col-sm-11", @placeholder = " Payment Method" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Status", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("StatusType", null, "-- Select Status --", new { @class = "form-control   col-sm-11", @placeholder = " Status" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("References", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("References", null, new { @class = "form-control   col-sm-11", @placeholder = " Refereces(Optional) " })
+                </div>
+            </div>
+            <div style="float:right; margin-right: 50px;">
+                <input type="button" id="btnAddDeposit" value="Submit" class="btn btn-primary btn-sm" />
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-8 padding5">
+        <div class="panel panel-body">
+
+            <div class="panel-heading" style="padding: 0px 0px;">
+                <div class="row" style="margin-left:0px;">
+                    <div class="col-sm-2">
+                        <div class=""><h4>Deposits:</h4> </div>
+                    </div>
+                </div>
+                <hr />
+            </div>
+            <table id="tblDeposit" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%;">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Date")
+                        </th>
+
+                        <th>
+                            @Html.DisplayName("Company Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Description")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Amount")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Status")
+                        </th>
+                    </tr>
+                </thead>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+<script src="~/Scripts/CustomScripts/ImageManager.js"></script>
+<script src="~/Scripts/CustomScripts/DepositManager.js"></script>
+<script>
+    var _DepositID;
+    var table;
+    var index;
+    $(document).ready(function () {
+
+        table = $("#tblDeposit").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+                "ajax":
+                {
+                    "url": "/Deposit/GetAllDepositAjaxData",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    { "targets": [0], "data": "DepositID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='DepositID' name='DepositID' value=" + row.DepositID + "></td>" } },
+                    { "targets": [1], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return AppUtil.ParseDateINMMDDYYYY(row.DepositDate) } },
+                    { "targets": [3], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.UpdateDeposit === true ? '<a href="/Deposit/Manage/'+ row.DepositID + '" >' + row.Description + '</a>' : '<td>' + row.Description + '</td>' } },
+                    { "targets": [5], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.Status == 1 ? "Cleared" : "Uncleared" } },
+
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "CompanyName"
+                    },
+                    {
+                        "data": "Description"
+                    },
+                    {
+                        "data": "Amount"
+                    },
+                    {
+                        "data": "Status"
+                    },
+                ]
+            });
+
+        $("#Company").change(function () {
+            debugger;
+            var CID = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "/Deposit/GetPayerList?CompanyID=" + CID,
+                contentType: "html",
+                success: function (data) {
+                    debugger;
+                    $("#PayerID").empty();
+                    $("#PayerID").append(data);
+                }
+            });
+        });
+
+        $('#Date').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+
+        $("#btnAddDeposit").click(function (e) {
+            if (DepositManager.DepositCreateValidation() === true) {
+                DepositManager.InsertDeposit();
+            }
+        });
+
+    });
+
+</script>

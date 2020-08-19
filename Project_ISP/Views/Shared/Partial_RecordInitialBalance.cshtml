@@ -1,0 +1,20 @@
+﻿<div class="modal-header">
+    <button id="mdlClose" type="button" class="close" data-dismiss="modal">&times;</button>
+    <div id="accountTile">
+        
+    </div>
+    
+</div>
+<input hidden id="AccountIDInitial" />
+<div class="modal-body panel-body">
+    <div class="form-group col-sm-12">
+        <div>
+            @Html.Label("Intitial Balance", null, new { @class = "control-label col-md-4", Style = "float:left" })
+            <div class="col-md-8" style="padding-left: 0px; float: left">
+                <input type="text" class="form-control amount" id="Initialbalance_USD" name="balance_USD" data-a-sign="$" data-a-sep="," data-a-dec="." data-p-sign="p" data-d-group="3">
+            </div>
+        </div>
+    </div>
+    <div style="padding-top: 20px;"></div>
+
+</div>

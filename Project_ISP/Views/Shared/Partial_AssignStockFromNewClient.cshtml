@@ -1,0 +1,247 @@
+﻿<div class="panel panel-default">
+    <div class="panel-heading">
+        <section class="content-header" style="padding: 0px 0px 0px 0px">
+            <h6 class="panel-title">Assign Employee: </h6>
+        </section>
+    </div>
+    <div class="panel-body" style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+        <div class="form-group col-sm-7">
+            <div class="col-md-3">
+                @Html.Label("Assign Employee", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div class="col-md-8" style="padding-left: 0px;">
+                @Html.DropDownList("lstEmployeeID", null, "-- Select Employee --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <section class="content-header" style="padding: 0px 0px 0px 0px">
+            <h6 class="panel-title">Cable Distribution: </h6>
+        </section>
+    </div>
+    <div class="panel-body" style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+        <div class="form-group col-sm-2">
+            <div>
+                @Html.Label("Cable Type", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div style="clear: both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("CableTypePopUpID", null, "-- Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>
+        </div>
+        <div class="form-group col-sm-3">
+            <div>
+                @Html.Label("Box/Drum", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div style="clear: both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("CableStockID", Enumerable.Empty<SelectListItem>(), "-- Select Box/Drum --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>
+        </div>
+        <div class="form-group col-sm-3">
+            <div>
+                <div id="Status" class="label label-success" style="display: none">Login Name Already Exist</div>
+                @Html.Label("Total:", new { @class = "control-label col-md-0", Style = "float:left;width:45%" })
+                <div>
+                    @Html.Label("lblTotalCableLength", new { @id = "lblTotalCableLength", @class = "label label-success", Style = "float:left; width:auto;display:none" })
+                    @Html.Label("M", new { @id = "", @class = "label label-success", Style = "float:right; width:auto;" })
+                </div>
+            </div>
+            <div style="clear: both"> </div>
+            <div>
+                @Html.Label("Used:", new { @class = "control-label col-md-0", Style = "float:left;width:45%" })
+                <div>
+                    @Html.Label("lblUsedCableLength", new { @id = "lblUsedCableLength", @class = "label label-danger", Style = "float:left; width:auto; display:none" })
+                    @Html.Label("M", new { @id = "", @class = "label label-danger", Style = "float:right; width:auto;" })
+                </div>
+            </div>
+            <div style="clear: both"> </div>
+            <div>
+                @Html.Label("Avialable:", new { @class = "control-label col-md-0", Style = "float:left;width:45%" })
+                <div>
+                    @Html.Label("lblDueCableLength", new { @id = "lblDueCableLength", @class = "label label-warning", Style = "float:left; width:auto; display:none" })
+                    @Html.Label("M", new { @id = "", @class = "label label-warning", Style = "float:right; width:auto;" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-2">
+            <div>
+                @Html.Label("Cable Quantity", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div style="clear: both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.TextBox("txtCableQuantity", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Cable Quantity " })
+            </div>
+        </div>
+        <div class="form-group col-sm-1" style=" padding: 2% 0 0 0;">
+            <input type="button" id="btnAddInAssignCableTableForCustomer" value="Add In List" class="btn btn-primary btn-sm maxWidthFor" style=" text-align: center;" />
+        </div>
+    </div>
+    <div class="panel panel-default" style="margin-bottom: 20px; overflow: auto;">
+        <div class="panel-heading">
+            <section class="content-header" style="padding: 0px 0px 0px 0px">
+                <h6 class="panel-title">Cable quantity For Customer</h6>
+            </section>
+        </div>
+        <div class="panel-body" style="padding-bottom: 0px">
+
+            <table id="tblCableList" class="table table-hover table-striped table-responsive table-bordered">
+
+                <thead>
+                    <tr>
+                        @* CableStokID *@
+                        <th hidden="hidden"></th>
+                        @* Cable Quantity *@
+                        <th hidden="hidden"></th>
+                        @* Employee ID *@
+                        <th hidden="hidden"></th>
+
+                        <th>Employee Name</th>
+                        <th>Customer Name</th>
+                        <th>Cable type</th>
+                        <th>Cable Box/Drum Name</th>
+                        <th>Item Cable Quantity</th>
+                        <th style="text-align: center">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            @*<div class="form-group col-sm-1">
+
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Pop", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                    </div>
+                    <div style="clear: both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.DropDownList("lstPopID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-5">
+                </div>*@
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <section class="content-header" style="padding: 0px 0px 0px 0px">
+            <h6 class="panel-title">Item Distribution: </h6>
+        </section>
+    </div>
+    <div class="panel-body" style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;">
+        @*<div class="form-group col-sm-4">
+            <div class="col-md-6">
+                @Html.Label("Assign Employee", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div class="col-md-6" style="padding-left: 0px;">
+                @Html.DropDownList("lstEmployeeID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>
+        </div>*@
+        <div class="form-group col-sm-5" style="margin-left: 2%">
+            <div class="col-md-4">
+                @Html.Label("Item", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div class="col-md-8" style="padding-left: 0px;">
+                @Html.DropDownList("lstStockID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>
+        </div>
+        <div class="form-group col-sm-5" style="margin-left: 2%">
+            <div class="col-md-4">
+                @Html.Label("Serial", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div class="col-md-8" style="padding-left: 0px;">
+                @Html.DropDownList("lstStockDetailsID", Enumerable.Empty<SelectListItem>(), "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>
+        </div>
+        <div class="form-group col-sm-1">
+            <input type="button" id="btnAddInAssignProductTableForCustomer" value="Add In List" class="btn btn-primary btn-sm maxWidthFor" />
+        </div>
+    </div>
+    <div class="panel panel-default" style="margin-bottom: 0px; overflow: auto;" >
+        <div class="panel-heading">
+            <section class="content-header" style="padding: 0px 0px 0px 0px">
+                <h6 class="panel-title">item List for Customer</h6>
+            </section>
+        </div>
+        <div class="panel-body" style="padding-bottom: 0px">
+
+            <table id="tblItemList" class="table table-hover table-striped table-responsive table-bordered">
+
+                <thead>
+                    <tr>
+                        @* StokID *@
+                        <th style="padding: 0px"></th>
+                        @* Stok DEtails ID *@
+                        <th style="padding: 0px"></th>
+                        @* Employee ID *@
+                        <th style="padding: 0px"></th>
+                        @* Customer ID *@
+                        <th style="padding: 0px"></th>
+                        <th>Employee Name</th>
+                        <th>Customer Name</th>
+                        <th>Item Name</th>
+                        <th>Item serial</th>
+                        <th style="text-align: center">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+@*<div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header" style="padding: 0px 0px 0px 0px">
+                <h6 class="panel-title">Select Employe: </h6>
+            </section>
+        </div>
+        <div class="panel-body" style="padding-bottom: 0px;padding-left: 0px; padding-right: 0px;">
+            <div class="form-group col-sm-4">
+                <div class="col-md-6">
+                    @Html.Label("Cable Type", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div class="col-md-6" style="padding-left: 0px;">
+                    @Html.DropDownList("CableTypeID", null, "-- Select Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                </div>
+            </div>
+            <div class="form-group col-sm-3" style="margin-left: 2%">
+                <div class="col-md-4">
+                    @Html.Label("Cable Type", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div class="col-md-8" style="padding-left: 0px;">
+                    @Html.DropDownList("CableTypeID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                </div>
+            </div>
+            <div class="form-group col-sm-3" style="margin-left: 2%">
+                <div class="col-md-4">
+                    @Html.Label("Box/Drum Name", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+                </div>
+                <div class="col-md-8" style="padding-left: 0px;">
+                    @Html.DropDownList("lstBoxOrDrumName", Enumerable.Empty<SelectListItem>(), "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                </div>
+            </div>
+            <div class="form-group col-sm-1">
+                <input type="button" id="btnAddInAssignCableTableForCustomer" value="Add In List" class="btn btn-primary btn-sm maxWidthFor" />
+            </div>
+        </div>
+    </div>*@
+
+

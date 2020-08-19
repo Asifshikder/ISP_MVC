@@ -1,0 +1,175 @@
+﻿@model IEnumerable<Project_ISP.Models.AccountList>
+@{
+    ViewBag.Title = "Account List";
+}
+<style> 
+    .ibox, .panel {
+        box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.03);
+        border-radius: 10px;
+    }
+</style>
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">My Account List</h6>
+                <ol class="breadcrumb" style="padding: 0px 12px;">
+                    <li class="active"><a href="/AccountList/Index"><i class="fa fa-dashboard"></i> Account List</a></li>
+                    <li class="active"> <a href="/AccountList/Create">  Create Account </a> </li>
+                </ol>
+            </section>
+        </div>
+        <input type="hidden" id="AccountId"/>
+        <div class="panel-body">
+
+            <table id="tblAccountLst" class="table table-bordered table-hover table-responsive dataTable no-footer" style="align-content: center; width: 100%;">
+                <thead>
+                    <tr>
+                        <th hidden></th>
+                        <th>Account</th>
+                        <th>Balance</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td hidden>@item.AccountListID</td>
+                            <td>
+                                <h4>@Html.DisplayFor(modelItem => item.AccountTitle)</h4>
+                            </td>
+                            <td>
+                                <strong>@Html.DisplayFor(modelItem => item.InitialBalance)</strong> <br>
+                                @*<strong>Total in: $0.00 </strong>  <br>
+                                <strong>Total out: $0.00 </strong>  <br><br>
+                                <strong> Balance (in home currency) : $0.00</strong>*@
+                            </td>
+                            <td>
+                                <a href="#" onclick="ShowForEditInitialBalance(@item.AccountListID)" class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> Record initial balance</a>
+                                <a href="#" onclick="ShowForEdit(@item.AccountListID)" class="btn btn-xs btn-warning"><i class="fa fa-pencil"></i> Edit</a>
+                                <a href="#" onclick="ShowForDelete(@item.AccountListID)" class="cdelete btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+
+            <div class="hr-line-dashed"></div>
+
+            <h3>Net Worth - @ViewBag.NetWorth </h3>
+
+        </div>
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Record_InitialBalance))
+        {
+            <div class="modal fade" id="mdlInitialBalance" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        @Html.Partial("Partial_RecordInitialBalance")
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnUpdateInitialBalanceClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateInitialConfirm" value="Update" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_AccountList))
+        {
+            <div class="modal fade panel" id="mdlUpdateAccountList" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="updateModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Account List</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_UpdateAccountList")
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateConfirm" value="Update" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_AccountList))
+        {
+            <div class="modal fade" id="mdlDeleteAccountList" role="dialog" style="overflow: hidden; overflow-y: scroll; " data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="DeleteModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Delete Account</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            Are you sure to delete? No data can be recover in future.
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnDeleteClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnDeleteConfirm" value="Delete" class="btn btn-danger btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script src="~/Scripts/CustomScripts/AccountListManager.js"></script>
+<script>
+    function ShowForEditInitialBalance(id) {
+        AccountListManager.GetInitialBalanceByID(id);
+        $("#mdlInitialBalance").modal("show");
+    }
+
+    function ShowForEdit(id) {
+        AccountListManager.GetDetailsByID(id);
+        $("#mdlUpdateAccountList").modal("show");
+    }
+    function ShowForDelete(id) {
+
+        $("#AccountIDDelete").val(id);
+        $("#mdlDeleteAccountList").modal("show");
+    }
+
+    $(document).ready(function () {
+
+
+        $("#btnUpdateInitialBalanceClose,#mdlClose").click(function (e) {
+            $("#mdlInitialBalance").modal("hide");
+        });
+
+
+        $("#btnUpdateInitialConfirm").click(function (e) {
+            AccountListManager.UpdateInitialBalance();
+        });
+
+        $("#updateModalClose,#btnUpdateClose").click(function () {
+            $("#mdlUpdateAccountList").modal("hide");
+        });
+
+        $("#btnUpdateConfirm").click(function () {
+            AccountListManager.UpdateAccountList();
+        });
+
+        $("#DeleteModalClose,#btnDeleteClose").click(function () {
+            $("#mdlDeleteAccountList").modal("hide");
+        });
+
+        $("#btnDeleteConfirm").click(function () {
+            AccountListManager.DeleteByID();
+        });
+
+    });
+</script>

@@ -1,0 +1,83 @@
+﻿
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Account Title", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("account", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Account Title " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Description", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextArea("description", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Description " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Initial Balance", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("balance_USD", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Initial Balance " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Account Number", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("account_number", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Account Number " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Contact Person", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("contact_person", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Contact Person " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Phone", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("contact_phone", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Phone " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Internet Banking URL", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("ib_url", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Internet Banking URL" })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Owner", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.DropDownList("Owner", null, "Select Owner", new { @class = "form-control input-sm col-sm-11", @placeholder = "Owner " })
+    </div>
+</div>
+

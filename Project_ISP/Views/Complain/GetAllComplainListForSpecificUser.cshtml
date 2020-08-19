@@ -1,0 +1,205 @@
+﻿@model IEnumerable<ISP_ManagementSystemModel.Models.Complain>
+
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/jquery-ui.min.css" rel="stylesheet" /> 
+<script src="~/Scripts/CustomScripts/TransactionManager.js"></script>
+<script src="~/Scripts/CustomScripts/ComplainManager.js"></script>
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+</style>
+
+<script>
+
+    if(@((TempData["message"] != null).ToString().ToLower()) === true)
+    {
+        AppUtil.ShowSuccess('@TempData["message"]');
+    }
+
+    var ComplainID;
+    var T_ID;
+    var T_DuePayment_ID;
+
+    function setCompleteStatus(TransactionID) {
+
+        T_ID = TransactionID;
+        $("#btnShowBillPaymentWindow").css("visibility", "visible");
+    }
+
+    $(document).ready(function() {
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $("#tblClientMonthlyBill").DataTable();
+        $("#tblComplainList").DataTable();
+
+        //$("#btnDelete").click(function() {
+        //
+        //    var ComplainID = $(this).closest("tr").find("td:eq(1) input").val();
+        //    ComplainManager.UpdateStatusByDelete(ComplainID);
+        //});
+
+        $("#tblComplainList").on("click", "#btnDelete", function () {
+
+            var ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.UpdateStatusByDelete(ComplainID);
+        });
+
+        $("#tblComplainList").on("click", "#btnEdit", function (e) {
+            e.preventDefault();
+
+            ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.ShowComplainByIdForUpdate(ComplainID);
+        });
+
+        $("#tblComplainList").on("click", "#btnSolve", function (e) {
+            e.preventDefault();
+
+            var ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.UpdateStatusBySolve(ComplainID);
+        });
+
+        $("#btnComplainClose").click(function () {
+            $("#mdlComplainUpdate").modal("hide");
+        });
+
+        $("#mdlComplainUpdate").on("click", "#btnUpdateComplain", function () {
+
+            if (ComplainManager.UpdateComplainValidation() === true) {
+                ComplainManager.UpdateComplain();
+            }
+
+        });
+
+        $("#btnSearch").click(function(){
+            ComplainManager.SearchComplainBySearchCriteria();
+        });
+
+    });
+
+
+
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    string Date = ISP_ManagementSystemModel.AppUtils.GetDateTimeNow().ToString("yyyy-MMM");
+    string complainOpenBy = "";
+    var status = "";
+
+
+    @Html.AntiForgeryToken()
+
+
+
+<div class="panel panel-default"> 
+
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">Complain List  @Date</h6>
+            <ol class="breadcrumb" style="padding: 0px 12px;">
+                <li><a href="/Complain/GetAllComplainListForSpecificUser"><i class="fa fa-dashboard"></i>All Complain</a></li>
+                <li class="active"> <a href="/Complain/createcomplainbyclient">  Create Complain </a> </li>
+            </ol>
+        </section>
+    </div>
+    @*<input type="button" class="btn btn-primary btn-sm" id="btnShowBillPaymentWindow" style="visibility:hidden" value="Bill Pay" />
+
+        <input type="button" class="btn btn-primary btn-sm" id="btnUpnapiBill" value="Unpaid Bill" />
+        <input type="button" class="btn btn-primary btn-sm" id="btnNewSignUpBill" value="New SIgnUp Bill" />
+        <input type="button" class="btn btn-primary btn-sm" id="btnBillPrint" value="Bill Print" />
+        <input type="button" class="btn btn-primary btn-sm" id="btnExportExcel" value="Export Excel" />*@
+    <div class="panel-body">
+
+        <div style="float: right;">
+            @*<a class="btn btn-danger btn-new" href="" id="DeleteButton">Delete</a>
+                <a class="btn btn-sm btn-primary" href="#" id="SolvedButton">Solved</a>*@
+            @*<a class="btn btn-sm btn-primary" href="\Complain\CreateComplain">New Complain</a>*@
+        </div>
+
+
+        <table id="tblComplainList" class="table table-bordered table-hover table-responsive table-striped">
+            <thead>
+                <tr>
+                    @*<th style="padding: 0px;"></th>*@
+                    <th hidden style="padding: 0px;"></th>
+                    <th style="padding: 10px;">Ticket No</th>
+                    <th style="padding: 10px;">Login Name</th>
+                    <th style="padding: 10px;">Address</th>
+                    <th style="padding: 10px;">Complain</th>
+                    <th style="padding: 10px;">Time</th>
+                    <th style="padding: 10px;">Assign To</th>
+                    <th style="padding: 10px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var group in Model)
+                {
+                    /// foreach (var group in item)
+                    <tr>
+                        @*<td width="0px">
+                                @Html.CheckBox("chkShowDetails", new {@class = "checkGroup1", @onclick = "setCompleteStatus(" + group.ComplainID + ")"})
+                            </td>*@
+
+                        @*<td>@Html.Hidden(group.TransactionID)</td>*@
+                        <td hidden style="padding: 0px"><input type="hidden" id="ComplainID" name="ComplainID" value="@group.ComplainID" /></td>
+                        @*<td>@group.TransactionID</td>*@
+                        <td>@group.TokenNo</td>
+                        <td>@group.ClientDetails.LoginName</td>
+                        <td>@group.ClientDetails.Address</td>
+                        <td>@group.ComplainDetails</td>
+                        <td>@group.ComplainTime</td>
+                        <td> @(group.EmployeeID != null ? group.Employee.Name : "")</td>
+                        @*@foreach (var item in @ViewBag.EmployeeID)
+                            {
+                                if (item.Value == group.ComplainOpenBy.ToString())
+                                {
+                                    complainOpenBy = item.Text;
+                                }
+                            }*@
+
+                        @{
+
+                            if (group.LineStatusID == 6)// panding
+                            {
+                                status = "<div style='color:black;' id='Status' class='label label-warning'>" + @group.LineStatus.LineStatusName + "</div>";
+                            }
+                            if (group.LineStatusID == 7)// delete
+                            {
+                                status = "<div style='color:black;' id='Status' class='label label-danger'>" + @group.LineStatus.LineStatusName + "</div>";
+                            }
+                            if (group.LineStatusID == 8)// Approve
+                            {
+                                status = "<div style='color:black;' id='Status' class='label label-success'>" + @group.LineStatus.LineStatusName + "</div>";
+                            }
+                            if (group.LineStatusID == 10)// Approve
+                            {
+                                status = "<div  style='color:black;' id='Status' class='label label-waring'>" + @group.LineStatus.LineStatusName + "</div>";
+                            }
+                        }
+
+                        <td>@Html.Raw(@status)</td>
+
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+ 
+}
+
+
+
+

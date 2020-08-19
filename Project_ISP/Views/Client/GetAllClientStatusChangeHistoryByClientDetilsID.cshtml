@@ -1,0 +1,401 @@
+﻿@model  IEnumerable<Project_ISP.Custom_Model.CustomClientLineStatus>
+
+@{
+    ViewBag.Title = "Line Status Change History";
+}
+
+<style>
+    .padding {
+        padding: 3px 6px;
+    }
+
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+        /* add padding to account for vertical scrollbar */
+        padding-right: 20px;
+    }
+</style>
+
+
+
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script> 
+<link href="~/Content/CSSReference/jquery-ui1.9.2.css" rel="stylesheet" />
+
+
+<script src="~/Scripts/CustomScripts/ClientDetailsManager.js"></script>
+<script src="~/Scripts/CustomScripts/CommonManager.js"></script>
+
+<script>
+
+
+    var ClientDetailsID;
+    var ClientLineStatusID;
+    var ClientBannedStatusID;
+    var ClientTransactionID;
+
+
+    function showWaitingDialog() {
+        //AppUtil.ShowWaitingDialog();
+    }
+    function hideWaitingDialog() {
+        //AppUtil.HideWaitingDialog();
+    }
+
+    $(document).ready(function () {
+
+
+
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $('#ConnectionDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnExportExcel").click(function () {
+            ClientDetailsManager.PrintEmployeeList();
+        });
+
+        //$("#tblUsers").DataTable();
+
+        $("#btnSearchLineStatusChangeHistoryByClientDetailsID").click(function () {
+
+            var SearchID = $("#SearchByClientDetailsID").val();
+            ClientDetailsManager.LineStatusChangeHistoryByClientDetailsID(SearchID);
+        });
+
+        $("#txtLoginName").autocomplete({
+            focus: function (event, ui) {
+
+                //_ClientDetailsID = ui.item.val;
+
+                console.log("event focus : " + ui.item.val);
+                console.log("focus : " + ui.item.val);
+                // or $('#autocomplete-input').val(ui.item.label);
+
+                // Prevent the default focus behavior.
+                event.preventDefault();
+                // or return false;
+
+                ClientDetailsManager.LineStatusChangeHistoryByClientDetailsID(ui.item.val);
+
+            },
+
+            source: function (request, response) {
+                $("#txtName").val("");
+                $("#txtZone").val("");
+                $("#txtMobile").val("");
+                $("#txtAddress").val("");
+                $("#tblClientListFromLineStatus>tbody>tr").empty();
+
+                var data = "{ 'SearchText': '" + request.term + "','resellerid': '" + $("#SearchByResellerID").val() + "'}";
+                $.ajax({
+                    url: "/Client/GetAutoCompleateInformationForSearchCriteria",
+                    data: data,
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+
+                        response($.map(data, function (item) {
+                            //
+                            //return {
+                            //    label: item.label,
+                            //    value: item.val
+                            //};
+
+
+                            return item;
+                        }));
+                    },
+                    error: function (data) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+
+
+                });
+            }
+            ,
+            select: function (e, i) {
+
+                console.log("event select : " + e);
+                console.log(" select : " + i.item.val);
+                //$("#hfCustomer").val(i.item.val);
+            },
+            open: function () {
+                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+            },
+            close: function () {
+                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+            }
+            ,
+            minLength: 1
+        });
+        //$("#tblClientListFromLineStatus").DataTable();
+        $("#SearchByResellerID").on("change", function () {
+            ClearContext();
+        });
+    });
+    function RemoveInformation(thi, dec) {
+        if (window.event) keycode = window.event.keyCode;
+        else if (e) keycode = e.which;
+        else return true;
+        if (keycode == 8) {
+            $("#txtName").val("");
+            $("#txtZone").val("");
+            $("#txtMobile").val("");
+            $("#txtAddress").val("");
+            $("#tblClientListFromLineStatus>tbody>tr").empty();
+        }
+    }
+    function checkKey(evt) {
+        var keyID = (evt.charCode) ? evt.charCode : ((evt.which) ? evt.which : evt.keyCode);
+        console.log("Press Key: " + keyID);
+        if (keyID == 8) {
+            $("#txtName").val("");
+            $("#txtZone").val("");
+            $("#txtMobile").val("");
+            $("#txtAddress").val("");
+            $("#tblClientListFromLineStatus>tbody>tr").empty();
+        }
+    }
+    function ClearContext() { 
+            $("#txtLoginName").val("");
+            $("#txtName").val("");
+            $("#txtZone").val("");
+            $("#txtMobile").val("");
+            $("#txtAddress").val("");
+            $("#tblClientListFromLineStatus>tbody>tr").empty(); 
+    }
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="container" style="padding-left: 0px; padding-top:0%">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <section class="content-header">
+                <h6 class="panel-title">Client Last 10 Bill History</h6>
+            </section>
+        </div>
+
+        <div class="panel-body">
+            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Reseller_Line_Status_History))
+            {
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("My User / Reseller User", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("SearchByResellerID", null, "-- My User --", new { @class = "form-control input-sm" })
+                </div>
+            </div>
+            }
+            
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtLoginName", null, new { @onkeydown = "checkKey(event);", @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Search Client " })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Client Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtName", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Login Name ", @disabled = "disabled" })
+                </div>
+            </div>
+
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Zone", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtZone", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Zone ", @disabled = "disabled" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Mobile", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("txtMobile", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Mobile ", @disabled = "disabled" })
+                </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+                <div>
+                    @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-12" style="padding-left: 0px;">
+                    @Html.TextArea("txtAddress", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Address ", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">Line History</h6>
+            @*<ol class="breadcrumb">
+                    <li class="active"><a href="/Client/GetAllCLients"><i class="fa fa-dashboard"></i> Client</a></li>
+                </ol>*@
+        </section>
+    </div>
+    <div class="panel-body">
+
+        @*<div class="panel panel-default">
+                <div class="panel-heading">
+                    <h6 class="panel-title">Select Client</h6>
+                </div>
+
+                <div class="panel-body">
+                    <div class="col-sm-4">
+                        @Html.DropDownList("SearchByClientDetailsID", null, "-- Selete Client --", new { @class = "form-control input-sm" })
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="Button" id="btnSearchLineStatusChangeHistoryByClientDetailsID" value="Search" class="btn btn-info btn-sm" />
+                    </div>
+                </div>
+
+            </div>*@
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title">Latest 10 change Status By whom and reason</h6>
+            </div>
+            <div class="panel-body" style="overflow: auto">
+                <div style="float: right; padding-bottom:5px;">
+
+                    @*  <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary  btn-sm" value="Export Excel">*@
+                    <!-- export xl file -->
+                    @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+                </div>
+
+                <table id="tblClientListFromLineStatus" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center;">
+                    <thead>
+                        <tr style="height: 20px;">
+                            <th style="padding-left:25px;padding-right:25px;"> Name</th>
+                            <th> Login Name</th>
+                            <th> Package</th>
+                            <th> Address</th>
+                            <th style="padding-left:45px;padding-right:45px;">Zone</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Employee Name</th>
+                            <th>Reseller Name</th>
+                            <th>Time</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        @*var status = "";
+                            if (item.Status == 3) {
+                            status = "
+                            <div id='status' class='label label-success'>Active</div>"
+                            }
+                            if (item.Status == 4) {
+                            status = "
+                            <div id='status' class='label label-warning'>In Active</div>"
+                            }
+                            if (item.Status == 5) {
+                            status = "
+                            <div id='status' class='label label-danger'>Lock</div>"
+                            }
+
+                            $("#tblClientListFromLineStatus>tbody").append("
+                            <tr>
+                                <td>" + item.Name + "</td>
+                                <td>" + item.LoginName + "</td>
+                                <td>" + item.Package + "</td>
+                                <td>" + item.Address + "</td>\
+                                <td>" + item.Zone + "</td>
+                                <td>" + item.Contact + "</td>
+                                <td>" + status + "</td>
+                                <td>" + item.Employee + "</td>\
+                                <td>" + AppUtil.ParseDateTime(item.Time) + "</td>
+                                <td>" + item.Reason + "</td>
+                            </tr>");*@
+
+                        @*@if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    var status = "";
+                                    if (item.Status == 3)
+                                    {
+                                        status = "<div id = 'status' class='label label-success'>Active</div>";
+                                    }
+                                    if (item.Status == 4)
+                                    {
+                                        status = " <div id = 'status' class='label label-warning'>In Active</div>";
+                                    }
+                                    if (item.Status == 5)
+                                    {
+                                        status = "<div id = 'status' class='label label-danger'>Lock</div>";
+                                    }
+                                    <tr>
+                                        <td> @item.Name  </td>
+                                        <td> @item.LoginName  </td>
+                                        <td> @item.Package  </td>
+                                        <td> @item.Address  </td>
+                                        <td> @item.Zone  </td>
+                                        <td> @item.Contact  </td>
+                                        <td> @Html.Raw(status)  </td>
+                                        <td> @item.Employee  </td>
+                                        <td> @item.Time  </td>
+                                        <td> @item.Reason  </td>
+                                    </tr>
+                                }
+                            }*@
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+

@@ -1,0 +1,336 @@
+﻿@model Project_ISP.Models.EmployeeLeaveHistory
+
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">Employee Leave Histories</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/LeaveSalary/EmployeeLeaveHistoryIndex"><i class="fa fa-dashboard"></i> Employee Leave History</a></li>
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("Partial_Start_End_Employee")
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+
+
+    <div class="panel-body">
+
+        <div style="float: right; padding-bottom:0px;">
+            <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+
+        </div>
+        <table id="tblEmployeeLeaveHistory" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%;">
+            <thead>
+                <tr>
+                    <th hidden="hidden"></th>
+
+                    <th>
+                        @Html.DisplayName("Employee")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Reason")
+                    </th>
+                    <th>
+                        @Html.DisplayName("LeaveType")
+                    </th>
+                    <th>
+                        @Html.DisplayName("StartDate")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("EndDate")
+                    </th>
+                    <th>
+
+                        <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+
+        </table>
+        <div class="modal fade" id="mdlLeaveInsert" role="dialog" style="overflow: auto">
+            <div class="modal-dialog modal-lg" style="width: 45%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add Leave History Information</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+
+                        <div class="form-group col-sm-12">
+                            <div>
+                                @Html.Label("Employee", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                <div class="col-md-8" style="padding-left: 0px; float: left">
+
+                                    @Html.DropDownList("AddEmployeeID", null, "Select Employee", new { @class = "form-control input-sm col-sm-11", @placeholder = "Select Employee " })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <div>
+                                @Html.Label("Reason", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                <div class="col-md-8" style="padding-left: 0px; float: left">
+                                    @Html.TextArea("InsertReason", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reason" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <div>
+                                @Html.Label("Leave Type", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                <div class="col-md-8" style="padding-left: 0px; float: left">
+                                    @Html.DropDownList("AddLeaveType", null, "Select Leave Type", new { @class = "form-control input-sm col-sm-11", @placeholder = "Select Leave Type " })
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding-top: 20px;"></div>
+
+                        <div class="form-group col-sm-12">
+                            <div>
+                                @Html.Label("Start Date", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                <div class="col-md-8" style="padding-left: 0px; float: left">
+                                    @Html.TextBox("InsertStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Leave Start Date " })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <div>
+                                @Html.Label("End Date", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                <div class="col-md-8" style="padding-left: 0px; float: left">
+                                    @Html.TextBox("InsertEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Leave End Date " })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpLeaveInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertLeave" value="Save Leave History" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal fade" id="mdlLeaveHistoryUpdate" role="dialog" style="overflow: auto">
+            <div class="modal-dialog modal-lg" style="width: 45%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Update Leave History Information</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        @Html.Partial("Partial_LeaveHistory")
+                    </div>
+                    <div class="modal-footer">
+                        <div id="PopUp" style="float: right">
+                            <input type="button" id="btnPopUpLeaveHistoryUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                            <input type="button" id="btnUpdateLeaveHistory" value="Update Leave History" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="mdlDeleteLeaveHistory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Confirm Delete
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to Delete This Leave History Permently From the system? In future no information will able to retrieve.
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <a href="#" id="btnLeaveHistoryDelete" class="btn btn-success success">Delete Leave History</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="~/Scripts/CustomScripts/LeaveHistoryManager.js"></script>
+<script>
+    var ID;
+    var table;
+
+    $(document).ready(function () {
+
+        $('#InsertStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#InsertEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#EditStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#EditEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#StartDateS').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#EndDateS').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        table = $("#tblEmployeeLeaveHistory").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+                "ajax":
+                {
+                    "url": "/LeaveSalary/GetAllLeaveHistoryAJAXData/",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.StartDateID = $("#StartDateS").val();
+                        d.EndDateID = $("#EndDateS").val();
+                        d.EmployeeIDS = $("#EmployeeIDS").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    { "targets": [0], "data": "ID", "render": function (datas, type, row, meta) { return "<td hidden><input type='hidden' id='ID' name='ID' value=" + row.ID + "></td>" } },
+                    { "targets": [1], "data": "ID", "render": function (datas, type, row, meta) { return "<td> " + row.LoginName + "</td>" } },
+                    { "targets": [3], "data": "ID", "render": function (datas, type, row, meta) { return "<td> " + row.LeaveTypeName + "</td>" } },
+                    { "targets": [4], "data": "ID", "render": function (datas, type, row, meta) { return AppUtil.ParseDateINMMDDYYYY(row.StartDate) } },
+                    { "targets": [5], "data": "ID", "render": function (datas, type, row, meta) { return AppUtil.ParseDateINMMDDYYYY(row.EndDate) } },
+                    { "targets": [6], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return '<a href="" id="ShowUpdateLeaveHistory" class="glyphicon glyphicon-edit btn-circle btn-default"></a><a href="" id="btnLeaveHistoryDelete" class="glyphicon glyphicon-remove btn-circle btn-default"></a> ' } }
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": "ID"
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "Reason"
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+        $("#createNew").click(function (e) {
+            e.preventDefault();
+            $("#mdlLeaveInsert").modal("show");
+        });
+
+        $("#btnPopUpLeaveInsertClose").click(function (e) {
+            LeaveHistoryManager.clearForSaveInformation();
+            $("#mdlLeaveInsert").modal("hide");
+        });
+
+        $("#btnInsertLeave").click(function (e) {
+            if (LeaveHistoryManager.CreateValidation() === true) {
+                LeaveHistoryManager.InsertLeaveHistoryFromPopUp();
+            }
+            $("#mdlLeaveInsert").modal('hide');
+            LeaveHistoryManager.clearForSaveInformation();
+        });
+
+        $("#tblEmployeeLeaveHistory").on("click", "#ShowUpdateLeaveHistory", function (e) {
+
+            e.preventDefault();
+            ID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            LeaveHistoryManager.ShowLeaveHistoryByIDForUpdate(ID);
+        });
+        $("#btnPopUpLeaveHistoryUpdateClose").click(function () {
+            ID = "";
+            LeaveHistoryManager.clearForUpdateInformation();
+            $("#mdlLeaveHistoryUpdate").modal("hide");
+        });
+        $("#btnUpdateLeaveHistory").click(function () {
+            if (LeaveHistoryManager.Validation() === true) {
+                LeaveHistoryManager.UpdateLeaveHistoryInformation();
+            }
+        });
+        $("#tblEmployeeLeaveHistory").on("click", "#btnLeaveHistoryDelete", function (e) {
+
+            e.preventDefault();
+            ID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            LeaveHistoryManager.DeleteLeaveHistory(ID);
+        });
+
+
+        $("#tblEmployeeLeaveHistory").on("click", "tr", function () {
+            ID = $(this).closest("tr").find("td:eq(0) input").val();
+        });
+
+        $("#btnSearch").click(function () {
+            if (LeaveHistoryManager.LeaveHistorySearchValidation()) {
+                table.draw();
+            }
+        });
+
+    });
+
+</script>

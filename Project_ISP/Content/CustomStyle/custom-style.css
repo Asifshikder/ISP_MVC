@@ -1,0 +1,23 @@
+﻿.custom-loader-color 
+{
+    color: #fff !important;
+    font-size: 50px !important;
+}
+
+.custom-loader-background
+{
+    /*background-color: crimson !important;*/
+    
+    background-color:darkgreen !important; 
+    /*a42a2a*/
+}
+.custom-middle-align 
+{
+    vertical-align: middle !important;
+}
+.aligncontentcenter {
+    text-align: center;
+}
+.marginleft20px {
+    margin-left:20px;
+}

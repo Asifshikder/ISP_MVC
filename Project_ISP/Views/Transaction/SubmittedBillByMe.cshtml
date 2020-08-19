@@ -1,0 +1,321 @@
+﻿@{
+    ViewBag.Title = "Submitted Bill By Me";
+}
+
+<style>
+    .changetrbackground {
+        background-color: #DFFBF0;
+    }
+
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+        /* add padding to account for vertical scrollbar */
+        padding-right: 20px;
+    }
+</style>
+<script>
+    var AssetID;
+    var totalBill = 0;
+    var advance = 0;
+    $(document).ready(function () {
+        $('#PaymentStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#PaymentEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        var table = $("#tblPaidBillByMe").DataTable
+            ({
+                "language":
+                    {
+                        "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                    },
+                "processing": true,
+                "serverSide": true,
+
+                "ajax":
+                    {
+                        "url": "/Transaction/GetSubmittedBillByMe",
+                        "type": "POST",
+                        "dataType": "JSON",
+                        data: function (d) {
+                            d.PaymentStartDate = $("#PaymentStartDate").val();
+                            d.PaymentEndDate = $("#PaymentEndDate").val();
+                            d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                        },
+                        dataFilter: function (reps) {
+                            totalBill = 0;
+                            $("#divTotalBill").text(totalBill);
+                            $("#divActualPay").text("");
+                            $("#divDiscountPay").text("");
+                            $("#divAdvancePay").text("");
+
+                            //if (searchBySearchButton !== 1) {
+
+                            //    TransactionManager.GetBillsListBySearchCriteria();
+                            //}
+                            //searchBySearchButton = 0;
+                            //console.log(reps);
+                            return reps;
+                        },
+                        //success: function (msg) {
+                        //
+                        //    fnCallback(msg);
+                        //    console.log(msg);
+                        //   // $("#sample_1").find("tbody").html(msg.data);
+                        //  //  $("#sample_1_processing").hide();
+                        //   // Init();
+                        //}
+                    },
+
+            @*@if (item.Due > 0) {
+
+            <td><a href="" id="linkOfShowingDueAmount">@item.Due</a></td>
+
+        }
+        else {
+            <td style="color:blue">0</td>
+        }*@
+
+        //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+        "columnDefs": [
+            { "targets": [0], "data": "TransactionID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='tid' name='TransactionID' value=" + row.TransactionID + "></td>" } },
+        ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+                $("#divTotalBill").text(aData.TotalAllAmount);
+                $("#divActualPay").text(aData.TotalActualAmount);
+                $("#divDiscountPay").text(aData.TotalDiscountAmount);
+                $("#divAdvancePay").text(aData.TotalAdvanceAmount);
+                if (aData.IsPriorityClient) {
+                    $(nRow).removeClass('odd');
+                    $(nRow).addClass('changetrbackground');
+                }
+                else {
+                    //$(nRow).removeClass('changetrbackground');
+                    $(nRow).removeClass('changetrbackground');
+                }
+                $(nRow).find("td:eq(0)").attr("hidden", true);
+                $(nRow).find("td:eq(2)").attr("color", "blue");
+                $(nRow).find("td:eq(7)").css("color", "blue");
+                $(nRow).find("td:eq(10)").css("color", "blue");
+                $(nRow).find("td:eq(12)").css("color", "green");
+                $(nRow).find("td:eq(12)").css("font-weight", "bold");
+                $(nRow).find("td:eq(12)").css("text-align", "center");
+                return nRow;
+            },
+
+        "columns": [
+            {
+                "data": ""
+            },
+            {
+                "data": "LoginID"
+            },
+            {
+                "data": "ClientName"
+            },
+            {
+                "data": "Address"
+            },
+            {
+                "data": "ContactNumber"
+            },
+            {
+                "data": "ZoneName"
+            },
+            //{
+            //    "data": "PackageName"
+            //},
+            //{
+            //    "data": "FeeForThisMonth"
+            //},
+            {
+                "data": "TotalAmount"
+            },
+            {
+                "data": "PaidAmount"
+            },
+            {
+                "data": "Discount"
+            },
+            {
+                "data": "PaymentType"
+            },
+            //{
+            //    "data": "Discount"
+            //},
+            //{
+            //    "data": "CollectBy"
+
+            //},
+            {     // fifth column (Edit link)
+                "data": "PaidTime"
+
+            },
+            //{     // fifth column (Edit link)
+            //    "data": "RemarksNo"
+
+            //},
+            {     // fifth column (Edit link)
+                "data": "ReceiptNo"
+            },
+            {     // fifth column (Edit link)
+                "data": "PaymentBy"
+            }
+            ]
+            });
+
+        //$('#tblPaidBillByMe tbody').on('click', 'td.details-control', function () {
+        //    var tr = $(this).closest('tr');
+        //    var row = table.row(tr);
+
+        //    if (row.child.isShown()) {
+        //        // This row is already open - close it
+        //        row.child.hide();
+        //        tr.removeClass('shown');
+        //    }
+        //    else {
+        //        // Open this row
+        //        row.child(format(row.data())).show();
+        //        tr.addClass('shown');
+        //    }
+        //});
+
+        $("#btnSearch").click(function () {
+            if (ValidationForSubmittedBillSearch()) {
+                table.draw();
+            }
+
+        });
+    });
+
+    function ValidationForSubmittedBillSearch() {
+        if (AppUtil.GetIdValue("PaymentStartDate") === '' ) {
+            AppUtil.ShowSuccess("Please Select Payment Start Date. ");
+            return false;
+        }
+        if (AppUtil.GetIdValue("PaymentEndDate") === '' ) {
+            AppUtil.ShowSuccess("Please Select Payment End Date. ");
+            return false;
+        }
+
+        return true;
+    }
+    function format ( d ) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        '<tr>'+
+            '<td>Full name:</td>'+
+            '<td>'+d.name+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Extension number:</td>'+
+            '<td>'+d.extn+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Extra info:</td>'+
+            '<td>And any further details here (images etc)...</td>'+
+        '</tr>'+
+    '</table>';
+}
+
+</script>
+
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm())
+{
+    <div class="container col-sm-12" style="padding-left: 0px; padding-top:0%;">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">Search Bill By Date</h6>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Bill Payment By Me</a></li>
+                    </ol>
+                </section>
+            </div>
+            <div class="panel-body">
+                <div class="form-group col-sm-12">
+                    <div class="form-group col-sm-5">
+                        <div>
+                            @Html.Label("Payment Start Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("PaymentStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Start Date " })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-5">
+                        <div>
+                            @Html.Label("Payment End Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("PaymentEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment End Date " })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <div style="float: left;margin-top: 25px;">
+                            <input type="button" id="btnSearch" value="Search By Date" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading ">
+                <h4 class="panel-title ">
+                    My Paid Bills List: Total Amount: <text id="divTotalBill"></text>
+                    <text style="margin-left:20px;">
+                        Actual Pay: <text id="divActualPay"></text>
+                        <text style="margin-left:20px;">Discount: <text id="divDiscountPay"></text></text>
+                        <text style="margin-left:20px;">Advance: <text id="divAdvancePay"></text></text>
+                </h4>
+            </div>
+            @*<input type="button" class="btn btn-primary btn-sm" id="btnExportExcel" value="Export Excel" />*@
+            <div class="panel-body" style="overflow:auto">
+                <table id="tblPaidBillByMe" class="table table-bordered table-hover table-responsive" style="align-content: center; width: 100%">
+                    <thead>
+                        <tr>
+
+                            <th hidden="hidden"></th>
+                            <th style="padding:10px;">Login_ID</th>
+                            <th style="padding:10px;">Client Name</th>
+                            <th style="padding:10px;">Address</th>
+                            <th style="padding:10px;">Mobile</th>
+                            <th style="padding:10px;">Zone</th>
+                            @*<th style="padding:10px;">Package</th>
+                                <th style="padding:10px;">This Month Fee</th>*@
+                            <th style="padding:10px;">Total</th>
+                            <th style="padding:10px;">Paid</th>
+                            <th style="padding:10px;">Discount</th>
+                            <th style="padding:10px;">Type</th>
+                            @*<th style="padding:10px;">Discount</th>
+                                <th style="padding:10px;">Collect By</th>*@
+                            <th style="padding:10px;">Paid Time</th>
+                            @*<th style="padding:10px;">Remarks</th>*@
+                            <th style="padding:10px;">Receipt No</th>
+                            <th style="padding:10px;">Payment BY</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+        </div>
+    </div>
+}
+

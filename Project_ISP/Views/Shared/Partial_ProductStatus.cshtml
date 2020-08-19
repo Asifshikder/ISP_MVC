@@ -1,0 +1,12 @@
+﻿
+
+@Html.Hidden("ProductStatusID")
+
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Product Status Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px;float:left">
+            @Html.TextBox("ProductStatusNames", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Product Status Name " })
+        </div>
+    </div>
+</div>

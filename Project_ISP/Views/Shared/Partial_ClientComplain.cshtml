@@ -1,0 +1,85 @@
+﻿<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Client Name", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtClientName", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Search Client " })
+    </div>
+</div>
+<div class="form-group col-sm-6" id="divEmployeeID">
+    <div>
+        @Html.Label("Assign To", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.DropDownList("EmployeeID", null, "-- Assign To --", new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+
+<div class="form-group col-sm-3">
+    <div>
+        @Html.Label("Complain Type", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.DropDownList("ComplainType", null, "-- Select Complain Type --", new { @class = "form-control input-sm col-sm-6" })
+    </div>
+</div>
+<div class="form-group col-sm-3">
+    <div>
+        @Html.Label("Which/Where", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-10" style="padding-left: 0px;">
+        @Html.TextArea("txtWhichWhere", null, new { @Style = "max-width: 99%;height: 30px;", @class = "form-control input-sm col-sm-6", disabled = "disabled", @placeholder = " Which/Where " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Mobile", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtMobile", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Mobile " })
+    </div>
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Complain", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextArea("txtComplain", null, new { @Style = "max-width: 100%;height: 65px;", @class = "form-control input-sm col-sm-6", @placeholder = " Complain ", disabled = "disabled", })
+    </div>
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Client Address", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtClientAdress", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Client Address " })
+    </div>
+</div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Client Given Inventory", new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-12" style="padding-left: 0px;">
+        @Html.TextArea("txtTotalItemGivenForThisClient", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-12", @placeholder = " Client Given Inventory ", @disabled = "disabled" })
+    </div>
+</div>
+
+<div style="float:right; margin-right: 73px;"> <input type="button" id="btnAddComplain" value="Save Complain" class="btn btn-primary btn-sm" /></div>
+

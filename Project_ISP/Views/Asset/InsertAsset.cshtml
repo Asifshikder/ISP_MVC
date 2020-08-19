@@ -1,0 +1,154 @@
+﻿@*@model ISP_ManagementSystemModel.ViewModel.VM_Asset_ClientDetails*@
+@{
+    ViewBag.Title = "Insert Asset";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">*@
+<link href="~/Content/CSSReference/jquery.dataTables1.10.2.min.css" rel="stylesheet" />
+<script src="~/Scripts/CustomScripts/AssetManager.js"></script>
+
+<script>
+    var AssetID;
+    $(document).ready(function () {
+
+        $('#PurchaseDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#WarrentyStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#WarrentyEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#btnInsertAsset").click(function (e) {
+
+            if (AssetManager.CreateValidation() === true) {
+
+                AssetManager.InsertAsset();
+            }
+        });
+    });
+
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm())
+{
+    <div class="container" style="padding-left: 0px; padding-top:0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">New Asset</h6>
+                    <ol class="breadcrumb">
+                        <li><a href="/Asset/Index"><i class="fa fa-dashboard"></i> All Asset</a></li>
+                        <li class="active"> <a href="/Asset/insertAsset"> New Asset </a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+                <div class="form-group col-sm-12">
+                    @*<div>
+                            @Html.Label(" Asset Name ", null, new { @class = "control-label col-md-4", Style = "float
+                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                @Html.TextBox("AssetName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Asset Name " })
+                            </div>
+                        </div>*@
+
+                    <div class="form-group col-sm-6">
+                        <div>
+                            @Html.Label(" Asset Type ", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                            <span class="required_field col-md-0" style="padding-left: 5px;color: red;"> *</span>
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.DropDownList("lstAssetType", null, "-- Select Asset Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Zone " })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <div>
+                            @Html.Label(" Asset Name ", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                            <span class="required_field col-md-0" style="padding-left: 5px;color: red;"> *</span>
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("AssetName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Asset Name " })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <div>
+                            @Html.Label("Asset Value", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                            <span class="required_field col-md-0" style="padding-left: 5px; color: red;"> *</span>
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("AssetValue", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Amount " })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                        <div>
+                            @Html.Label("Purchase Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("PurchaseDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Purchase Date " })
+
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <div>
+                            @Html.Label("Serial Number", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("SerialNumber", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Serial Number " })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                        <div>
+                            @Html.Label("Warrenty Start Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("WarrentyStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Warrenty Start Date " })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <div>
+                            @Html.Label("Warrenty End Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("WarrentyEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Warrenty End Date " })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                        <div style="float: right;margin-right: 70px;">
+                            <input type="button" id="btnInsertAsset" value="Save Asset" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+

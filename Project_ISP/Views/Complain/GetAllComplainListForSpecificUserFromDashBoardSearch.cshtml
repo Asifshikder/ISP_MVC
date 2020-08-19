@@ -1,0 +1,310 @@
+﻿@model IEnumerable<ISP_ManagementSystemModel.Models.Complain>
+
+@*<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/jquery-ui.min.css" rel="stylesheet" />*@
+@*<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>*@
+<script src="~/Scripts/CustomScripts/TransactionManager.js"></script>
+<script src="~/Scripts/CustomScripts/ComplainManager.js"></script>
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+</style>
+
+<script>
+
+    if(@((TempData["message"] != null).ToString().ToLower()) === true)
+    {
+        AppUtil.ShowSuccess('@TempData["message"]');
+    }
+
+    var ComplainID;
+    var T_ID;
+    var T_DuePayment_ID;
+
+    function setCompleteStatus(TransactionID) {
+          
+        T_ID = TransactionID;
+        $("#btnShowBillPaymentWindow").css("visibility", "visible");
+    }
+
+    $(document).ready(function() {
+        //$('#BillPaymentDate').datepicker({
+        //    dateFormat: 'mm/dd/yy',
+        //    numberOfMonths: 1,
+        //    changeMonth: true,
+        //    changeYear: true
+        //});
+
+        $("#tblClientMonthlyBill").DataTable();
+        $("#tblComplainList").DataTable();
+
+        //$("#btnDelete").click(function() {
+        //      
+        //    var ComplainID = $(this).closest("tr").find("td:eq(1) input").val();
+        //    ComplainManager.UpdateStatusByDelete(ComplainID);
+        //});
+
+        $("#tblComplainList").on("click", "#btnDelete", function () {
+              
+            var ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.UpdateStatusByDelete(ComplainID);
+        });
+
+        $("#tblComplainList").on("click", "#btnEdit", function (e) {
+            e.preventDefault();
+              
+            ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.ShowComplainByIdForUpdate(ComplainID);
+        });
+
+        $("#tblComplainList").on("click", "#btnSolve", function (e) {
+            e.preventDefault();
+              
+            var ComplainID = $(this).closest("tr").find("td:eq(0) input").val();
+            ComplainManager.UpdateStatusBySolve(ComplainID);
+        });
+
+        $("#btnComplainClose").click(function () {
+            $("#mdlComplainUpdate").modal("hide");
+        });
+
+        $("#mdlComplainUpdate").on("click", "#btnUpdateComplain", function () {
+              
+            if (ComplainManager.UpdateComplainValidation() === true) {
+                ComplainManager.UpdateComplain();
+            }
+
+        });
+
+        $("#btnSearch").click(function(){
+            ComplainManager.SearchComplainBySearchCriteria();
+        });
+
+    });
+
+
+
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    string Date = ISP_ManagementSystemModel.AppUtils.GetDateTimeNow().ToString("yyyy-MMM");
+    string complainOpenBy = "";
+    var status = "";
+
+
+    @Html.AntiForgeryToken()
+
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">Client Details</h4>
+        </div>
+        <div class="panel-body">
+
+            <div class="row col-sm-12">
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Name : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-8" style="padding-left: 0px;">
+                        <div id="popName" style="margin-left:10px; font-weight:bold;">@ViewBag.popName</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Login Name : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="popLoginName" style="margin-left:10px; font-weight:bold;">@ViewBag.popLoginName</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Zone : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ClientZone" style="margin-left:10px; font-weight:bold;">@ViewBag.ClientZone</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row col-sm-12">
+
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Client Address : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ClientAddress" style="margin-left:10px; font-weight:bold;">@ViewBag.ClientAddress</div>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Connection Type : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ConnectionType" style="margin-left:10px; font-weight:bold;">@ViewBag.ConnectionType</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div>
+                        @Html.Label("Contact Number : ", new { @class = "control-label col-md-0", Style = "float:left" })
+                    </div>
+                    @*<div style="clear:both"> </div>*@
+                    <div class="col-md-7" style="padding-left: 0px;">
+                        <div id="ContactNumber" style="margin-left:10px; font-weight:bold;">@ViewBag.ContactNumber</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">Complain List  @Date</h4>
+        </div>
+        @*<input type="button" class="btn btn-primary btn-sm" id="btnShowBillPaymentWindow" style="visibility:hidden" value="Bill Pay" />
+
+            <input type="button" class="btn btn-primary btn-sm" id="btnUpnapiBill" value="Unpaid Bill" />
+            <input type="button" class="btn btn-primary btn-sm" id="btnNewSignUpBill" value="New SIgnUp Bill" />
+            <input type="button" class="btn btn-primary btn-sm" id="btnBillPrint" value="Bill Print" />
+            <input type="button" class="btn btn-primary btn-sm" id="btnExportExcel" value="Export Excel" />*@
+        <div class="panel-body">
+
+            <div style="float: right;">
+                @*<a class="btn btn-danger btn-new" href="" id="DeleteButton">Delete</a>
+                    <a class="btn btn-sm btn-primary" href="#" id="SolvedButton">Solved</a>*@
+                @*<a class="btn btn-sm btn-primary" href="\Complain\CreateComplain">New Complain</a>*@
+            </div>
+
+
+            <table id="tblComplainList" class="table table-bordered table-hover table-responsive table-striped">
+                <thead>
+                    <tr>
+                        @*<th style="padding: 0px;"></th>*@
+                        <th style="padding: 0px;"></th>
+                        <th style="padding: 10px;">Ticket No</th>
+                        <th style="padding: 10px;">Login Name</th>
+                        <th style="padding: 10px;">Address</th>
+                        <th style="padding: 10px;">Complain</th>
+                        <th style="padding: 10px;">Time</th>
+                        <th style="padding: 10px;">Assign To</th>
+                        <th style="padding: 10px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var group in Model)
+                    {
+                        /// foreach (var group in item)
+                        <tr>
+                            @*<td width="0px">
+                                    @Html.CheckBox("chkShowDetails", new {@class = "checkGroup1", @onclick = "setCompleteStatus(" + group.ComplainID + ")"})
+                                </td>*@
+
+                            @*<td>@Html.Hidden(group.TransactionID)</td>*@
+                            <td style="padding: 0px"><input type="hidden" id="ComplainID" name="ComplainID" value="@group.ComplainID" /></td>
+                            @*<td>@group.TransactionID</td>*@
+                            <td>@group.TokenNo</td>
+                            <td>@group.ClientDetails.LoginName</td>
+                            <td>@group.ClientDetails.Address</td>
+                            <td>@group.ComplainDetails</td>
+                            <td>@group.ComplainTime</td>
+                            <td> @group.Employee.Name</td>
+                            @*@foreach (var item in @ViewBag.EmployeeID)
+                                {
+                                    if (item.Value == group.ComplainOpenBy.ToString())
+                                    {
+                                        complainOpenBy = item.Text;
+                                    }
+                                }*@
+
+                            @{
+
+                                if (group.LineStatusID == 6)// panding
+                                {
+                                    status = "<div id='Status' class='label label-warning'>" + @group.LineStatus.LineStatusName + "</div>";
+                                }
+                                if (group.LineStatusID == 7)// delete
+                                {
+                                    status = "<div id='Status' class='label label-danger'>" + @group.LineStatus.LineStatusName + "</div>";
+                                }
+                                if (group.LineStatusID == 8)// Approve
+                                {
+                                    status = "<div id='Status' class='label label-success'>" + @group.LineStatus.LineStatusName + "</div>";
+                                }
+                            }
+
+                            <td>@Html.Raw(@status)</td>
+
+
+                        </tr>
+                                }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mdlShowDueBillsList" role="dialog" style="overflow:auto">
+        <div class="modal-dialog modal-lg" style="width:90%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Due Bills</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_ShowDueBillsList")
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUp" style="float:right">
+                        <input type="button" id="btn" value="Close" class="btn btn-default btn-sm" />
+                        @* <input type="button" id="btnPayUnpaidBill" value="Yes" class="btn btn-primary btn-sm" />*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mdlComplainUpdate" role="dialog" style="overflow:auto">
+        <div class="modal-dialog modal-lg" style="width:45%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Complain Information</h4>
+                </div>
+                <div class="modal-body panel-body">
+                    @Html.Partial("Partial_UpdateComplain")
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                    <div id="PopUp" style="float:right">
+                        <input type="button" id="btnComplainClose" value="Close" class="btn btn-default btn-sm" />
+                        <input type="button" id="btnUpdateComplain" value="Update Complain Information" class="btn btn-primary btn-sm" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+                                }

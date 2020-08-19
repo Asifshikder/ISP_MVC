@@ -1,0 +1,347 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<style>
+    .margin-bottom-zero {
+        margin-bottom: 0px;
+    }
+
+    .info-box-number {
+        display: block;
+        font-weight: normal;
+        font-size: 14px;
+    }
+
+    .customHeightAndImagePosition {
+        height: 122px;
+        line-height: 125px;
+    }
+
+    .nav-tabs > li.active {
+        border-top-color: #3c8dbc;
+    }
+
+    .nav-tabs > li {
+        border-top: 3px solid transparent;
+        /*margin-bottom: -2px;
+        margin-right: 5px;*/
+    }
+
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+            border: 0px solid #ddd;
+        }
+
+        .nav-tabs > li > a {
+            border-radius: 0px 0px 0 0;
+        }
+
+    .content-header {
+        padding: 15px 0px 5px 13px;
+    }
+
+
+
+    .floatleftright15px {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .card {
+        background: #fff;
+        min-height: 50px;
+        box-shadow: none;
+        position: relative;
+        margin-bottom: 20px;
+        transition: .5s;
+        border: 1px solid #f2f2f2;
+        border-radius: 0;
+    }
+
+    .card {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        border-radius: 4px;
+        color: rgba(0,0,0, 0.87);
+        background: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
+    }
+
+    * {
+        -webkit-tap-highlight-color: rgba(255,255,255,0);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .top-report h3 {
+        margin-top: 0;
+    }
+
+    .progress {
+        height: 5px;
+    }
+
+    .card:hover {
+        box-shadow: 0 1px 5px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
+        transition: all 150ms linear;
+    }
+
+    .panel-footer-admin-Paid {
+        padding: 0px 0px;
+        background-color: #fff;
+        border-top: 0px solid #ddd;
+        border-bottom-right-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, "", window.location.href);
+        };
+        $("#btnSearchDashboardByResellerID").on("click", function () {
+            var rid = $("#ResellerID").val();
+            window.location.href = "/home/ResellerDashboard?rid=" + rid + "";
+        });
+    });
+</script>
+
+@if (Session["role_id"].ToString() == ISP_ManagementSystemModel.AppUtils.AdminRole.ToString() || Session["role_id"].ToString() == ISP_ManagementSystemModel.AppUtils.EmployeeRole.ToString() || Session["role_id"].ToString() == ISP_ManagementSystemModel.AppUtils.SuperUserRole.ToString())
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h6 class="panel-title">Search By Reseller</h6>
+        </div>
+        <div class="panel-body">
+            <div class="col-sm-4">
+                @Html.DropDownList("ResellerID", null, "-- Select Reseller --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Reseller " })
+            </div>
+            <div class="col-sm-2">
+                <input type="button" id="btnSearchDashboardByResellerID" value="Search" class="btn btn-primary btn-sm" />
+            </div>
+        </div>
+    </div>
+}
+<div style="margin-top:10px" class="floatleftright15px">
+    <div id="menu1" class="tab-pane fade in  active">
+        <div style="margin-top:15px;"></div>
+        <div class="row clearfix top-report">
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        <h3>Total : @ViewBag.ActiveClient	</h3>
+                        <p class="text-muted">Active Client</p>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="info">
+                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Client/GetAllCLients">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        <h3>@ViewBag.LockClient</h3>
+                        <p class="text-muted">Lock Client</p>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="success">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Client/GetAllActiveClient">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        <h3>@ViewBag.DeleteClient</h3>
+                        <p class="text-muted">Delete Client</p>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="danger">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Client/GetAllLockCLients">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        <div class="row clearfix top-report">
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        @*<h3>1,100</h3>*@
+                        <p class="text-muted">
+                            <div class="huge">Total Bill :    @ViewBag.TotalBill BDT </div>
+                            <div class="huge">Paid Bill : @ViewBag.PaidBill BDT</div>
+                            <div class="huge">Discount : @ViewBag.Discount BDT</div>
+                            @*<div class="huge">Unpaid Bill : @ViewBag.UnpaidBill BDT</div>*@
+                        <p class="text-muted"><b>Total Bills</b></p>
+                        </p>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="info" style="margin-bottom: 10px;">
+                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Transaction/Accounts">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        @*<h3>1,100</h3>*@
+                        <p class="text-muted">
+                            <div class="huge">Unpaid Member : @ViewBag.UnpaidMember</div>
+                            <div class="huge">Unpaid Bill : @ViewBag.UnpaidBill BDT</div>
+                        <p class="text-muted"><b>Unpaid Bills</b></p>
+                        <div class="huge" style="color:white;">@ViewBag.UnpaidBill BDT</div>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="info" style="margin-bottom: 10px;">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Transaction/UnpaidBills">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        @*<h3>1,100</h3>*@
+                        <p class="text-muted">
+                            <div class="huge">New Signup : @ViewBag.NewSignUp</div>
+                            <div class="huge">New Signup Bill : @ViewBag.NewSignUpBill BDT</div>
+                        <p class="text-muted"><b>New Signup Bills</b></p>
+                        <div class="huge" style="color:white;">@ViewBag.NewSignUpBill BDT</div>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="info" style="margin-bottom: 10px;">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Transaction/UnpaidBills">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        <div class="row clearfix top-report">
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        @*<h3>1,100</h3>*@
+                        <p class="text-muted">
+                            <div class="huge">Lock To Active : @ViewBag.LockToActive</div>
+                            <div class="huge">Total Bill : @ViewBag.LockToActiveTotalBill BDT</div>
+                        <p class="text-muted"><b>Lock to Active Client</b></p>
+                        <div class="huge" style="color:white;">@ViewBag.LockToActive BDT</div>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="info" style="margin-bottom: 10px;">
+                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Client/LockToActive">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body">
+                        @*<h3>1,100</h3>*@
+                        <p class="text-muted">
+                            <div class="huge">Active To Lock : @ViewBag.ActiveToLock</div>
+                            <div class="huge">Total Bill : @ViewBag.ActiveToLockTotalBill BDT</div>
+                        <p class="text-muted"><b>Active to Lock Client</b></p>
+                        <div class="huge" style="color:white;">@ViewBag.ActiveToLock BDT</div>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="info" style="margin-bottom: 10px;">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Client/ActiveToLock">*@
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-lg-4 col-sm-6 col-md-6 col-xs-12 floatleftright15px">
+                <div class="card">
+                    <div class="panel-body"> 
+                        <p class="text-muted">
+                            <div class="huge">Total Complains : @ViewBag.TotalComplains</div>
+                            <div class="huge">Pending Complains : @ViewBag.PendingComplains</div>
+                            <div class="huge">Solved Complains : @ViewBag.SolvedComplains</div> 
+                        <p class="text-muted"><b>Complains</b></p>
+                        <div class="progressbar-xs progress-rounded progress-striped progress ng-isolate-scope" value="68" type="info" style="margin-bottom: 10px;">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;"></div>
+                        </div>
+                        <span class="text-small">
+                             <a href="#">@*<a href="~/Complain/GetAllComplainList">
+                                <div class="panel-footer-admin-Paid">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>*@ 
+        </div>
+    </div>
+</div>
+
+
+

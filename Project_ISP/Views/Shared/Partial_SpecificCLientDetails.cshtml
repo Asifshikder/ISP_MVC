@@ -1,0 +1,568 @@
+﻿
+
+<div>
+    <div class="form-group col-sm-1">
+    </div>
+    <div class="form-group col-sm-3">
+        <div>
+            @Html.Label("Name", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("Name", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Name " })
+        </div>
+    </div>
+
+    <div class="form-group col-sm-4">
+
+        <img id="PreviewClientOWNImageBytesPaths" src="" width="100" height="90" onclick="">
+        <label>Client Image</label>
+        <p>
+            <div class="col-sm-9" style="padding-left:0px;">
+                <input type="file" name="ClientOWNImageBytes" id="ClientOWNImageBytes" onchange="ImageManager.preview(this,'PreviewClientOWNImageBytesPaths','ClientOWNImage')">
+                <input id="ClientOWNImageBytesPaths" name="ClientOWNImageBytesPaths" type="hidden" value="exist">
+            </div>
+            <div class="col-sm-3">
+                <button type="button" class="close" style="top: 0px;font-size: 25px; opacity:1" aria-label="Close" onclick="ImageManager.RemoveContent($('#ClientOWNImageBytes'),'ClientOWNImageBytesPaths')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </p>
+    </div>
+    <div class="form-group col-sm-4">
+        <div>
+            @Html.Label("Email", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("Email", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Email " })
+        </div>
+    </div>
+
+    <div style="clear:both;">
+
+        </div>
+    @*<div class="form-group col-sm-1">
+
+    </div>*@
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Login Name", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            <div id="Status" class="label label-success" style="display:none">Login Name Already Exist</div>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("LoginName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Login Name " })
+        </div>
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Password", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.Password("Password", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Password " })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-sm-1">
+        </div>
+        <div class="form-group col-sm-6 row">
+            <div id="Status" class="label label-success " style="display:none">Login Name Already Exist</div>
+        </div>
+        <div class="form-group col-sm-5">
+        </div>
+    </div>
+
+
+
+
+    @*<div class="form-group col-sm-1">
+
+    </div>*@
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Address", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("Address", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Address " })
+        </div>
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Latitude & Longitude", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("LatitudeLongitude", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Latitude Longitude " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Contact Number", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("ContactNumber", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Contact Number " })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Zone", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("ZoneID", null, "-- Select Zone --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Zone " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("SMS Communication", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("SMSCommunication", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " SMS Communication " })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Occupation", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("Occupation", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Occupation " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Social Communication URL", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("SocialCommunicationURL", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Social Communication URL " })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Remarks", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("Remarks", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Remarks " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Connection Type", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("ConnectionTypeID", null, "-- Select Connection Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Connection Type " })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Box Number", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("BoxID", null, "-- Select Box --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Box No " })
+            @*@Html.TextBox("BoxNumber", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Box Number " })*@
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Pop Details", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("PopDetails", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Pop Details " })
+        </div>
+    </div>
+
+
+    @*<div class="form-group col-sm-1">
+
+        </div>
+        <div class="form-group col-sm-6">
+            <div>
+                @Html.Label("RequireCable", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+            </div>
+            <div style="clear:both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.TextBox("RequireCable", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Require Cable " })
+            </div>
+        </div>
+        <div class="form-group col-sm-5">
+            <div>
+                @Html.Label("CableType", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+            </div>
+            <div style="clear:both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("CableTypeID", null, "-- Select Cable Type --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Cable Type " })
+            </div>
+        </div>*@
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-3">
+        <div>
+            @Html.Label("Reference", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("Reference", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reference " })
+        </div>
+    </div>
+    <div class="form-group col-sm-4">
+        <div>
+            @Html.Label("NationalID", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("NationalID", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " National ID " })
+        </div>
+    </div>
+
+    <div class="form-group col-sm-4">
+
+        <div id="divPreviewClientNIDImageBytesPaths">
+            <img id="PreviewClientNIDImageBytesPaths" src="" width="100" height="90" onclick="">
+        </div>
+        <label>NID Image</label>
+        <p>
+            <div class="col-sm-9" style="padding-left:0px;">
+                <input type="file" name="ClientNIDImage" id="ClientNIDImage" onchange="ImageManager.preview(this,'PreviewClientNIDImageBytesPaths','ClientNIDImage')">
+                <input id="ClientNIDImageBytesPaths" name="ClientNIDImageBytesPaths" type="hidden" value="exist">
+            </div>
+            <div class="col-sm-3">
+                <button type="button" class="close" style="top: 0px;font-size: 25px; opacity:1" aria-label="Close" onclick="ImageManager.RemoveContent($('#ClientNIDImage'),'ClientNIDImageBytesPaths')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </p>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    @*<div class="form-group col-sm-6">
+            <div>
+                @Html.Label("Package", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+            </div>
+            <div style="clear:both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("PackageID", null, "-- Select Package --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Package " })
+            </div>
+        </div>*@
+    <div class="form-group col-sm-3">
+        <div>
+            @Html.Label("Package This Month", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("PackageThisMonth", null, "-- Select Package --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Package " })
+        </div>
+    </div>
+    <div class="form-group col-sm-3">
+        <div>
+            @Html.Label("Package Next Month", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("PackageNextMonth", null, "-- Select Package --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Package " })
+        </div>
+    </div>
+
+
+
+
+    <div class="form-group col-sm-2">
+        <div>
+            @Html.Label("Signup Fee", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("SingUpFee", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " SingUpFee " })
+        </div>
+    </div>
+    <div class="form-group col-sm-3">
+        <div>
+            @Html.Label("Permanent Discount", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("PermanentDiscount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Permanent Discount ", @Value = "0" })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Security Question", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("SecurityQuestionID", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " SecurityQuestion " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Security Question Answer", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("SecurityQuestionAnswer", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Security Question Answer " })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Mac Address", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("MacAddress", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mac Address " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Bill Payment/Cycle Date", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @*@Html.TextBox("BillPaymentDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Bill Payment Date " })*@
+            @Html.TextBox("BillPaymentDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Bill Payment/Cycle Date ", @type = "number", @min = "1", @max = "31" })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Client Survey", new { @class = "control-label col-md-0", Style = "float:left" })
+            @*<span class="required_field col-md-0" style="padding-left:5px"> *</span>*@
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("ClientSurvey", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Client Survey " })
+        </div>
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Connection Date", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("ConnectionDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Connection Date " })
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    @*<div class="form-group col-sm-6">
+            <div>
+                @Html.Label("Is Banned?", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+            </div>
+            <div style="clear:both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("BannedID", null, "-- Select Banned Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Connection Date " })
+            </div>
+        </div>*@
+    <div class="form-group col-sm-3">
+        <div>
+            @Html.Label("Line Status This Month", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("ThisMonthLineStatusID", null, "-- Select Line Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " change reason " })
+        </div>
+    </div>
+    <div class="form-group col-sm-3">
+        <div>
+            @Html.Label("Line Status Next Month", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.DropDownList("NextMonthLineStatusID", null, "-- Select Line Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " change reason " })
+        </div>
+    </div>
+
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Lock/Active Date", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @Html.TextBox("LineStatusActiveDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Lock/Active Date " })
+        </div>
+    </div>
+    <div class="row"></div>
+    @*<div class="form-group col-sm-1">
+        </div>
+        <div class="form-group col-sm-5">
+            <div style="font-weight:bold">@Html.CheckBox("chkStatusFromRunningMonth") Status Will Activate From Now </div>
+            <input type="hidden" value="false" name="chkStatusFromRunningMonth" />
+        </div>*@
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-5">
+        @*<div style="font-weight:bold">@Html.CheckBox("chkPackageFromRunningMonth") Package will Activate from running month </div>
+            <input type="hidden" value="false" name="chkPackageFromRunningMonth" />*@
+        <div style="font-weight:bold">@Html.CheckBox("IsPriorityClient") Is Priority Client? </div>
+    </div>
+
+
+    <div class="row"></div>
+    <div class="form-group col-sm-1">
+
+    </div>
+    @*<div class="form-group col-sm-3">
+            <div style="font-weight:bold">@Html.CheckBox("IsPriorityClient") Is Priority Client? </div>
+
+        </div>*@
+
+    <div class="form-group col-sm-11">
+        <div>
+            @Html.Label("Change Reason", new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;width:96.3%">
+            @Html.TextBox("Reason", null, new { @class = "form-control input-sm col-sm-12", @placeholder = " Change Reason " })
+        </div>
+    </div>
+
+    <div class="row"></div>
+
+    <div class="form-group col-sm-1">
+
+    </div>
+
+    <div class="form-group col-sm-11">
+        <div>
+            @Html.Label("Clint Items Lists:", new { @class = "control-label col-md-0", Style = "float:left" })
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;width:96.3%">
+            <div id="txtItemAndCablesAssign" class="form-control input-sm" style="border:1px solid #DeD6De; height:auto; min-height:30px;"></div>
+            @*@Html.TextArea("txtItemAndCablesAssign", null,  new { @class = "form-control input-sm col-sm-11", @placeholder = " Employee Given Items " })*@
+        </div>
+    </div>
+    @*
+        <div class="form-group col-sm-5">
+
+        </div>*@
+
+    <div class="form-group col-sm-1">
+
+    </div>
+
+    <div class="form-group col-sm-6" hidden>
+        @*<div>
+                @Html.Label("Reseller", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left: 5px"> *</span>
+            </div>
+            <div style="clear: both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("ResellerID", null, "-- Select Reseller --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Reseller " })
+            </div>*@
+    </div>
+
+    <div class="form-group col-sm-5">
+
+    </div>
+
+    @*<div class="form-group col-sm-1">
+
+        </div>
+        <div class="form-group col-sm-6">
+
+        </div>
+        <div class="form-group col-sm-5">
+            <div>
+                @Html.Label("Reason", new { @class = "control-label col-md-0", Style = "float:left" })
+                <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+            </div>
+            <div style="clear:both"> </div>
+            <div class="col-md-11" style="padding-left: 0px;">
+                @Html.TextBox("Reason", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Connection Date " })
+            </div>
+        </div>*@
+
+
+
+
+
+</div>

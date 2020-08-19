@@ -1,0 +1,249 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+        <section class="content-header">
+            <h6 class="panel-title">Company Payer List</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/CompanyVsPayer/index"><i class="fa fa-dashboard"></i>Index</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        <table id="tblCompanyVsPayer" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%;">
+            <thead>
+                <tr>
+                    <th hidden="hidden"></th>
+                    <th>
+                        @Html.DisplayName("Payer Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Company Name")
+                    </th>
+                    <th>
+                        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_CompanyVsPayer))
+                        {
+                            <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                        }
+                    </th>
+                </tr>
+            </thead>
+
+        </table>
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_CompanyVsPayer))
+        {
+            <div class="modal fade" id="mdlInsert" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Insert Company Payer</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Payer Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("InsertPayerName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Name " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Company", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px; float: left">
+                                        @Html.DropDownList("Company", null, "-- Select Company --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Company" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertConfirm" value="Save" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_CompanyVsPayer))
+        {
+            <div class="modal fade" id="mdlUpdate" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="updateModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Payer</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Payer Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px; float: left">
+                                        @Html.TextBox("UpdatePayerName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Name " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Company", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px; float: left">
+                                        @Html.DropDownList("NewCompany", null, "-- Select Company --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Company" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateConfirm" value="Update" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Delete_CompanyVsPayer))
+        {
+            <div class="modal fade" id="mdlDelete" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="DeleteModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Delete Payer Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            Are You Sure to delete? No data can be recover in future.
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpDeleteClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnDelete" value="Delete" class="btn btn-danger btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script src="~/Scripts/CustomScripts/CompanyVsPayerManager.js"></script>
+<script>
+    var _PayerID;
+    var table;
+    $(document).ready(function () {
+
+        table = $("#tblCompanyVsPayer").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+                "ajax":
+                {
+                    "url": "/CompanyVsPayer/GetAllCompanyVsPayer",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    { "targets": [0], "data": "PayerID", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='PayerID' name='PayerID' value=" + row.PayerID + "></td>" } },
+                    { "targets": [3], "style": "align='center'", "orderable": false, "data": "Action", "render": function (data, type, row, meta) { return row.UpdateCompanyVsPayer === true ? '<a href="" id="showForUpdate" class="glyphicon glyphicon-edit btn-circle btn-default"></a><a href="" id="showForDelete" class="glyphicon glyphicon-remove btn-circle btn-default"></a>' : "" } }
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": "PayerID"
+                    },
+                    {
+                        "data": "PayerName"
+                    },
+                    {
+                        "data": "CompanyName"
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+
+        $("#tblCompanyVsPayer").on("click", "#showForUpdate", function (e) {
+            e.preventDefault();
+            _PayerID = $(this).closest("tr").find("td:eq(0) input").val();
+            CompanyVsPayerManager.GetDetailsByID(_PayerID);
+        });
+
+        $("#tblCompanyVsPayer").on("click", "#showForDelete", function (e) {
+            e.preventDefault();
+            _PayerID = $(this).closest("tr").find("td:eq(0) input").val();
+            $("#mdlDelete").modal("show");
+        });
+
+        $("#createNew").click(function (e) {
+            e.preventDefault();
+            $("#mdlInsert").modal("show");
+        });
+
+        $("#btnInsertClose,#btnPopUpInsertClose").click(function (e) {
+            CompanyVsPayerManager.clearForSaveInformation();
+            $("#mdlInsert").modal("hide");
+        });
+
+        $("#btnInsertConfirm").click(function (e) {
+
+            if (CompanyVsPayerManager.CreateValidation() === true) {
+                CompanyVsPayerManager.InsertCompanyVsPayer();
+            }
+        });
+
+        $("#updateModalClose,#btnPopUpUpdateClose").click(function () {
+            $("#mdlUpdate").modal("hide");
+        });
+
+
+        $("#btnUpdateConfirm").click(function () {
+            CompanyVsPayerManager.EditCompanyVsPayer(_PayerID);
+        });
+
+        $("#DeleteModalClose,#btnPopUpDeleteClose").click(function () {
+            $("#mdlDelete").modal("hide");
+        });
+        $("#btnDelete").click(function () {
+            CompanyVsPayerManager.DeletePayer(_PayerID);
+        });
+
+    });
+
+
+
+</script>

@@ -1,0 +1,263 @@
+﻿@*@model ISP_ManagementSystemModel.ViewModel.VM_Asset_ClientDetails*@
+@{
+    ViewBag.Title = "Accept Collected Bill";
+}
+
+<head>
+    <style>
+        .changetrbackground {
+            background-color: #DFFBF0;
+        }
+    </style>
+</head>
+
+
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm())
+{
+    <div class="container col-sm-12" style="padding-left: 0px; padding-top:0%;">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">Search Bill By Date</h6>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Bill Payment By Employee</a></li>
+                    </ol>
+                </section>
+            </div>
+            <div class="panel-body">
+                <div class="form-group col-sm-12">
+
+                    <div class="form-group col-sm-4">
+                        <div>
+                            @Html.Label("Search By Employee", new { @class = "control-label col-md-0", Style = "float:left" })
+                            <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                        </div>
+                        <div style="clear:both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.DropDownList("EmployeeID", null, "-- Search By --", new { @class = "form-control input-sm col-sm-6" })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <div>
+                            @Html.Label("Payment Start Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("PaymentStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Start Date " })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <div>
+                            @Html.Label("Payment End Date", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                        </div>
+                        <div style="clear: both"> </div>
+                        <div class="col-md-11" style="padding-left: 0px;">
+                            @Html.TextBox("PaymentEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment End Date " })
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <div style="float: left;margin-top: 25px;">
+                            <input type="button" id="btnSearch" value="Search By Date" class="btn btn-primary btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading ">
+                <h4 class="panel-title ">Bills List:  Amount: <text id="divTotalBill"></text></h4>
+            </div>
+            @*<input type="button" class="btn btn-primary btn-sm" id="btnExportExcel" value="Export Excel" />*@
+            <div class="panel-body" style="overflow:auto">
+                <table id="tblPaidBillByMe" class="table table-bordered table-hover table-responsive" style="align-content: center; width: 100%">
+                    <thead>
+                        <tr>
+
+                            @*TransactionID = s.PaymentHistory.FirstOrDefault().TransactionID.Value,
+                                PaidAmount = s.PaymentHistory.Sum(x => x.PaidAmount),
+                                PaidTime = s.PaymentHistory.FirstOrDefault().PaymentDate.ToString(),
+                                ReceiptNo = s.PaymentHistory.FirstOrDefault().ResetNo,
+                                CollectBy = db.Employee.Find(s.PaymentHistory.FirstOrDefault().CollectByID).Name,
+                                ShowAcceptButton = showAccepteButton*@
+
+                            <th hidden="hidden"></th>
+                            <th hidden="hidden"></th>
+                            <th hidden="hidden"></th>
+                            <th hidden="hidden"></th>
+                            <th  hidden="hidden">ReceiptNo</th>
+                            <th style="padding:10px;">Paid_Amount</th>
+                            <th style="padding-left:100px;padding-right:100px;">Paid_Time</th>
+                            <th style="padding:10px;">Collect_By</th>
+                            <th style="padding:10px;">Accept</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="popModalForAcceptPermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to receive collected amount for this employee.
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnAcceptCollectedBill" class="btn btn-success success">Accept Bill</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/Scripts/CustomScripts/B_P_Manager.js"></script>
+<script>
+    var table;
+    var _CollectBy;
+    var _StartDate;
+    var _EndDate;
+    var _index;
+    var totalBill = 0;
+    $(document).ready(function () {
+        $('#PaymentStartDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#PaymentEndDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        table = $("#tblPaidBillByMe").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+                "ajax":
+                {
+                    "url": "/Transaction/GetAcceptEmployeeCollectedBillByEmployee",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.EmployeeID = $("#EmployeeID").val();
+                        d.PaymentStartDate = $("#PaymentStartDate").val();
+                        d.PaymentEndDate = $("#PaymentEndDate").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    },
+                    dataFilter: function (reps) {
+                        totalBill = 0;
+                        $("#divTotalBill").text(totalBill);
+                        return reps;
+                    }
+                },
+
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "data": "", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='' name='' value=" + row.CollectBy + "></td>" } },
+                    { "targets": [1], "data": "resetNo", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='ReceiptNo' name='ReceiptNo' value=" + row.ReceiptNo + "></td>" } },
+                    { "targets": [2], "data": "", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='' name='' value=" + row.StartDate + "></td>" } },
+                    { "targets": [3], "data": "", "render": function (data, type, row, meta) { return "<td hidden><input type='hidden' id='' name='' value=" + row.EndDate + "></td>" } },
+                    { "targets": [8], "style": "align='center'", "data": "Action", "render": function (data, type, row, meta) { return (row.ShowAcceptButton === true) ? ' <button id="btnAccept" type="button" class="btn btn-warning btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForAcceptPermently"> <span class="glyphicon glyphicon-ok-circle"></span> </button> ' : "" } }
+                ],
+
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $("#divTotalBill").text(aData.TotalAmount);
+
+                    if (aData.IsPriorityClient) {
+                        $(nRow).removeClass('odd');
+                        $(nRow).addClass('changetrbackground');
+                    }
+                    else {
+                        $(nRow).removeClass('changetrbackground');
+                    }
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    $(nRow).find("td:eq(1)").attr("hidden", true);
+                    $(nRow).find("td:eq(2)").attr("hidden", true);
+                    $(nRow).find("td:eq(3)").attr("hidden", true);
+                    $(nRow).find("td:eq(4)").attr("hidden", true);
+                    $(nRow).find("td:eq(4)").css("font-weight", "bold");
+                    $(nRow).find("td:eq(5)").css("color", "blue");
+                    $(nRow).find("td:eq(6)").css("font-weight", "bold");
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "ReceiptNo"
+                    },
+                    {
+                        "data": "PaidAmount"
+                    },
+                    {
+                        "data": "PaidTime"
+                    },
+                    {
+                        "data": "CollectByName"
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+        $("#btnSearch").click(function () {
+            if (ValidationForSubmittedBillSearch()) {
+                table.draw();
+            }
+        });
+        $("#tblPaidBillByMe>tbody").on("click", "#btnAccept", function () {
+            _index = $(this).index();
+            _CollectBy = $(this).closest("tr").find("td:eq(0) input").val();
+            _StartDate = AppUtil.ParseDateINMMDDYYYY($(this).closest("tr").find("td:eq(2) input").val());
+            _EndDate = AppUtil.ParseDateINMMDDYYYY($(this).closest("tr").find("td:eq(3) input").val());
+            //$("#popModalForAcceptPermently").modal("show");
+        });
+        $("#btnAcceptCollectedBill").on("click", function () {
+            B_P_Manager.CollectedBillAccept();
+        });
+    });
+
+    function ValidationForSubmittedBillSearch() {
+
+
+        if (AppUtil.GetIdValue("PaymentStartDate") === '') {
+            AppUtil.ShowSuccess("Please Select Payment Start Date. ");
+            return false;
+        }
+        if (AppUtil.GetIdValue("PaymentEndDate") === '') {
+            AppUtil.ShowSuccess("Please Select Payment End Date. ");
+            return false;
+        }
+
+        return true;
+    }
+</script>

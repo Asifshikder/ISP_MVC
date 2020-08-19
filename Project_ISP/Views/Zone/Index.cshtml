@@ -1,0 +1,281 @@
+﻿@using ISP_ManagementSystemModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+<script src="~/Scripts/CustomScripts/ZoneManager.js"></script>
+
+@if (TempData["AlreadyInsert"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["AlreadyInsert"].ToString()');
+    </script>
+
+}
+@if (TempData["SaveSucessOrFail"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["SaveSucessOrFail"].ToString()');
+    </script>
+
+}
+<script>
+
+    var ZoneID;
+    var table;
+    $(document).ready(function () {
+
+        table = $("#tblZone").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+
+                "ajax":
+                {
+                    "url": "/zone/GetZoneAJAXData",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                        d.ResellerID = $("#SearchByResellerID").val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "render": function (data, type, row, meta) { return '<input type="hidden" id="ItemID" name="ItemID" value=' + row.ZoneID + ' />' } },
+                    { "targets": [2], "orderable": false, "render": function (data, type, row, meta) { return row.UpdateStatus === true ? '<a href="" id="showZoneForUpdate">Show</a>' : "" } }
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "ZoneName"
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+        $("#btnSearchZoneListByResellerID").click(function () {
+            ZoneManager.clearForSaveInformation();
+            ZoneManager.clearForUpdateInformation();
+            table.draw();
+        });
+
+        $("#tblZone").on("click", "#showZoneForUpdate", function (e) {
+
+            e.preventDefault();
+            ZoneID = $(this).closest("tr").find("td:eq(0) input").val();
+            ZoneManager.ShowZoneDetailsByIDForUpdate(ZoneID);
+        });
+
+        $("#createNew").click(function (e) {
+            e.preventDefault();
+            $("#mdlZoneInsert").modal("show");
+        });
+
+        $("#btnInsertZone").click(function (e) {
+            if (ZoneManager.CreateValidation() === true) {
+                ZoneManager.InsertZoneFromPopUp();
+            }
+        });
+
+        $("#btnUpdateZone").click(function () {
+            if (ZoneManager.UpdateValidation() === true) {
+                ZoneManager.UpdatePackageInformation();
+            }
+        });
+
+        $("#btnPopUpZoneInsertClose").click(function (e) {
+            ZoneManager.clearForSaveInformation();
+            $("#mdlZoneInsert").modal("hide");
+        });
+
+        $("#btnPopUpZoneUpdateClose").click(function () {
+            ZoneID = "";
+            ZoneManager.clearForUpdateInformation();
+            $("#mdlZoneUpdate").modal("hide");
+        });
+        $('#btnInsertZoneModalClose').click(function () {
+            ZoneManager.clearForSaveInformation();
+        });
+        $('#btnUpdateZoneModalClose').click(function () {
+            ZoneManager.clearForUpdateInformation();
+        });
+
+        $("#tblZone").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            ZoneManager.PrintZoneList();
+        });
+
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Zone List</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Zone/Index"><i class="fa fa-dashboard"></i> All Zone List</a></li>
+            </ol>
+        </section>
+    </div>
+
+    @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.View_Reseller_Zone_List))
+    {
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-sm-4">
+                    @Html.DropDownList("SearchByResellerID", null, "-- Reseller List --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-sm-4">
+                    <input type="Button" id="btnSearchZoneListByResellerID" value="Search" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+            <table id="tblZone" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;">
+                @*<table id="tblZone" class="table table-striped table-bordered table-responsive">*@
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Zone Name")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Zone))
+                            {
+                                <a style="font-weight:800;color: crimson" href="" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@foreach (var item in Model)
+                        {
+                                        <tr>
+                                            <td hidden="hidden">
+                                                @Html.HiddenFor(s => item.ZoneID)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ZoneName)
+                                            </td>
+                                            <td>
+                                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Zone))
+                                                {
+                                                    <a href="" id="showZoneForUpdate">Show</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }*@
+                </tbody>
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Zone))
+        {
+            <div class="modal fade" id="mdlZoneInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertZoneModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Zone Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Add_Reseller_Zone))
+                            {
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Reseller Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px;float:left">
+                                            @Html.DropDownList("ddlCreateReseller", null, "-- Select Reseller --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Reseller Name " })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Zone Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("ZoneName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Zone Name " })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpZoneInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertZone" value="Save Zone " class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>}
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Zone))
+        {
+            <div class="modal fade" id="mdlZoneUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateZoneModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Zone Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_Zone")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpZoneUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateZone" value="Update Zone " class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>

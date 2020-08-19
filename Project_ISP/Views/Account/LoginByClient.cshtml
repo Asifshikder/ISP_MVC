@@ -1,0 +1,329 @@
+﻿
+
+
+@model ISP_ManagementSystemModel.Models.LoginViewModel
+@{
+    Layout = null;
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ISP Billing Solution</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="~/Scripts/LayoutScripts/jquery.min.js"></script>
+
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
+    <link href="~/Content/CSSReference/bootstrap.min3.3.7.css" rel="stylesheet" />
+    <script src="~/Scripts/LayoutScripts/jquery-ui.min.js"></script>
+
+
+    <script src="~/Scripts/CustomScripts/AppUtil.js"></script>
+    <script src="~/Scripts/notify.js"></script>
+    <script src="~/Scripts/LayoutScripts/bootstrap.min.js"></script>
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">*@
+    <link href="~/Content/CSSReference/font-awesome.min4.4.0.css" rel="stylesheet" />
+    <style>
+        .body {
+            /*background: rgba(0, 0, 0, 0.5);*/
+            /*background-image: url('../../ISPwallpaper/3.png');*/
+            /*background-image: url('../../ISPwallpaper/7.jpg');*/
+            /*background-image: url('../../ISPwallpaper/9.png');*/
+        }
+
+        .login-signup {
+            padding: 0 0 25px;
+        }
+
+        .btn-success {
+            background: #23bab5;
+            border-radius: 0;
+            border: 2px solid #23bab5;
+            webkit-transition: all 400ms cubic-bezier(.4,0,.2,1);
+            transition: all 400ms cubic-bezier(.4,0,.2,1);
+        }
+
+            .btn-success:hover, .btn-success:focus {
+                background: rgba(26, 161, 157, 0);
+                border: 2px solid #1aa19d;
+                webkit-transition: all 400ms cubic-bezier(.4,0,.2,1);
+                transition: all 400ms cubic-bezier(.4,0,.2,1);
+                color: #23BAB5;
+            }
+
+        a {
+            color: #23bab5;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        article[role="login"] {
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 10px rgba(0, 0, 0, 0.24);
+            webkit-transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 50px;
+            margin-bottom: 20px;
+        }
+
+            article[role="login"] input[type="submit"] {
+                padding: 10px 15px;
+                font-size: 16px;
+            }
+
+            article[role="login"]:hover {
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+                -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 1px 15px rgba(0, 0, 0, 0.23);
+                webkit-transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            article[role="login"] h3 {
+                font-size: 26px;
+                font-weight: 300;
+                color: #23bab5;
+                margin-bottom: 20px;
+            }
+
+            article[role="login"] p {
+                font-size: 16px;
+                padding: 5px 15px;
+            }
+
+        .nav-tab-holder {
+            padding: 0 0 0 30px;
+            float: left;
+        }
+
+            .nav-tab-holder .nav-tabs {
+                border: 0;
+                float: none;
+                display: table;
+                table-layout: fixed;
+                width: 99.1%;
+            }
+
+                .nav-tab-holder .nav-tabs > li {
+                    margin-bottom: -3px;
+                    text-align: center;
+                    padding: 0;
+                    display: table-cell;
+                    float: none;
+                    padding: 0;
+                }
+
+                    .nav-tab-holder .nav-tabs > li > a {
+                        background: #d9d9d9;
+                        color: #6c6c6c;
+                        margin: 0;
+                        font-size: 18px;
+                        font-weight: 300;
+                    }
+
+                    .nav-tab-holder .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+                        color: #FFF;
+                        background-color: #23bab5;
+                        border: 0;
+                        border-radius: 0;
+                    }
+
+        .mobile-pull {
+            float: left;
+        }
+
+        article[role="manufacturer"] {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 10px rgba(0, 0, 0, 0.24);
+            padding: 0 0 40px;
+            max-width: 420px;
+            margin: -45px auto 0;
+        }
+
+            article[role="manufacturer"] header {
+                background: #23bab5;
+                color: #fff;
+                padding: 10px;
+                font-size: 18px;
+                font-weight: 300;
+            }
+
+            article[role="manufacturer"] h1 {
+                font-size: 26px;
+                font-weight: 300;
+                border-bottom: 1px solid #f2f2f2;
+                padding: 25px 15px;
+            }
+
+            article[role="manufacturer"] ul {
+                padding: 0 25px;
+            }
+
+                article[role="manufacturer"] ul li {
+                    font-size: 16px;
+                    border-bottom: 1px solid #eaeaea;
+                    padding: 20px 15px;
+                    color: #404040;
+                }
+
+                    article[role="manufacturer"] ul li i {
+                        color: #23bab5;
+                    }
+
+        .login-signup {
+            padding: 0 0 25px;
+        }
+
+        @@media only screen and (max-width: 767px) {
+            .mobile-pull {
+                float: none;
+            }
+
+            .nav-tab-holder {
+                float: none;
+                overflow: hidden;
+            }
+
+            .nav-tabs > li > a {
+                font-size: 13px;
+                font-weight: 600;
+                padding: 10px 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .nav-tabs > li {
+                width: 50%;
+            }
+        }
+
+        .main-footer {
+            background: #fff;
+            padding: 15px;
+            color: #444;
+            border-top: 1px solid #d2d6de;
+        }
+
+        .nav-tab-holder .nav-tabs > li > a {
+            background: #d9d9d9;
+            /*color: #6c6c6c;*/
+            margin: -2px;
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        .login-signup {
+            position: fixed;
+            padding-left: 28%;
+            /*background-color: #f3f3f3;*/
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+        }
+
+        .row {
+            margin-right: -0px;
+            margin-left: -17px;
+        }
+    </style>
+</head>
+<body class="body">
+    @if (TempData["TempInformation"] != null)
+    {
+        <script>
+            $("#UserName").notify(
+  "I'm to the right of this box",
+  { position: "right" }
+);
+            AppUtil.ShowSuccess('@TempData["TempInformation"].ToString()');
+        </script>
+    }
+    @*@Html.ValidationSummary(true)*@
+    @* <div class="container" style="margin-left:27%; width:100%; margin-top:120px;"> *@
+        <div class="container" style="margin-left:0%; width:100%; margin-top:120px; align-content:center">
+            <div class="login-signup">
+                <div class="row" style="width: 90%;">
+                    <div class="col-sm-8 nav-tab-holder">
+                        <ul class="nav nav-tabs row" role="tablist">
+                            <li role="presentation" class="active col-sm-12"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Admin</a></li>
+                            <li role="presentation" class="col-sm-12"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">User</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="tab-content" style="width: 87%;">
+                    <div role="tabpanel" class="tab-pane active" id="home">
+                        <div class="row">
+
+                            <div class="col-sm-8 mobile-pull">
+                                <article role="login">
+                                    <h3 class="text-center"><i class="fa fa-lock"></i> Login As Employee</h3>
+                                    @using (Html.BeginForm("LoginByClient", "Account", new { ReturnUrl = ViewBag.ReturnUrl, Type = 1 }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                    {@Html.AntiForgeryToken()
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-success btn-block" value="SUBMIT">
+                                    </div>
+                                }
+                                </article>
+                            </div>
+
+                        </div>
+                        <!-- end of row -->
+                    </div>
+                    <!-- end of home -->
+
+                    <div role="tabpanel" class="tab-pane" id="profile">
+                        <div class="row">
+
+                            <div class="col-sm-8 mobile-pull">
+                                <article role="login">
+                                    <h3 class="text-center"><i class="fa fa-lock"></i> Login As Client</h3>
+                                    @using (Html.BeginForm("LoginByClient", "Account", new { ReturnUrl = ViewBag.ReturnUrl, Type = 2 }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                    {@Html.AntiForgeryToken()
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-success btn-block" value="SUBMIT">
+                                    </div>
+                                }
+
+
+                                </article>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <footer class="main-footer footer" style="">
+        <div class="pull-left hidden-xs">
+            <strong>Copyright © 2014-2018 <a target="_blank" href="http://busitech.net/">Business Technology</a>.</strong> All rights reserved.
+        </div>
+        <b style="margin-left:100px;">Developed By: </b><strong><a target="_blank" href="http://busitech.net/" title="Contact No: +88-01553-138099">&nbsp;&nbsp;Kamrul Hasan</a></strong>
+        <b style="margin-left:100px;">Contact No: </b><strong><a target="_blank" href="#" title="Contact No: +88-01553-138099">&nbsp;&nbsp;+88-01553-138099</a></strong>
+        <text style="float:right; margin-right:10px;color:blue">1.0</text><b style="float:right">Version:&nbsp;</b>
+    </footer>
+</body>
+</html>

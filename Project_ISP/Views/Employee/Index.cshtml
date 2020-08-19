@@ -1,0 +1,885 @@
+﻿@*
+    @using ISP_ManagementSystemModel
+    @model IEnumerable<ISP_ManagementSystemModel.Models.Employee>
+
+    <style>
+        .btn-sm {
+            padding: 3px 6px;
+        }
+    </style>
+    @{
+        ViewBag.Title = "Employee List";
+        // Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <script src="~/Scripts/CustomScripts/EmployeeManager.js"></script>
+    <script>
+        var EmployeeID;
+        $(document).ready(function () {
+            $("#tblEmployee").on("click", "#showEmployeeForUpdate", function (e) {
+
+                e.preventDefault();
+                EmployeeID = $(this).closest("tr").find("td:eq(0) input").val();
+
+                EmployeeManager.ShowEmployeeDetailsByIDForUpdate(EmployeeID);
+            });
+
+            $("#createNew").click(function (e) {
+
+                e.preventDefault();
+                $("#mdlEmployeeInsert").modal("show");
+            });
+
+            $("#btnPopUpEmployeeInsertClose").click(function (e) {
+                $("#mdlEmployeeInsert").modal("hide");
+            });
+
+            //$("#btnPopUpPackageUpdateClose").click(function () {
+            //    packageID = "";
+            //    $("#mdlPackageUpdate").modal("hide");
+            //});
+
+            $("#btnInsertEmployee").click(function (e) {
+
+                if (EmployeeManager.Validation() === true) {
+                    EmployeeManager.InsertEmployeeFromPopUp();
+                }
+            });
+
+            $("#btnUpdateEmployee").click(function () {
+
+                if (EmployeeManager.EmployeeUpdateValidation() === true) {
+
+                    EmployeeManager.UpdateEmployeeInformation();
+                }
+            });
+
+
+            $("#btnPopUpEmployeeClose").click(function () {
+                $("#mdlEmployeeUpdate").modal("hide");
+            });
+            $("#tblEmployee").DataTable();
+
+            $("#btnExportExcel").click(function () {
+                EmployeeManager.PrintEmployeeList();
+            });
+        });
+
+
+
+    </script>
+    @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+        SelectList list = ViewBag.EmployeeStatus;
+        <div class="panel panel-default" style="margin-bottom: 0px;">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">All Employee</h6>
+                    <ol class="breadcrumb">
+                        <li class="active"><a href="/Employee/Index"><i class="fa fa-dashboard"></i> All Employee</a></li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+
+                <div style="float: right; padding-bottom:0px;">
+                    <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                    <!-- export xl file -->
+                </div>
+                <table id="tblEmployee" class="table table-striped table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th hidden></th>
+                            <th>
+                                @Html.DisplayName("Employee Name")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Login Name")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Phone")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Address")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Email")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Department")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Roll Name")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Right Permission")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Status")
+                            </th>
+                            <th>
+                                @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Add_Employee))
+                                {
+                                    <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                                }
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var status = "";
+
+                            if (item.EmployeeStatus == ISP_ManagementSystemModel.AppUtils.EmployeeStatusIsActive)
+                            {
+                                status = "Active";
+                            }
+                            else if (item.EmployeeStatus == ISP_ManagementSystemModel.AppUtils.EmployeeStatusIsLock)
+                            {
+                                status = "Lock";
+                            }
+
+                            <tr>
+                                <td hidden>
+                                    @Html.HiddenFor(s => item.EmployeeID)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LoginName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Phone)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Address)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Email)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Department.DepartmentName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Role.RoleNae)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UserRightPermission.UserRightPermissionName)
+                                </td>
+                                <td>
+                                    @status
+                                </td>
+                                <td>
+                                    @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Employee) && !AppUtils.GetTempNotUpdateEmployee.Contains(Convert.ToString(item.EmployeeID)))
+                                    {
+                                        <a href="" id="showEmployeeForUpdate">Show</a>
+
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Add_Employee))
+                {
+                    <div class="modal fade" id="mdlEmployeeInsert" role="dialog" style="overflow: auto">
+                        <div class="modal-dialog modal-lg" style="width: 45%">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Create New Employee</h4>
+                                </div>
+                                <div class="modal-body panel-body">
+
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.TextBox("Name", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Employee Name " })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Login Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.TextBox("LoginName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Employee Name " })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="padding-top: 20px;"></div>
+
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Password", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.TextBox("Password", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Password" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Phone", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.TextBox("Phone", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Phone " })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Address", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.TextBox("Address", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Address " })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Email", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.TextBox("Email", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Email " })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Department", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.DropDownList("DepartmentID", null, "-- Select Department --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Department " })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Role Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.DropDownList("RoleID", null, "-- Select Role --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Role " })
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("User Right Permission Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.DropDownList("UserRightPermissionID", null, "-- Select Access Right --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Role " })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="padding-top: 20px;"></div>
+                                    <div class="form-group col-sm-12">
+                                        <div>
+                                            @Html.Label("Status", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                            <div class="col-md-8" style="padding-left: 0px; float: left">
+                                                @Html.DropDownList("EmployeeStatusDD", @list, "-- Employee Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Department " })
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <div id="PopUp" style="float: right">
+                                        <input type="button" id="btnPopUpEmployeeInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                        <input type="button" id="btnInsertEmployee" value="Insert Employee Information" class="btn btn-primary btn-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Employee))
+                {
+                    <div class="modal fade" id="mdlEmployeeUpdate" role="dialog" style="overflow: auto">
+                        <div class="modal-dialog modal-lg" style="width: 45%">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Update Employee Information</h4>
+                                </div>
+                                <div class="modal-body panel-body">
+                                    @Html.Partial("Parrial_EmployeeDetails")
+                                </div>
+                                <div class="modal-footer">
+                                    <div id="PopUp" style="float: right">
+                                        <input type="button" id="btnPopUpEmployeeClose" value="Close" class="btn btn-default btn-sm" />
+                                        <input type="button" id="btnUpdateEmployee" value="Update Employee Information" class="btn btn-primary btn-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+    }
+
+*@
+
+@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.Employee>
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+@{
+    ViewBag.Title = "Employee List";
+}
+
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm())
+{
+    SelectList list = ViewBag.EmployeeStatus;
+    <div class="panel panel-default" style="margin-bottom: 0px;">
+        <div class="panel-heading">
+
+            <section class="content-header">
+                <h6 class="panel-title">All Employee</h6>
+                <ol class="breadcrumb">
+                    <li class="active"><a href="/Employee/Index"><i class="fa fa-dashboard"></i> All Employee</a></li>
+                </ol>
+            </section>
+        </div>
+
+        <div class="panel-body" style="overflow: auto">
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+            </div>
+            <div></div>
+            <table id="tblEmployee" class="table table-striped table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th hidden></th>
+                        <th>
+                            @Html.DisplayName("Employee Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Login Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Phone")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Address")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Email")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Birth Date")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Department")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Salary")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Roll Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Off Day")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Right Permission")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Break Run Time")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Duty Shift")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Employee Work Schedule")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Status")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Add_Employee))
+                            {
+                                <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var status = "";
+
+                        if (item.EmployeeStatus == ISP_ManagementSystemModel.AppUtils.EmployeeStatusIsActive)
+                        {
+                            status = "Active";
+                        }
+                        else if (item.EmployeeStatus == ISP_ManagementSystemModel.AppUtils.EmployeeStatusIsLock)
+                        {
+                            status = "Lock";
+                        }
+                        <tr>
+                            <td hidden>
+                                @Html.HiddenFor(s => item.EmployeeID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LoginName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Phone)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Address)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                                @Convert.ToString(string.Format("{0:dd/MM/yyyy}", item.DOB))
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Department.DepartmentName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Salary)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Role.RoleNae)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Days.DayName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.UserRightPermission.UserRightPermissionName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BreakHour) : @Html.DisplayFor(modelItem => item.BreakMinute)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DutyShiftCombined)
+                            </td>
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Employee) && !AppUtils.GetTempNotUpdateEmployee.Contains(Convert.ToString(item.EmployeeID)))
+                                {
+                                    <a href="" id="showEmployeeWorkSchedules">Show</a>
+                                }
+                            </td>
+                            <td>
+                                @status
+                            </td>
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Employee) && !AppUtils.GetTempNotUpdateEmployee.Contains(Convert.ToString(item.EmployeeID)))
+                                {
+                                    <a href="" id="showEmployeeForUpdate">Show</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Add_Employee))
+            {
+                <div class="modal fade" id="mdlEmployeeInsert" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-lg" style="width: 65%">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Create New Employee</h4>
+                            </div>
+                            <div class="modal-body panel-body">
+
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("Name", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Employee Name " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Login Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("LoginName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Employee Name " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Password", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("Password", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Password" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Phone", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("Phone", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Phone " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Address", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("Address", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Address " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Date of Birth", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("DateOfBirth", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Date of Birth" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Email", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("Email", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Email " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Salary", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("Salary", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Salary " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Department", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("DepartmentID", null, "-- Select Department --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Department " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Role Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("RoleID", null, "-- Select Role --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Role " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("User Right Permission Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("UserRightPermissionID", null, "-- Select Access Right --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Role " })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Status", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("EmployeeStatusDD", @list, "-- Employee Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Department " })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Duty Sift", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("DutyShift", @list, "-- Employee Duty Shift --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Duty Shift " })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Off Day", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("OffDay", @list, "-- Off Day --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Off Day " })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Device ID", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.TextBox("DeviceID", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Device ID " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Break Run Time", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                                            @Html.DropDownList("BreakHour", @list, "Hour", new { }) @Html.DropDownList("BreakMinute", @list, "Min", new { })
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top: 20px;"></div>
+
+                                <div class="form-group col-sm-6">
+                                    <img id="PreviewEmployeeOwnCreateImage" src="" width="100" height="90">
+                                    <label>
+                                        Employee Own Image
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </label>
+                                    <p>
+                                        <div class="col-sm-9" style="padding-left:0px;">
+                                            <input accept="image/*" class="" id="EmployeeOwnCreateImage" name="EmployeeOwnCreateImage" type="file" onchange="ImageManager.preview(this,'PreviewEmployeeOwnCreateImage')">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#EmployeeOwnCreateImage'),'EmployeeOwnCreateImage')">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </p>
+                                    <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+                                </div>
+                                <div style="padding-top: 20px;"></div>
+
+                                <div class="form-group col-sm-6">
+                                    <img id="PreviewEmployeeNIDCreateImage" src="" width="100" height="90">
+                                    <label>
+                                        Employee NID Image
+                                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                                    </label>
+                                    <p>
+                                        <div class="col-sm-9" style="padding-left:0px;">
+                                            <input accept="image/*" class="" id="EmployeeNIDCreateImage" name="EmployeeNIDCreateImage" type="file" onchange="ImageManager.preview(this,'PreviewEmployeeNIDCreateImage')">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#EmployeeNIDCreateImage'),'EmployeeNIDCreateImage')">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </p>
+                                    <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div id="PopUp" style="float: right">
+                                    <input type="button" id="btnPopUpEmployeeInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                    <input type="button" id="btnInsertEmployee" value="Insert Employee Information" class="btn btn-primary btn-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Employee))
+            {
+                <div class="modal fade" id="mdlEmployeeUpdate" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-lg" style="width: 65%">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Update Employee Information </h4>
+                            </div>
+                            <div class="modal-body panel-body">
+                                @Html.Partial("Parrial_EmployeeDetails")
+                            </div>
+                            <div class="modal-footer">
+                                <div id="PopUp" style="float: right">
+                                    <input type="button" id="btnPopUpEmployeeClose" value="Close" class="btn btn-default btn-sm" />
+                                    <input type="button" id="btnUpdateEmployee" value="Update Employee Information" class="btn btn-primary btn-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Update_Employee))
+            {
+                <div class="modal fade" id="mdlEmployeeWorkSchedule" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-lg" style="width: 75%">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Employee Work Schedule</h4>
+                            </div>
+                            <div class="modal-body panel-body">
+                                @Html.Partial("Partial_EmployeeWorkSchedule")
+                            </div>
+
+                            <div class="modal-footer">
+                                <div id="PopUp" style="float: right">
+                                    <input type="button" id="btnPopUpEmployeeWorkSchedule" value="Close" class="btn btn-default btn-sm" />
+                                    <input type="button" id="btnPopUpEmployeeWorkScheduleSave" value="Save" class="btn btn-primary btn-sm" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<script src="~/Scripts/CustomScripts/ImageManager.js"></script>
+<script src="~/Scripts/CustomScripts/EmployeeManager.js"></script>
+<script>
+    var EmployeeID;
+    $(document).ready(function () {
+        $("#tblEmployee").on("click", "#showEmployeeForUpdate", function (e) {
+
+            e.preventDefault();
+            EmployeeID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            EmployeeManager.ShowEmployeeDetailsByIDForUpdate(EmployeeID);
+        });
+
+        $("#tblEmployee").on("click", "#showEmployeeWorkSchedules", function (e) {
+
+            e.preventDefault();
+            EmployeeID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            EmployeeManager.ShowEmployeeWorkSchedule(EmployeeID);
+        });
+        $("#tblEmployee").on("click", "#showEmployeeDutyShift", function (e) {
+
+            e.preventDefault();
+            EmployeeID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            EmployeeManager.ShowEmployeeDutyShift(EmployeeID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlEmployeeInsert").modal("show");
+        });
+
+        $("#btnPopUpEmployeeInsertClose").click(function (e) {
+            $("#mdlEmployeeInsert").modal("hide");
+        });
+
+        $("#btnPopUpEmployeeWorkSchedule").click(function (e) {
+            $("#mdlEmployeeWorkSchedule").modal("hide");
+        });
+
+        //$("#btnPopUpPackageUpdateClose").click(function () {
+        //    packageID = "";
+        //    $("#mdlPackageUpdate").modal("hide");
+        //});
+
+        $("#btnInsertEmployee").click(function (e) {
+
+            if (EmployeeManager.Validation() === true) {
+                EmployeeManager.InsertEmployeeFromPopUp();
+            }
+        });
+
+        $("#btnUpdateEmployee").click(function () {
+
+            if (EmployeeManager.EmployeeUpdateValidation() === true) {
+
+                EmployeeManager.UpdateEmployeeInformation();
+            }
+        });
+        $("#btnPopUpEmployeeWorkScheduleSave").click(function () {
+
+            EmployeeManager.SaveEmployeeWorkSchedule();
+
+        });
+
+
+        $("#btnPopUpEmployeeClose").click(function () {
+            $("#mdlEmployeeUpdate").modal("hide");
+        });
+        $("#btnPopUpEmployeeDutyShift").click(function () {
+            $("#mdlEmployeeDutyShift").modal("hide");
+        });
+        $("#tblEmployee").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            EmployeeManager.PrintEmployeeList();
+        });
+
+        $('#DateOfBirth').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+        $('#NewDateofBirth').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+
+
+
+</script>

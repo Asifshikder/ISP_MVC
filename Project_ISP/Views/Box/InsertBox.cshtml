@@ -1,0 +1,74 @@
+﻿@*@model ISP_ManagementSystemModel.ViewModel.VM_Box_ClientDetails*@
+@{
+    ViewBag.Title = "Insert Box";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Scripts/CustomScripts/BoxManager.js"></script>
+
+<script>
+    var BoxID;
+    $(document).ready(function () {
+
+        $("#btnInsertBox").click(function (e) {
+              
+            if (BoxManager.CreateValidation() === true) {
+                  
+                BoxManager.InsertBox();
+            }
+        });
+    });
+
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+@using (Html.BeginForm())
+{
+    <div class="container" style="padding-left: 0px; padding-top:0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">New Box</h6>
+                    <ol class="breadcrumb">
+                        <li><a href="/Box/Index"><i class="fa fa-dashboard"></i> All Box</a></li>
+                        <li class="active"> <a href="/Box/insertBox"> New Box </a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="form-group col-sm-12">
+                    <div>
+                        @Html.Label(" Box Name ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                            @Html.TextBox("BoxName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Box Name " })
+                        </div>
+                    </div>
+                    <div>
+                        @Html.Label(" Box Location ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                            @Html.TextBox("BoxLocation", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Box Location " })
+                        </div>
+                    </div>
+                    <div>
+                        @Html.Label("Latitude & Longitude ", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                        <div class="col-md-8" style="padding-left: 0px; float: left">
+                            @Html.TextBox("LatitudeLongitude", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Latitude & Longitude" })
+                        </div>
+                    </div>
+                    <input type="button" id="btnInsertBox" value="Save Box" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+

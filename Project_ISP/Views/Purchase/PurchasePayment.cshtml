@@ -1,0 +1,561 @@
+﻿@model  ISP_ManagementSystemModel.ViewModel.VM_PurchaseAndDetails
+
+<head>
+    <style>
+        #ribbon-container {
+            position: absolute;
+            top: 55px;
+            right: -14px;
+            overflow: visible;
+            font-size: 16px;
+            line-height: 16px;
+        }
+
+        .main-form {
+            padding: 15px 15px 15px 15px;
+        }
+
+        .tdcolor {
+            background-color: #d9edf7;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .panel {
+            border-radius: 10px;
+        }
+
+        /*.ibox {
+                box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.03);
+                border-radius: 10px;
+            }*/
+
+        .ibox-title {
+            -moz-border-bottom-colors: none;
+            -moz-border-left-colors: none;
+            -moz-border-right-colors: none;
+            -moz-border-top-colors: none;
+            color: inherit;
+            margin-bottom: 0;
+            padding: 5px 15px 32px;
+            height: 26px;
+            border-bottom: 1px solid rgba(0, 0, 0, .12);
+        }
+
+            .ibox-title h5 {
+                display: inline-block;
+                font-size: 14px;
+                margin: 0 0 7px;
+                padding: 0;
+                text-overflow: ellipsis;
+                float: left;
+            }
+
+        .ibox-content {
+            clear: both;
+        }
+
+        /*#ribbon-container {
+                position: absolute;
+                top: 55px;
+                right: 0;
+                overflow: visible;
+                font-size: 16px;
+                line-height: 16px;
+            }*/
+
+        #ribbon-container a:before {
+            content: "";
+            height: 0;
+            width: 0;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: -20px;
+            border-top: 20px solid #0089d0;
+            border-bottom: 20px solid #0089d0;
+            border-right: 20px solid transparent;
+            border-left: 20px solid transparent;
+        }
+
+        #ribbon-container:before {
+            content: "";
+            height: 0;
+            width: 0;
+            display: block;
+            position: absolute;
+            top: 3px;
+            left: 0;
+            border-top: 20px solid rgba(0,0,0,.3);
+            border-bottom: 20px solid rgba(0,0,0,.3);
+            border-right: 20px solid rgba(0,0,0,.3);
+            border-left: 20px solid transparent;
+        }
+
+        #ribbon-container:after {
+            content: "";
+            height: 3px;
+            background: rgba(0,0,0,.3);
+            display: block;
+            position: absolute;
+            bottom: -3px;
+            left: 40px;
+            right: 3px;
+        }
+
+        #ribbon-container a {
+            display: block;
+            padding: 12px;
+            position: relative;
+            background: #0089d0;
+            overflow: visible;
+            height: 40px;
+            margin-left: 29px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+            #ribbon-container a:after {
+                content: "";
+                height: 0;
+                width: 0;
+                display: block;
+                position: absolute;
+                bottom: -15px;
+                right: 0;
+                border-top: 15px solid #004a70;
+                border-right: 15px solid transparent;
+            }
+
+
+        .btn-green {
+            background-color: #84c529;
+            border-color: #84c529;
+            color: #fff;
+        }
+
+        /*.btn-warning {
+                background-color: #f4511e;
+                border-color: #e65100;
+                color: #fff;
+            }*/
+
+        .btn-inverse {
+            background-color: #2f4050 !important;
+            color: #fff !important;
+        }
+
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-family: inherit;
+            font-weight: 500;
+            line-height: 1.1;
+            color: inherit;
+        }
+
+        h3, h4, h5 {
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .ibox-title h5 {
+            display: inline-block;
+            font-size: 14px;
+            margin: 0 0 7px;
+            padding: 0;
+            text-overflow: ellipsis;
+            float: left;
+        }
+    </style>
+
+    <link href="~/Content/bootstrap-datepicker.min.css" rel="stylesheet" />
+</head>
+
+@Html.AntiForgeryToken()
+@using (Html.BeginForm())
+{
+    string paymentStatus = Model.purchase.SubTotal > Model.purchase.PurchasePayment ? "Pending" : "Paid";
+
+    <div class="main-form">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="animated fadeIn page-bg">
+
+                    <div class="row">
+
+                        <div class="col-lg-12" id="application_ajaxrender">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <h5>Purchase - @Model.purchase.InvoiceID  </h5>
+                                    <input type="hidden" name="pid" value="@Model.purchase.PurchaseID" id="pid">
+
+                                    <div class="btn-group  pull-right" role="group" aria-label="...">
+                                        @*<div class="btn-group" role="group">
+                                                <button type="button" class="btn  btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-envelope-o"></i>  Send Email
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="#" id="mail_invoice_created">Invoice Created</a></li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn  btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>  Mark As
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+
+                                                    <li><a href="#" id="mark_stage_accepted" class="set_status">Accepted</a></li>
+
+                                                    <li><a href="#" id="mark_stage_declined" class="set_status">Declined</a></li>
+
+                                                    <li><a href="#" id="mark_stage_on_hold" class="set_status">On Hold</a></li>
+
+                                                    <li><a href="#" id="mark_stage_cancelled" class="set_status">Cancelled</a></li>
+
+
+                                                </ul>
+                                            </div>
+                                        *@
+
+                                        <a href="/purchase/PurchaseList" class="btn btn-primary  btn-sm"><i class="fa fa-list"></i> Purchase List</a>
+                                        @if (paymentStatus != "Paid")
+                                        {
+                                            if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Purchase_Payment))
+                                            {
+                                                <span id="spnMakePayment" style="float:left">
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnAddPayment"><i class="fa fa-calculator"></i> Make Payment</button>
+                                                </span>
+                                            }
+                                        }
+
+                                        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Purchase))
+                                        {
+                                            <a href="/purchase/Edit?pid=@Model.purchase.PurchaseID" class="btn btn-warning  btn-sm"><i class="fa fa-pencil"></i> Edit</a>
+                                        }
+
+                                        @*<div class="btn-group" role="group">
+                                                <button type="button" class="btn  btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-file-pdf-o"></i>
+                                                    PDF
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="#" target="_blank">View PDF</a></li>
+                                                    <li><a href="#">Download PDF</a></li>
+                                                </ul>
+                                            </div> *@
+                                    </div>
+
+                                </div>
+                                <div class="ibox-content">
+                                    <div id="ribbon-container">
+                                        <a href="javascript:void(0)" id="divPaymentStatus">@paymentStatus</a>
+                                    </div>
+
+                                    <div class="">
+                                        <header class="clearfix">
+                                            <div class="row">
+                                                <div class="col-sm-6 mt-md">
+                                                    <h2 class="h2 mt-none mb-sm text-dark text-bold">Purchase</h2>
+                                                    <h4 class="h4 m-none text-dark text-bold">#PO- @Model.purchase.InvoiceID </h4>
+                                                </div>
+                                                <div class="col-sm-6 text-right" style="margin-top:60px;">
+
+                                                    <div class="ib">
+                                                        <img src="https://demo.cloudonex.com/storage/system/logo_2105025689.png" alt="Logo" style="margin-bottom: 15px;">
+                                                    </div>
+
+                                                    <address class="ib mr-xlg">
+                                                        <strong>@(System.Configuration.ConfigurationSettings.AppSettings["MyCompanyName"].ToString()).</strong>
+                                                        <br>@(System.Configuration.ConfigurationManager.AppSettings["MyCompanyLocalAddress"].ToString())
+                                                        <br>@(System.Configuration.ConfigurationManager.AppSettings["MyCompanyGlobalAddress"].ToString())
+                                                    </address>
+
+                                                </div>
+                                            </div>
+                                        </header>
+                                        <div class="bill-info">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="bill-to">
+                                                        <p class="h5 mb-xs text-dark text-semibold"><strong>Supplier:</strong></p>
+                                                        <address>
+                                                            @Model.purchase.Supplier.SupplierName
+                                                            <br>
+                                                            @Model.purchase.Supplier.SupplierAddress
+                                                            <br>
+                                                            Bangladesh
+                                                            <br>
+                                                            <strong>Phone:</strong> 01553138099
+                                                            <br>
+                                                            <strong>Email:</strong> kamrulbt@gmail.com
+                                                        </address>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="bill-data text-right">
+                                                        <p class="mb-none">
+                                                            <span class="text-dark">Issued at:</span>
+                                                            <span class="value">@Model.purchase.IssuedAt.Date.ToString("MM-dd-yyyy")</span>
+                                                        </p>
+                                                        <h2> Invoice Total: <span class="amount" data-a-sign=" $ "> BDT @Model.purchase.SubTotal</span> </h2>
+                                                        <h2> Due: <span id="spnDueTotal" class="amount" data-a-sign=" $ "> BDT @(Model.purchase.SubTotal - Model.purchase.PurchasePayment)</span> </h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table class="table invoice-items">
+                                                <thead>
+                                                    <tr class="h4 text-dark">
+                                                        <th id="cell-id" class="text-semibold">#</th>
+                                                        <th id="cell-item" class="text-semibold">Item</th>
+                                                        <th id="cell-item" class="text-semibold">Serial</th>
+
+                                                        <th id="cell-price" class="text-center text-semibold">Price</th>
+                                                        <th id="cell-qty" class="text-center text-semibold">Qty</th>
+                                                        <th id="cell-total" class="text-center text-semibold">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{ int serial = 1;}
+
+                                                    @foreach (var purchaseItem in Model.purchasedeatils)
+                                                    {
+                                                        <tr>
+                                                            <td>@serial</td>
+                                                            <td class="text-semibold text-dark">@purchaseItem.Item.ItemName</td>
+                                                            <td class="text-center amount" data-a-sign=" $ "> @purchaseItem.Serial</td>
+                                                            <td class="text-center amount" data-a-sign=" $ "> @purchaseItem.Price</td>
+                                                            <td class="text-center">@purchaseItem.Quantity</td>
+                                                            <td class="text-center amount" data-a-sign=" $ "> @purchaseItem.Price</td>
+                                                        </tr>
+                                                        serial += 1;
+                                                    }
+
+                                                    @*<tr>
+                                                            <td></td>
+                                                            <td class="text-semibold text-dark">asfasdf</td>
+
+                                                            <td class="text-center amount" data-a-sign=" $ "> $ 3.00</td>
+                                                            <td class="text-center">2</td>
+                                                            <td class="text-center amount" data-a-sign=" $ "> $ 6.00</td>
+                                                        </tr>*@
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="invoice-summary">
+                                            <div class="row">
+                                                <div class="col-sm-4 col-sm-offset-8">
+                                                    <table class="table h5 text-dark">
+                                                        <tbody>
+                                                            <tr class="b-top-none">
+                                                                <td colspan="2">Subtotal</td>
+                                                                <td class="text-left amount" data-a-sign=" $ "> BDT @Model.purchase.Total</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="2">Discount</td>
+                                                                <td class="text-left amount" data-a-sign=" $ "> BDT @Model.purchase.DiscountAmount</td>
+                                                            </tr>
+                                                            <tr class="h4">
+                                                                <td colspan="2">Grand Total</td>
+                                                                <td class="text-left amount" data-a-sign=" $ "> BDT @Model.purchase.SubTotal</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="well m-t">
+                                        <p>@Model.purchase.SupplierNoted</p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modal_add_item" class="modal fade" tabindex="-1" data-width="760" style="display: none;">
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title">New Document</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+
+                                <div class="col-md-12">
+
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="doc_title">Title</label>
+                                            <input type="text" class="form-control" id="doc_title" name="doc_title">
+
+                                        </div>
+
+
+
+                                    </form>
+
+                                    <form action="" class="dropzone dz-clickable" id="upload_container">
+
+                                        <div class="dz-message">
+                                            <h3> <i class="fa fa-cloud-upload"></i>  Drop File Here</h3>
+                                            <br>
+                                            <span class="note">Or Click to Upload</span>
+                                        </div>
+
+                                    </form>
+                                    <hr>
+                                    <h4>Server Config:</h4>
+                                    <p>Upload Maximum Size: 200M</p>
+                                    <p>POST Maximum Size: 200M</p>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="file_link" id="file_link" value="">
+                            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+                            <button type="button" id="btn_add_file" class="btn btn-primary">Submit</button>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="_lan_msg_confirm" value="Are You Sure?">
+                    <input type="hidden" id="admin_email" value="demo@example.com">
+
+                    <div id="ajax-modal" class="modal container fade-scale" tabindex="-1" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+        @if (paymentStatus != "Paid")
+        {
+            <div class="modal fade" id="mdlPurchasePayment" role="dialog" style="overflow:auto" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog modal-lg" style="width:55%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Purchase Payment</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            <h3>
+                                <span style="margin-left:30%">Invoice Total:</span> <span id="spnShowTotalAmount" class="amount" data-a-sign="$ "></span>
+                                <span style="margin-left:20%">Due:</span> <span id="spnShowTotalDueAmount" class="amount" data-a-sign="$ "></span>
+                            </h3>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Account", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.DropDownList("ddlAccount", (IEnumerable<SelectListItem>)ViewBag.lstAccount, "-- Select Account --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Account For " })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Payment Date", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        <div id="divWarrentyStart" class="input-group date" data-provide="datepicker">
+                                            <input type="text" id="dtpPaynentDate" name="dtpPaynentDate" class="form-control">
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-th"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Description", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("txtDescription", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Description " })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Amount", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("txtAmount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Amount " })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Payee", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("txtPayee", null, new { @Disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Payee " })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                @Html.Label("Payment Method", new { @class = "control-label col-md-4", Style = "float:left" })
+                                @*   <div style="clear: both"> </div>*@
+                                <div class="col-md-8" style="padding-left: 0px;">
+                                    @Html.DropDownList("lstPaymentMethod", (IEnumerable<SelectListItem>)ViewBag.ddlPaymentMethod, "-- Select Payment By --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment By " })
+                                </div>
+                            </div>
+                            <div style="padding-top: 20px;"></div>
+                            <div class="form-group col-sm-12">
+                                @Html.Label("Check No", new { @class = "control-label col-md-4", Style = "float:left" })
+                                @*   <div style="clear: both"> </div>*@
+                                <div class="col-md-8" style="padding-left: 0px;">
+                                    @Html.TextBox("txtCheckNo", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Check/Reset No " })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            @*<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>*@
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpPurchasePaymentClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertPurchasePayment" value="Save Payment" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+}
+
+<script src="~/Scripts/CustomScripts/PurchaseManager.js"></script>
+<script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnAddPayment").on("click", function () {
+            PurchaseManager.GetPurchaseDuePaymentDetails();
+        });
+        $("#btnInsertPurchasePayment").on("click", function () {
+            PurchaseManager.InsertPurchasePayment();
+        });
+
+    });
+</script>

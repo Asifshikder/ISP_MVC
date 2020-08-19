@@ -1,0 +1,52 @@
+﻿
+<div class="form-group col-sm-12">
+    <div class="col-sm-6">
+        <div>
+            @Html.Label("SMS Title", null, new { @class = "control-label col-md-4", Style = "float:left" })
+            <div class="col-md-8" style="padding-left: 0px; float: left">
+                @Html.TextBox("txtSMSTitle", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " SMS Title " })
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div>
+            @Html.Label("Sender Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+            <div class="col-md-8" style="padding-left: 0px; float: left">
+                @Html.TextBox("txtMaskingName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Sender Name " })
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-6 form-group">
+    <div>
+        @Html.Label("SMS Details", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.TextArea("txtSMSDetails", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Message Details ", @rows="7" })
+        </div>
+    </div>
+</div>
+<div class="col-sm-6 form-group">
+    <div>
+        @Html.Label("SMS Code", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.TextBox("txtSMSCode", null, new { @disabled = "disabled", @class = "form-control input-sm col-sm-11", @placeholder = " SMS Code " })
+        </div>
+    </div>
+</div>
+<div class="col-sm-6 form-group">
+    <div>
+        @Html.Label("SMS Status", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.DropDownList("ddlSMSStatus", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Status " })
+        </div>
+    </div>
+</div>
+<div class="col-sm-6 form-group">
+    <div>
+        @Html.Label("SMS Counter", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.TextBox("txtSMSCounter", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " SMS Counter " })
+        </div>
+    </div>
+</div>

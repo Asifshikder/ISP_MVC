@@ -1,0 +1,50 @@
+﻿@Html.Hidden("ID")
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Employee", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.DropDownList("EditEmployeeID", null, "Select Employee", new { @class = "form-control input-sm col-sm-11", @placeholder = "Select Employee " })
+        </div>
+    </div>
+</div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Reason", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.TextArea("EditReason", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Reason" })
+        </div>
+    </div>
+</div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Leave Type", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.DropDownList("EditLeaveType", null, "Select Leave Type", new { @class = "form-control input-sm col-sm-11", @placeholder = "Select Leave Type " })
+        </div>
+    </div>
+</div>
+<div style="padding-top: 20px;"></div>
+
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Start Date", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.TextBox("EditStartDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Leave Start Date " })
+
+        </div>
+    </div>
+</div>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("End Date", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        @*  <span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.TextBox("EditEndDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Leave End Date " })
+
+        </div>
+    </div>
+</div>

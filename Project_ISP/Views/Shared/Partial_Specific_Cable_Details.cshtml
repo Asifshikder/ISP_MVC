@@ -1,0 +1,53 @@
+﻿
+
+<div>
+
+
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Pass In Main Box", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> @Html.RadioButton("chkPassedGroup",  1)</span>
+        </div>
+        <div style="clear:both"> </div>
+        @*<div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("lstSectionID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>*@
+    </div>
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Pass In OC Box", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left:5px"> @Html.RadioButton("chkPassedGroup",  2, new { @checked = true })</span>
+        </div>
+        <div style="clear:both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @* @Html.DropDownList("lstProductStatusID", Enumerable.Empty<SelectListItem>(), "-- Select Serial --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Serial  " })*@
+        </div>
+    </div>
+    <div class="form-group col-sm-1">
+
+    </div>
+    <div class="form-group col-sm-6">
+        <div>
+            @Html.Label("Cable is Stolen", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px"> @Html.RadioButton("chkPassedGroup", 3, new { @value = 3 })</span>
+        </div>
+        <div style="clear: both"> </div>
+        @*<div class="col-md-11" style="padding-left: 0px;">
+                @Html.DropDownList("lstSectionID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+            </div>*@
+    </div>
+
+    <div class="form-group col-sm-5">
+        <div>
+            @Html.Label("Cable Is Not Woring", null, new { @class = "control-label col-md-0", Style = "float:left" })
+            <span class="required_field col-md-0" style="padding-left: 5px"> @Html.RadioButton("chkPassedGroup", 4, new { @value = 4 })</span>
+        </div>
+        <div style="clear: both"> </div>
+        <div class="col-md-11" style="padding-left: 0px;">
+            @* @Html.DropDownList("lstProductStatusID", Enumerable.Empty<SelectListItem>(), "-- Select Serial --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Serial  " })*@
+        </div>
+    </div>
+</div>

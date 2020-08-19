@@ -1,0 +1,112 @@
+﻿<style>
+    .align {
+        text-align: center;
+    }
+</style>
+<table id="tblClientBillsSummary" class="table table-bordered table-hover table-responsive table-striped">
+    <thead>
+        <tr>
+            @*<th class="col-lg-1" colspan="3" style="text-align:center">Archive Bills Summary</th>*@
+            <th   style="text-align:center">Serial</th>
+            <th   style="text-align:center">Archive Bills Summary</th>
+            <th   style="text-align:center"></th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="align" >1</td>
+        <td class="align">Payable Amount (Monthly Bill)</td>
+        <td class="align" id="clnPayableAmount"></td>
+    </tr>
+        
+    <tr>
+        <td class="align">2</td>
+        <td class="align">Collected Amount (Monthly Bill + Discount(3))  </td>
+        <td class="align" id="clnCollectedAmountBIll"></td>
+    </tr>
+        
+        
+
+    <tr>
+            <td class="align">3</td>
+            <td class="align">Discount Amount (Bill)</td>
+            <td class="align" id="clnDiscountAmount"></td>
+        </tr>
+        <tr>
+            <td class="align">4</td>
+            <td class="align">Online Payment</td>
+            <td class="align" id="clnOnlinePayment"></td>
+        </tr>
+    <tr>
+        <td class="align">5</td>
+        <td class="align">SignUp Bills</td>
+        <td class="align" id="clnInstallationAmount"></td>
+    </tr>
+        
+        
+        
+    <tr>
+        <td class="align">6</td>
+        <td class="align">Total Collected Amount ((Monthly Bill + Discount) + SignUp Bills)</td>
+        <td class="align" id="clnCollectedAmount"></td>
+    </tr>
+        
+        
+
+    <tr>
+            <td class="align">7</td>
+            <td class="align">	Due Amount = Payable Amount (Bill)(1) - (Collected Amount (Bill)(2) + Discount Amount (Bill)(3))</td>
+            <td class="align" id="clnDueAmount"></td>
+        </tr>
+        <tr>
+            <td class="align">8</td>
+            <td class="align">Total Expense</td>
+            <td class="align" id="clnTotalExpense"></td>
+        </tr>
+        <tr>
+            <td class="align">9</td>
+            <td class="align">Rest of Amount : Collected Amount (Bill)(6) - Total Expense(8)</td>
+            <td class="align" id="clnRestOfAmount"></td>
+        </tr>
+        <tr>
+            <td class="align">10</td>
+            <td class="align">Total Client</td>
+            <td class="align" id="clnTotalClient"></td>
+        </tr>
+        <tr>
+            <td class="align">11</td>
+            <td class="align">Paid Client</td>
+            <td class="align" id="clnPaidClient"></td>
+        </tr>
+        <tr>
+            <td class="align">12</td>
+            <td class="align">Unpaid Client = Total Client (10) - Paid Client (11)</td>
+            <td class="align" id="clnUnpaidClient"></td>
+        </tr>
+        <tr>
+            <td class="align">13</td>
+            <td class="align">Previous Bill Collection</td>
+            <td class="align" id="clnPreviousBillCollection"></td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+
+    $(document).ready(function () {
+        $("#clnPayableAmount").text('@ViewBag.clnPayableAmount');
+        $("#clnCollectedAmount").text('@ViewBag.clnCollectedAmount');
+        $("#clnDiscountAmount").text('@ViewBag.clnDiscountAmount');
+        $("#clnCollectedAmountBIll").text('@ViewBag.clnCollectedAmountBIll');
+        $("#clnOnlinePayment").text('@ViewBag.clnOnlinePayment ');
+        $("#clnInstallationAmount").text('@ViewBag.clnInstallationAmount');
+        $("#clnDueAmount").text('@ViewBag.clnDueAmount');
+        $("#clnTotalExpense").text('@ViewBag.clnTotalExpense');
+        $("#clnRestOfAmount").text('@ViewBag.clnRestOfAmount');
+        $("#clnTotalClient").text('@ViewBag.clnTotalClient ');
+        $("#clnPaidClient").text('@ViewBag.clnPaidClient ');
+        $("#clnUnpaidClient").text('@ViewBag.clnUnpaidClient');
+        $("#clnPreviousBillCollection").text('@ViewBag.clnPreviousBillCollection ');
+    });
+
+</script>

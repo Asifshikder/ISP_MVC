@@ -1,0 +1,864 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+    *******************************************
+    Developer Name: Kamrul Hasan
+    Developer Email: kamrulbt@gmail.com
+    Last Modified Date: 12/06/2017
+    *******************************************
+    -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>@ViewBag.Title -ISP | ADMIN PANEL</title>
+
+   @Scripts.Render("~/bundles/jquery")
+
+    @*<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js" type="text/javascript"></script>*@
+    <script src="~/Scripts/JSReference/jquery.dataTables.1.10.10.min.js"></script>
+    @*<script src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js" type="text/javascript"></script>*@
+    <script src="~/Scripts/JSReference/dataTables.bootstrap1.10.10.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    @*<link href="~/Content/CSSReference/font-awesome4.7.0.min.css" rel="stylesheet" />*@
+    @*<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css " />*@
+    <link href="~/Content/CSSReference/dataTables.bootstrap1.10.10.min.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/AdminLayoutScript")
+
+    @*<script type="text/javascript" src='@Url.Content("~/Scripts/notify.js")'></script>*@
+    @Scripts.Render("~/bundle/AppUtil")
+
+    @*@Styles.Render("~/Content/css")*@
+    @Styles.Render("~/bundles/AdminLayoutStyles")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+    @*@Scripts.Render("~/bundles/modernizr")*@
+
+    <!-- Data table -->
+    <!-- Font Awesome -->
+    <link href="~/Content/CustomStyle/custom-style.css" rel="stylesheet" />
+
+    <!-- Data Table -->
+
+
+    <script>
+        //var achID = "";
+        function navigate(target, CID) {
+            //Perform your navigation
+            window.location.href = "/Complain/GetAllComplainListForSpecificUserFromDashBoardSearch" + '?CID=' + CID;
+        }
+
+        $(document).ready(function () {
+            $("#search-btn").keyup(function () {
+
+                var contentLength = $("#search-btn").val().length;
+                if (contentLength > 0) {
+                    var keyword = $("#search-btn").val();
+                    $("#tblAllClientsDashBoard>tbody").empty();
+                    SearchClientInformationManager.GetClientInformationBySearchKeyWord(keyword);
+
+                    $("#ShowInformation").css("display", "block");
+                } else {
+                    $("#tblAllClientsDashBoard>tbody").empty();
+                    $("#ShowInformation").css("display", "none");
+                }
+            });
+
+            $("#tblAllClientsDashBoard").on("click",
+                "#showClientFromDashBoard",
+                function () {
+
+                    var achID = $(this).closest("tr").find("td:eq(0) input").val();
+                    ClientUpdateFromDashBoardManager.GetClientDetailsByIDDashBoard(achID);
+                });
+
+            $("#PopUpDashBoard").on("click",
+                "#btnUpdateClientDetailsDashBoard",
+                function () {
+
+                    if (ClientUpdateFromDashBoardManager.UpdateClientDetailsValidationFromDashBoard() === true) {
+                        //ClientUpdataeFromSeveralPageManager.UpdateClientDetailsPopUpFromOtherPages();
+                        ClientUpdateFromDashBoardManager.UpdateClientDetailsFromDashBoard();
+                    }
+
+                });
+
+            $("#tblAllClientsDashBoard").on("click", "#layoutClientStatusUpdateHistory", function () {
+
+                var cID = $(this).closest("tr").find("td:eq(0) input").val();
+                GetlayoutClientLineHistoryByCID(cID);
+
+            });
+
+            $("#btnPopUptblLayoutClientChangeHistoryClose,#closetblLayoutClientChangeHistory").click(function () {
+                $("#tblLayoutClientChangeHistory>tbody").empty();
+                $("#mdlLayoutClientChangeHistory").modal("hide");
+            });
+            $("#closeLayoutShowInformation").click(function () {
+                $("#tblAllClientsDashBoard>tbody").empty();
+                $("#ShowInformation").css("display", "none");
+                $("#search-btn").val("");
+            });
+        });
+
+        //GetlayoutClientLineHistoryByCID: function(CID) {
+        //    var Data = ({ CID: CID });
+        //    Data = ClientUpdataeFromSeveralPageManager.addRequestVerificationToken(Data);
+        //    AppUtil.MakeAjaxCallsForAntiForgery(url, "POST", Data, this.GetlayoutClientLineHistoryByCIDSuccess, ClientUpdataeFromSeveralPageManager.GetlayoutClientLineHistoryByCIDFail);
+        //},
+        //GetlayoutClientLineHistoryByCIDSuccess: function (data) {
+        //    if (data.Success === true) {
+        //        $.each(data.lstClientLineStatus, function (index, item) {
+        //
+        //            $("#tblLayoutClientChangeHistory>tbody").append("<tr><td>" + item.Name + "</td><td>" + item.LoginName + "</td><td>" + item.Package + "</td><td>" + item.Address + "</td>\
+        //                                <td>" + item.Zone + "</td><td>" + item.Contact + "</td><td>" + item.Status + "</td><td>" + item.Employee + "</td>\
+        //                                <td>" + item.Time + "</td><td>" + item.Reason + "</td></tr>");
+        //        });
+        //    }
+        //},
+        //GetlayoutClientLineHistoryByCIDFail: function (data) {
+        //    if (data.Success === false) {
+        //        AppUtil.ShowError("Something is wrong. Contact with administrator.")
+        //    }
+        //},
+        function addRequestVerificationTokenLayout(data) {
+
+            data.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();
+            return data;
+        }
+        function GetlayoutClientLineHistoryByCID(CID) {
+            var url = "/client/LineStatusChangeHistoryByClientDetailsID/";
+            var Data = ({ SearchID: CID });
+            Data = addRequestVerificationTokenLayout(Data);
+            AppUtil.MakeAjaxCallsForAntiForgery(url, "POST", Data, GetlayoutClientLineHistoryByCIDSuccess, GetlayoutClientLineHistoryByCIDFail);
+        }
+        function GetlayoutClientLineHistoryByCIDSuccess(data) {
+            if (data.Success === true) {
+                $.each(data.lstClientLineStatus, function (index, item) {
+
+
+                    var status = "";
+                    if (item.Status == 3) {
+                        status = "<div id='status' class='label label-success'>Active</div>"
+                    }
+                    if (item.Status == 4) {
+                        status = "<div id='status' class='label label-warning'>In Active</div>"
+                    }
+                    if (item.Status == 5) {
+                        status = "<div id='status' class='label label-danger'>Lock</div>"
+                    }
+                    $("#tblLayoutClientChangeHistory>tbody").append("<tr><td>" + item.Name + "</td><td>" + item.LoginName + "</td><td>" + item.Package + "</td><td>" + item.Address + "</td>\
+                                                                                            <td>" + item.Zone + "</td><td>" + item.Contact + "</td><td>" + status + "</td><td>" + item.Employee + "</td>\
+                                                                                            <td>" + AppUtil.ParseDateTime(item.Time) + "</td><td>" + item.Reason + "</td></tr>");
+                });
+                $("#mdlLayoutClientChangeHistory").modal("show");
+            }
+        }
+        function GetlayoutClientLineHistoryByCIDFail(data) {
+            if (data.Success === false) {
+                AppUtil.ShowError("Something is wrong. Contact with administrator.")
+            }
+        }
+    </script>
+
+
+    @*<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">*@
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Google Font -->
+    @*<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">*@
+    <link href="~/Content/CSSReference/fonts.googleapis.css" rel="stylesheet" />
+    @*<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">*@
+    <link href="~/Content/CSSReference/jquery-ui1.12.1.css" rel="stylesheet" />
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <script src="~/Scripts/JSReference/jquery-ui1.12.1.js"></script>
+
+    <style>
+        .required_field {
+            color: red;
+        }
+
+        body {
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+
+
+        .btn-circle {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            line-height: 1.428571429;
+            border-radius: 15px;
+        }
+
+            .btn-circle.btn-lg {
+                width: 50px;
+                height: 50px;
+                padding: 10px 16px;
+                font-size: 18px;
+                line-height: 1.33;
+                border-radius: 25px;
+            }
+
+            .btn-circle.btn-xl {
+                width: 70px;
+                height: 70px;
+                padding: 10px 16px;
+                font-size: 24px;
+                line-height: 1.33;
+                border-radius: 35px;
+            }
+
+
+        .checkboxpadding20 {
+            padding: 20px;
+        }
+    </style>
+
+</head>
+
+@{
+    // ISP_ManagementSystemModel.AppUtils.CallingMethod();
+}
+
+
+<body class="hold-transition skin-blue sidebar-mini" style="padding-right: 0px">
+
+    @* start  *@
+
+    <div class="wrapper">
+        <header class="main-header">
+            <!-- Logo -->
+            <a target="_blank" href="http://busitech.net/" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini">ISP</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg" title="SKY View">SKY View</span>
+            </a>
+
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+
+
+                        <li class="dropdown notifications-menu">
+
+                            @*<a href="@Url.Action("GetAllCLients", "Client")">
+                                    <i class="fa fa-user-o"></i>
+                                    <span>
+                                        <span class="label label-warning">
+                                            @Session["AllClientInThisMonth"]
+                                        </span>
+                                    </span>
+                                </a>*@
+
+                            <a href="@Url.Action("GetAllCLients", "Client")">
+                                <i class="fa fa-user-o"></i>
+                                <span class="label label-warning">
+                                    @Session["AllClientInThisMonth"]
+                                </span>
+                            </a>
+
+                        </li>
+
+                        <!-- Notifications: style can be found in dropdown.less -->
+                        <li class="dropdown notifications-menu">
+
+                            <a href="@Url.Action("GetAllActiveClient", "Client")">
+                                <i class="fa fa-user-o"></i>
+                                <span class="label label-success">
+                                    @Session["ActiveClientInThisMonth"]
+                                </span>
+                            </a>
+
+                        </li>
+
+                        <!-- Notifications: style can be found in dropdown.less -->
+                        <li class="dropdown notifications-menu">
+                            <a href="@Url.Action("GetAllLockCLients", "Client")">
+                                <i class="fa fa-user-o"></i>
+                                <span class="label label-danger">
+                                    @Session["LockClientInThisMonth"]
+                                </span>
+                            </a>
+
+
+                        </li>
+
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="@Url.Content("~/images/user2-160x160.jpg")" class="user-image" alt="User Image">
+                                @*  @using (Html.BeginForm())*@
+                                @*  {*@
+
+                                @{
+                                    var claimInformation = (System.Security.Claims.ClaimsIdentity)User.Identity;
+                                    string role = "";
+                                    string name = "";
+                                    if (claimInformation.IsAuthenticated)
+                                    {
+                                        role = claimInformation.FindFirst(System.Security.Claims.ClaimTypes.Role).Value;
+                                        name = claimInformation.FindFirst(System.Security.Claims.ClaimTypes.Name).Value;
+                                    }
+                                }
+                                <span class="hidden-xs">@name</span>
+                                @*   }*@
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header">
+                                    <img src="@Url.Content("~/images/user2-160x160.jpg")" class="img-circle" alt="User Image">
+                                    <p>
+                                        <span class="hidden-xs">@name</span>
+                                    </p>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                    </div>
+                                    <div class="pull-right">
+
+                                        @using Microsoft.AspNet.Identity
+                                        @if (Request.IsAuthenticated)
+                                        {
+                                            using (Html.BeginForm("LogOut", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                @*<ul class="nav navbar-nav navbar-right">
+                                                        <li>
+                                                            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
+                                                        </li>
+                                                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                                                    </ul>*@
+                                                @*<a href="/Account/LogOut" class="btn btn-default btn-flat">Sign out</a>*@
+                                                <button type="submit" class="btn btn-default btn-flat" value="Sign Out">Sign Out</button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <a href="/Account/LoginByClient" class="btn btn-default btn-flat">Sign In</a>
+                                            //  @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+                                        }
+
+
+                                        @*<a href="/Account/LogOut" class="btn btn-default btn-flat">Sign out</a>*@
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+
+        <div class="modal fade" id="mdlLayoutClientChangeHistory" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" style="width: 85%;margin-bottom:5px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="closetblLayoutClientChangeHistory" type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Client Latest 10 Update Status History</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        <table id="tblLayoutClientChangeHistory" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%">
+                            <thead>
+                                <tr style="height: 20px;">
+                                    <th> Name</th>
+                                    <th> Login Name</th>
+                                    <th> Package</th>
+                                    <th> Address</th>
+                                    <th> Zone</th>
+                                    <th> Contact </th>
+                                    <th>Status</th>
+                                    <th>Employee</th>
+                                    <th>Time</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" id="btnPopUptblLayoutClientChangeHistoryClose" value="Close" class="btn btn-default btn-sm" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="ShowInformation" style="display: none; margin-left: 202px; margin-top: 50px; position: absolute; width: 84%; height: 30%; z-index: 999;">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+
+                    <section class="content-header" style="padding: 5px 0px 0 0px;">
+                        <h6 class="panel-title">Search Client List</h6>
+                        <ol class="breadcrumb">
+                            @*<li class="active"><a href="/Employee/Index"><i class="fa fa-dashboard"></i> All Employee</a></li>*@
+                        </ol>
+
+                        <button id="closeLayoutShowInformation" type="button" class="close" data-dismiss="modal" style="margin-top:-20px;">&times;</button>
+                    </section>
+                </div>
+
+                <div class="panel-body">
+                    <table id="tblAllClientsDashBoard" class="table table-hover table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <td hidden>ClientDetailsID</td>
+                                <td hidden>ClientLineStatusID</td>
+                                <td>Name</td>
+                                <td>Login Name</td>
+                                <td>Package This Month</td>
+                                <td>Package Next Month</td>
+                                <td>Address</td>
+                                <td>Zone</td>
+                                <td>Contact</td>
+                                <td>Status This Month</td>
+                                <td>Status Next Month</td>
+                                <td>Complain</td>
+                                <td>Profile</td>
+                                <td>Bill History</td>
+                                <td>Line History</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar" style="height: auto;">
+                <!-- Sidebar user panel -->
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <img src="@Url.Content("~/images/user2-160x160.jpg")" class="img-circle" alt="User Image">
+                    </div>
+                    <div class="pull-left info">
+                        <p>@name</p>
+                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                    </div>
+                </div>
+
+                <!-- search form -->
+                <div class="sidebar-form">
+                    <div class="input-group">
+                        <input type="text" name="q" id="search-btn" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <button type="submit" name="search" id="search-btn1" class="btn btn-flat">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+                @* <a tabindex="0" class="btn btn-lg btn-danger" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</a>*@
+
+                <!-- /.search form -->
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li class="header">MAIN NAVIGATION</li>
+
+                    <li class="active"><a href="/Home/Dashboard"><i class="fa fa-dashboard"></i> DashBoard</a></li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-user-o"></i>
+                            <span>Client Management</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_New_Client_By_Reseller))
+                            {
+                                <li> <a href="@Url.Action("ResellerClientcreate", "Client")"> <i class="fa fa-circle-o"></i> New Client </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Client_List_By_Reseller))
+                            {
+                                <li> <a href="@Url.Action("GetAllResellerClients", "Client")"> <i class="fa fa-circle-o"></i> All Client </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Line_Status_History))
+                            {
+                                <li> <a href="@Url.Action("GetAllClientStatusChangeHistoryByClientDetilsID", "Client")"> <i class="fa fa-circle-o"></i> Line Status History </a> </li>
+                            }
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>Packages</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.VIew_Reseller_Package_List_By_Himself))
+                            {
+                                <li> <a href="@Url.Action("ResellerPackagePriceChange", "Package")"> <i class="fa fa-circle-o"></i> All Packages</a> </li>
+                            }
+                        </ul>
+                    </li>
+
+
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>Accounts</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @*<li><a href="#"><i class="fa fa-circle-o"></i> Bill History</a></li>*@
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Reseller_Accounts))
+                            {
+                                <li> <a href="@Url.Action("ResellerAccounts", "Transaction")"> <i class="fa fa-circle-o"></i> Archive Bills </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Unpaid_Bills_List_Reseller_Clients))
+                            {
+                                <li> <a href="@Url.Action("ResellerUnpaidBills", "Transaction")"> <i class="fa fa-circle-o"></i> Unpaid Bills </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Sign_Up_Bills_List_Reseller_Clients))
+                            {
+                                <li> <a href="@Url.Action("ResellerSignUpBills", "Transaction")"> <i class="fa fa-circle-o"></i> New Signup Bills </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Active_To_Lock_List))
+                            {
+                                <li><a href="@Url.Action("ActiveToLock", "Client")"><i class="fa fa-circle-o"></i> Active to Lock Client</a></li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Lock_To_Active_List))
+                            {
+                                <li><a href="@Url.Action("LockToActive", "Client")"><i class="fa fa-circle-o"></i> Lock to Active Client</a></li>
+                            }
+                            @*@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Filter_Bills_List))
+        {
+            <li><a href="@Url.Action("FilterBills", "Transaction")"><i class="fa fa-circle-o"></i> Filter Bills</a></li>
+        }*@
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Bill_Submit_By_Me))
+                            {
+                                <li><a href="@Url.Action("submitbillbyme", "Transaction")"><i class="fa fa-circle-o"></i> Bill Pay</a></li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Bill_Submit_By_Admin))
+                            {
+                                <li><a href="@Url.Action("SubmitBillByMeAdmin", "Transaction")"><i class="fa fa-circle-o"></i> Bill Pay By Admin</a></li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Paid_Bills_By_Me))
+                            {
+                                <li><a href="@Url.Action("SubmittedBillByMe", "Transaction")"><i class="fa fa-circle-o"></i> Submitted Bill By Me</a></li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Paid_Bills_By_Employee))
+                            {
+                                <li><a href="@Url.Action("submittedbillbyEmployee", "Transaction")"><i class="fa fa-circle-o"></i>Search Paid List By Employee</a></li>
+                            }
+
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_ResellerPayment_List))
+                            {
+                                <li><a href="@Url.Action("ResellerPaymentHistory", "Reseller")"><i class="fa fa-circle-o"></i>My Recharge History</a></li>
+                            } 
+                        </ul>
+                    </li>
+
+
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-money"></i>
+                            <span>Advance Payment</span>
+                            <span class="pull-right-container">
+                                <small class="label pull-right bg-green">@Session["AdvancePayment"]</small>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Advance_Payment))
+                            {
+                                <li> <a href="@Url.Action("AddAdvancePayment", "AdvancePayment")"> <i class="fa fa-circle-o"></i> Add Advance Payment </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Advance_Payment_List))
+                            {
+                                <li> <a href="@Url.Action("ViewAdvancePayment", "AdvancePayment")"> <i class="fa fa-circle-o"></i> View Advance Payment </a> </li>
+                            }
+                        </ul>
+                    </li>
+
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-comments-o"></i>
+                            <span>Complain Management</span>
+                            <span class="pull-right-container">
+                                @* <i class="fa fa-angle-left pull-right"></i>*@
+                                <small class="label pull-right bg-green">@Session["ComplainPanding"]</small>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Complain_List))
+                            {
+                                <li> <a href="@Url.Action("index", "Complaintype")"> <i class="fa fa-circle-o"></i> Complain Type</a> </li>
+                            } @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Complain_List))
+                            {
+                                <li> <a href="@Url.Action("GetAllComplainList", "Complain")"> <i class="fa fa-circle-o"></i> Complain History</a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Create_Complain))
+                            {
+                                <li> <a href="@Url.Action("CreateComplain", "Complain")"> <i class="fa fa-circle-o"></i> New Complain </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_TimePeriodForSignal))
+                            {
+                                <li> <a href="@Url.Action("Index", "TimePeriodForSignal")"> <i class="fa fa-circle-o"></i> Time Period For Signal </a> </li>
+                            }
+
+                        </ul>
+                    </li>
+
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-usd"></i>
+                            <span>Expenses</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Expense_List))
+                            {
+                                <li> <a href="@Url.Action("Index", "Expense")"> <i class="fa fa-circle-o"></i> Expenses </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Expense))
+                            {
+                                <li> <a href="@Url.Action("Create", "Expense")"> <i class="fa fa-circle-o"></i> New Expense </a> </li>
+                            }
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-wrench"></i> <span>Asset Management </span>
+                            <span class="pull-right-container">
+                                @*<i class="fa fa-angle-left pull-right"></i>*@
+                                <small class="label pull-right bg-yellow">3</small>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_AssetType))
+                            {
+                                <li> <a href="@Url.Action("Index", "AssetType")"> <i class="fa fa-circle-o"></i> Add asset type </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Zone_List))
+                            {
+                                <li> <a href="@Url.Action("InsertAsset", "Asset")"> <i class="fa fa-circle-o"></i> Add Asset </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Zone))
+                            {
+                                <li> <a href="@Url.Action("Index", "Asset")"> <i class="fa fa-circle-o"></i> Remove/Update Asset </a> </li>
+                            }
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.AssetOverView))
+                            {
+                                <li><a href="@Url.Action("assetoverview", "asset")"><i class="fa fa-circle-o"></i> Asset OverView </a></li>
+                            }
+                        </ul>
+                    </li>
+
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-wrench"></i> <span>Settings </span>
+                            <span class="pull-right-container">
+                                @*<i class="fa fa-angle-left pull-right"></i>*@
+                                <small class="label pull-right bg-yellow">5</small>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-circle-o"></i> Zone Settings
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Zone_List))
+                                    {
+                                        <li> <a href="@Url.Action("Index", "Zone")"> <i class="fa fa-circle-o"></i> All Zone </a> </li>
+                                    }
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Zone))
+                                    {
+                                        <li> <a href="@Url.Action("InsertZone", "Zone")"> <i class="fa fa-circle-o"></i> New Zone </a> </li>
+                                    }
+                                </ul>
+                            </li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-circle-o"></i> Distribution Reason
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Distribution_Reason_List))
+                                    {
+                                        <li> <a href="@Url.Action("Index", "DistributionReason")"> <i class="fa fa-circle-o"></i> All Distribution Reason </a> </li>
+                                    }
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Distribution_Reason))
+                                    {
+                                        <li> <a href="@Url.Action("InsertDistributionReason", "DistributionReason")"> <i class="fa fa-circle-o"></i> New Distribution Reason </a> </li>
+                                    }
+                                </ul>
+                            </li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-circle-o"></i> Item Settings
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Item_List))
+                                    {
+                                        <li> <a href="@Url.Action("Index", "Item")"> <i class="fa fa-circle-o"></i> All Item </a> </li>
+                                    }
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Item))
+                                    {
+                                        <li> <a href="@Url.Action("InsertItem", "Item")"> <i class="fa fa-circle-o"></i> New Item </a> </li>
+                                    }
+                                </ul>
+                            </li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-circle-o"></i> Pop Settings
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Pop_List))
+                                    {
+                                        <li> <a href="@Url.Action("Index", "Pop")"> <i class="fa fa-circle-o"></i> All Pop </a> </li>
+                                    }
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Pop))
+                                    {
+                                        <li> <a href="@Url.Action("InsertPop", "Pop")"> <i class="fa fa-circle-o"></i> New Pop </a> </li>
+                                    }
+                                </ul>
+                            </li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-circle-o"></i> Box Settings
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.View_Box_List))
+                                    {
+                                        <li> <a href="@Url.Action("Index", "Box")"> <i class="fa fa-circle-o"></i> All Box </a> </li>
+                                    }
+                                    @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Box))
+                                    {
+                                        <li> <a href="@Url.Action("InsertBox", "Box")"> <i class="fa fa-circle-o"></i> New Box </a> </li>
+                                    }
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+
+
+        @*<div class="container body-content">
+
+                @RenderBody()
+            </div>*@
+
+
+        <footer class="main-footer">
+            <div class="pull-left hidden-xs">
+                <strong>Copyright &copy; 2014-2018 <a target="_blank" href="http://busitech.net/">Business Technology</a>.</strong> All rights reserved.
+            </div>
+            <b style="margin-left:100px;">Developed By: </b><strong><a style="font-weight:bold" target="_blank" href="http://busitech.net/" title="Contact No: +88-01553-138099">&nbsp;&nbsp;Kamrul Hasan</a></strong>
+            <b style="margin-left:50px;">Contact No: </b><strong><a style="font-weight:bold" href="#" title="Contact No: +88-01553-138099">&nbsp;&nbsp;+88-01553-138099</a></strong>
+            <text style="float:right; margin-right:10px;color:blue">S.T.1.0</text><b style="float:right">Version:&nbsp;</b>
+        </footer>
+
+    </div>
+    @* end  *@
+
+
+    @*<script src="~/Scripts/LayoutScripts/jquery.min.js"></script>
+        <script src="~/Scripts/LayoutScripts/jquery-ui.min.js"></script>*@
+
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    @*<script>
+            $.widget.bridge('uibutton', $.ui.button);
+        </script>*@
+
+    @*@Scripts.Render("~/bundles/bootstrap")*@
+
+
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+
+        $.ajaxSetup({
+            statusCode: {
+                401: function () {
+                    window.location.reload();
+                }
+            }
+        });
+
+
+                                                                                                    //OR
+
+
+                                                                                                    //$.ajaxSetup({
+                                                                                                    //    error: function (x, e) {
+                                                                                                    //        if (x.status == 401) {
+                                                                                                    //            window.location.reload();
+                                                                                                    //        }
+                                                                                                    //    }
+                                                                                                    //});
+
+    </script>
+
+</body>
+</html>

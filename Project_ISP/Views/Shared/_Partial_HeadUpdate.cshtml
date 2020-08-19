@@ -1,0 +1,20 @@
+﻿<input type="hidden" id="EditHeadID"/>
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Head Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.TextBox("EditHeadName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Head Name " })
+        </div>
+    </div>
+</div>
+<div style="padding-top: 20px;"></div>
+
+<div class="form-group col-sm-12">
+    <div>
+        @Html.Label("Head Type", null, new { @class = "control-label col-md-4", Style = "float:left" })
+        <div class="col-md-8" style="padding-left: 0px; float: left">
+            @Html.DropDownList("EditHeadTypeID", null, "-- Select Head Type --", new { @class = "form-control input-sm col-sm-6" })
+        </div>
+    </div>
+</div>
+<div style="padding-top: 20px;"></div>

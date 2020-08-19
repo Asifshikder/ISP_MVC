@@ -1,0 +1,8 @@
+﻿<option value="">--Select Payer--</option>
+@if (ViewBag.PayerList != null)
+{
+    foreach(var item in ViewBag.PayerList)
+    {
+        <option value="@item.Value">@item.Text</option>
+    }
+}

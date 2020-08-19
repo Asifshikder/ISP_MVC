@@ -1,0 +1,216 @@
+﻿@model IEnumerable<ISP_ManagementSystemModel.Models.CustomStockListInformation>
+
+<script src="~/Scripts/CustomScripts/StockManager.js"></script>
+
+<style>
+    .customDTWidth {
+        padding: 0px;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+<script>
+
+    var T_ID;
+    var StockDetailsID;
+    function setCompleteStatus(TransactionID) {
+
+        T_ID = TransactionID;
+        $("#btnShowBillPaymentWindow").css("visibility", "visible");
+    }
+
+    $(document).ready(function () {
+
+        var table = $("#tblItemList").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+
+                "ajax":
+                {
+                    "url": "/Stock/StockListInformation",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.ItemID = $("#ItemID").val();
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "width": "5%" },
+                    //{ "width": "5%", "targets": [6] },
+                    { "targets": [0], "data": "StockID", "render": function (data, type, row, meta) { return '<td hidden><input type="hidden" id="StockID" name="StockID" value=' + row.StockID + ' /></td>' } },
+                    { "targets": [1], "data": "StockDetailsID", "render": function (data, type, row, meta) { return '<td hidden><input type="hidden" id="StockDetailsID" name="StockDetailsID" value=' + row.StockDetailsID + ' /></td>' } },
+                    { "targets": [7], "data": "deleteStock", "render": function (data, type, row, meta) { return row.DeleteStockList === true ? ' <div style="float: left"><button type="button" id="btnDelete" class="btn btn-success  btn-sm" data-toggle="modal" data-target="#popModalForDeletePermently"><span class="glyphicon glyphicon-remove"></span></button></div> ' : "" } }
+                    //{ "targets": [9], "data": "Show", "render": function (data, type, row, meta) { return row.StatusThisMonthID == '3' ? "<div style='color: green; font-weight:bold'>Active</td>" : "<div style='color: red; font-weight:bold'>Lock</td>" } },
+                    //{ "targets": [10], "data": "Show", "render": function (data, type, row, meta) { return row.StatusNextMonthID == '5' ? "<div style='color: red; font-weight:bold'>Lock</td>" : "<div style='color: green; font-weight:bold'>Active</td>" } },
+                    //{ "targets": [11], "data": "Show", "render": function (data, type, row, meta) { return "<a href='#' id='ShowPopUps'>Edit</a>" } },
+                    //{ "targets": [12], "style": "align='center'", "data": "Action", "render": function (data, type, row, meta) { return row.Button === true ? ' <button id="btnDelete" type="button" class="btn btn-danger btn-sm padding" data-placement="top" data-toggle="modal" data-target="#popModalForDeletePermently"> <span class="glyphicon glyphicon-remove"></span> </button> ' : "" } }
+
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    $(nRow).find("td:eq(1)").attr("hidden", true);
+                    $(nRow).find("td:eq(6)").css("color", "blue");
+                    $(nRow).find("td:eq(7)").css("padding", "8px 25px");
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "ItemName"
+                    },
+                    {
+                        "data": "BrandName"
+                    },
+                    {
+                        "data": "Serial"
+                    },
+                    {
+                        "data": "SectionName"
+                    },
+                    {
+                        "data": "ProductStatusName"
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+        $("#btnProductDeletePermently").click(function () {
+
+            StockManager.DeleteStockItem(StockDetailsID);
+            $("#popModalForDeletePermently").modal("hide");
+        });
+
+        $("#tblItemList").on("click", "#btnPrint", function () {
+
+            window.open("/Report/ShoBillReport?ForAllOrSingle=0&TransactionID=" + $(this).closest("tr").find("td:eq(1) input").val() + "");
+            //TransactionManager.PrintAchiveBillIndividually();
+        });
+
+        $("#tblItemList").on("click", "#btnDelete", function () {
+
+            StockDetailsID = $(this).closest("tr").find("td:eq(1) input").val();
+        });
+
+        $("#btnSearchItem").click(function () {
+
+            if (StockManager.Validation() === true) {
+                //var itemId = $("#ItemID").val();
+                //StockManager.SearchStockListByItemID(itemId);
+                table.draw();
+            }
+
+        });
+
+        //$('#tblItemList').dataTable();
+
+    });
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    string Date = ISP_ManagementSystemModel.AppUtils.GetDateTimeNow().ToString("yyyy-MMM");
+
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-default">
+        <div class="panel-heading" style="height:45px;">
+            <section class="content-header" style="padding: 5px 10px 0px 15px;">
+                <h6 class="panel-title">Search By</h6>
+                <ol class="breadcrumb" style="padding: 0px 5px;     top: 5px;">
+                    <li class="active"><a href="/Stock/AddStock"><i class="fa fa-dashboard"></i> Add Item</a></li>
+
+                </ol>
+            </section>
+        </div>
+
+        <div class="panel-body">
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Item Name", null, new { @class = "control-label col-md-2", Style = "float:left" })
+                    <div class="col-md-4" style="padding-left: 0px; float: left">
+                        @Html.DropDownList("ItemID", null, "-- Select Item --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Select Item  " })
+                    </div>
+                    <div class="col-md-2" style="padding-left: 0px; float: left; margin-left: 20px;">
+                        <input type="button" id="btnSearchItem" class="btn btn-sm btn-primary" value="Search" />
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-heading">
+            <h4 class="panel-title">Item List</h4> @*@Date*@
+
+        </div>
+
+        <div class="panel-body" style="overflow:auto">
+            <table id="tblItemList" class="table table-bordered table-hover table-responsive table-striped" style="align-content: center; width: 100%">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th hidden="hidden"></th>
+                        <th style="padding:10px;">Item Name</th>
+                        <th style="padding:10px;">Brand</th>
+                        <th style="padding:10px;">Serial</th>
+                        <th style="padding:10px;">Section</th>
+                        <th style="padding:10px;">Status</th>
+                        <th style="text-align: center; width: 5%">Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModalForDeletePermently" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    This product will be delete from system permanently. No record will be found in future. Are you sure you want to Delete ?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="btnProductDeletePermently" class="btn btn-success success">Delete Product</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+

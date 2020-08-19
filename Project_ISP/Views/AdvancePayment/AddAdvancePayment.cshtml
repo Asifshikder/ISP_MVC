@@ -1,0 +1,175 @@
+﻿@{
+    ViewBag.Title = "Advance Payment";
+}
+
+
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+@*<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css"
+      rel="Stylesheet" type="text/css" />*@
+<link href="~/Content/CSSReference/jquery-ui1.9.2.css" rel="stylesheet" />
+<script src="~/Scripts/notify.js"></script>
+<script src="~/Scripts/CustomScripts/AppUtil.js"></script>
+<script src="~/Scripts/CustomScripts/AdvancePaymentManager.js"></script>
+<script>
+    var _ClientDetailsID;
+    $(document).ready(function () {
+        //$("#myTextBox").change
+        //$("#txtClientName").change(function () {
+        //
+        //    $("#txtMobile").val("");
+        //    $("#txtClientAdress").val("");
+        //});
+
+
+        $("#btnAddAdvancePayment").click(function () {
+            if (AdvancePaymentManager.Validation() === true) {
+                AdvancePaymentManager.AddAdvancePayment();
+            }
+
+        });
+
+        $("#txtClientName").autocomplete({
+            focus: function (event, ui) {
+
+                _ClientDetailsID = ui.item.val;
+
+                console.log("event focus : " + ui.item.val);
+                console.log("focus : " + ui.item.val);
+                // or $('#autocomplete-input').val(ui.item.label);
+
+                // Prevent the default focus behavior.
+                event.preventDefault();
+                // or return false;
+
+                AdvancePaymentManager.getAutoCompleateDetailsInformation(ui.item.val);
+
+            },
+            source: function (request, response) {
+                _ClientDetailsID = "";
+                $("#txtMobile").val("");
+                $("#txtClientAdress").val("");
+                $("#txtCredit").val("");
+                $("#txtRemarks").val("");
+                $.ajax({
+                    url: '/AdvancePayment/getAutoCompleateInformation',
+                    data: "{ 'Name': '" + request.term + "'}",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        response($.map(data, function (item) {
+
+                            return item;
+                            //return { label: item.Name, value: item.val };
+                        }))
+                    },
+                    error: function (response) {
+
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+
+                console.log("event select : " + e);
+                console.log(" select : " + i.item.val);
+                //$("#hfCustomer").val(i.item.val);
+            },
+            open: function () {
+                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+            },
+            close: function () {
+                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+            }
+            ,
+            minLength: 1
+        });
+    });
+</script>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <div class="container" style="padding-left: 0px; padding-top:0%">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <section class="content-header">
+                    <h6 class="panel-title">Advance Payment</h6>
+                    <ol class="breadcrumb">
+                        <li><a href="/AdvancePayment/ViewAdvancePayment"><i class="fa fa-dashboard"></i>View Payment</a></li>
+                        <li class="active"> <a href="/AdvancePayment/AddAdvancePayment"> Advance Payment</a> </li>
+                    </ol>
+                </section>
+            </div>
+
+            <div class="panel-body">
+
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Client Name", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                    </div>
+                    <div style="clear:both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("txtClientName", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-10", @placeholder = " Search Client " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Credit", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                    </div>
+                    <div style="clear:both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("txtCredit", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Credit " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Remarks", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                    </div>
+                    <div style="clear:both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextArea("txtRemarks", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Remarks " })
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Mobile", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                    </div>
+                    <div style="clear:both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("txtMobile", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Mobile " })
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Client Address", new { @class = "control-label col-md-0", Style = "float:left" })
+                        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                    </div>
+                    <div style="clear:both"> </div>
+                    <div class="col-md-11" style="padding-left: 0px;">
+                        @Html.TextBox("txtClientAdress", null, new { @Style = "max-width: 100%;", @class = "form-control input-sm col-sm-6", @placeholder = " Client Address " })
+                    </div>
+                </div>
+
+                <div style="float:right; padding:10px;margin-right: 60px"> <input type="button" id="btnAddAdvancePayment" value="Save Advance Payment" class="btn btn-primary btn-sm" /></div>
+
+            </div>
+
+        </div>
+    </div>
+}

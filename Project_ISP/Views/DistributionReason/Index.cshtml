@@ -1,0 +1,214 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.DistributionReason>
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+<script src="~/Scripts/CustomScripts/DistributionReasonManager.js"></script>
+
+
+@if (TempData["AlreadyInsert"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["AlreadyInsert"].ToString()');
+    </script>
+
+}
+@if (TempData["SaveSucessOrFail"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["SaveSucessOrFail"].ToString()');
+    </script>
+
+}
+<script>
+
+    var DistributionReasonID;
+    $(document).ready(function () {
+
+
+        $("#tblDistributionReason").on("click", "#showDistributionReasonForUpdate", function (e) {
+
+            e.preventDefault();
+            DistributionReasonID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            DistributionReasonManager.ShowDistributionReasonDetailsByIDForUpdate(DistributionReasonID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlDistributionReasonInsert").modal("show");
+        });
+
+
+
+        $("#btnInsertDistributionReason").click(function (e) {
+
+            if (DistributionReasonManager.CreateValidation() === true) {
+
+                DistributionReasonManager.InsertDistributionReasonFromPopUp();
+            }
+        });
+
+        $("#btnUpdateDistributionReason").click(function () {
+
+            if (DistributionReasonManager.UpdateValidation() === true) {
+
+                DistributionReasonManager.UpdateDistributionReasonInformation();
+            }
+        });
+        //btnPopUpPackageClose
+
+
+
+
+
+
+        $("#btnPopUpDistributionReasonInsertClose").click(function (e) {
+            DistributionReasonManager.clearForSaveInformation();
+            $("#mdlDistributionReasonInsert").modal("hide");
+        });
+
+        $("#btnPopUpDistributionReasonUpdateClose").click(function () {
+            DistributionReasonID = "";
+            DistributionReasonManager.clearForUpdateInformation();
+            $("#mdlDistributionReasonUpdate").modal("hide");
+        });
+        $('#btnInsertDistributionReasonModalClose').click(function () {
+            DistributionReasonManager.clearForSaveInformation();
+        });
+        $('#btnUpdateDistributionReasonModalClose').click(function () {
+            DistributionReasonManager.clearForUpdateInformation();
+        });
+
+        $("#tblDistributionReason").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            DistributionReasonManager.PrintDistributionReasonList();
+        });
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Distribution Reason List</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/DistributionReason/Index"><i class="fa fa-dashboard"></i> All Distribution Reason List</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+            <table id="tblDistributionReason" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;">
+                @* <table id="tblDistributionReason" class="table table-striped table-bordered table-responsive">*@
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Distribution Reason List")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Distribution_Reason))
+                            {
+                                <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => item.DistributionReasonID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DistributionReasonName)
+                            </td>
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Distribution_Reason))
+                                {
+                                    <a href="" id="showDistributionReasonForUpdate">Show</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Distribution_Reason))
+        {
+            <div class="modal fade" id="mdlDistributionReasonInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertDistributionReasonModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Distribution Reason Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Reason Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("DistributionReasonName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Distribution Reason Name " })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpDistributionReasonInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertDistributionReason" value="Save Distribution Reason" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>}
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Distribution_Reason))
+        {
+            <div class="modal fade" id="mdlDistributionReasonUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateDistributionReasonModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Distribution Reason Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_DistributionReason")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpDistributionReasonUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateDistributionReason" value="Update Distribution Reason" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>

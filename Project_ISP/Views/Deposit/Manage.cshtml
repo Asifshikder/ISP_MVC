@@ -1,0 +1,273 @@
+﻿@model Project_ISP.Models.Deposit
+@{
+    ViewBag.Title = "Manage";
+}
+@Html.AntiForgeryToken()
+<head>
+    <style>
+        .panel {
+            border-radius: 10px;
+        }
+
+        .main-form {
+            margin: 0px 15px 0px 15px;
+        }
+
+
+        .padding5 {
+            padding: 20px 5px 0px 5px;
+        }
+    </style>
+</head>
+
+<div class="col-sm-12">
+    <div class="col-md-4 padding5">
+        <div class="panel panel-body ">
+            <div class="panel panel-heading">
+                <h4>Update </h4>
+            </div>
+            @Html.HiddenFor(model => model.DepositID)
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Account", null, new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("AccountListID", null, "-- Select Account --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Zone " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Date", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("DepositDate", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Date " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Description", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBox("Description", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Description " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label>Description File</label>
+                @if (Model.DescriptionFilePath != null && Model.DescriptionFilePath != "")
+                {
+                    <img id="PreviewDescriptionFilePath" src="@Model.DescriptionFilePath" width="100" height="90" onclick="">
+                }
+                else
+                {
+                    <img id="PreviewDescriptionFilePath" src="" width="100" height="90" onclick="">
+                }
+                <p>
+                    <div class="col-sm-9" style="padding-left:0px;">
+                        <input type="file" name="DescriptionFile" id="DescriptionFile" onchange="ImageManager.preview(this,'PreviewDescriptionFilePath')">
+                        <input id="DescriptionFilePath" name="DescriptionFilePath" type="hidden" value="@Model.DescriptionFilePath">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#DescriptionFile'),'DescriptionFilePath')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </p>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Amount", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBoxFor(model => model.Amount, new { @class = "form-control input-sm col-sm-11", @placeholder = " Amount " })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Category", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("HeadID", null, "-- Select Category --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Category" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Company", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("CompanyID", null, "-- Select Company --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Company" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Payer", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("PayerID", null, "--Select Payer--", new { @class = "form-control input-sm col-sm-11", @placeholder = "Payer " })
+
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Payment Method", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("PaymentByID", null, "-- Select Method --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Payment Method" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("Status", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.DropDownList("DepositStatus", null, "-- Select Status --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Status" })
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <div>
+                    @Html.Label("References", new { @class = "control-label col-md-0", Style = "float:left" })
+                    <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                </div>
+                <div style="clear:both"> </div>
+                <div class="col-md-11" style="padding-left: 0px;">
+                    @Html.TextBoxFor(model => model.References, new { @class = "form-control input-sm col-sm-11", @placeholder = " Refereces(Optional) " })
+                </div>
+            </div>
+            <div style="float:right; margin-right: 50px;">
+                <input type="button" id="btnAddDeposit" value="Submit" class="btn btn-primary btn-sm" />
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-8 padding5">
+        <div class="panel panel-body">
+            <div class="body-content">
+                <div class="content-header">
+                    <h4 class="card-title">Delete Deposit</h4>
+                </div>
+                <div class="panel-body">
+                    Are you sure to delete? No data can be recover in future.
+                </div>
+                <div id="PopUp" style="float: right">
+                    <input type="button" id="btnDeleteDeposit" value="Delete" class="btn btn-danger btn-sm" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+    @*@if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Vendor))
+        {
+            <div class="modal fade" id="mdlVendorUpdate" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" style="width: 75%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="updateModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Vendor</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            Modal goes here
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float: right">
+                                <input type="button" id="btnPopUpVendorUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateVendor" value="Update" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }*@
+
+
+    @*<div class="modal fade" id="mdlAttachFile" role="dialog" style="overflow: hidden; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" style="width: 45%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="mdlCLose" type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Upload Description File</h4>
+                    </div>
+                    <div class="modal-body panel-body">
+                        <div class="form-group col-sm-6">
+                            <img id="PreviewDescriptionImage" src="" width="100" height="90">
+                            <label>
+                                Vendor Image
+                                <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+                            </label>
+                            <p>
+                                <div class="col-sm-9" style="padding-left:0px;">
+                                    <input accept="image/*" class="" id="DescriptionFile" name="DescriptionFile" type="file" onchange="ImageManager.preview(this,'PreviewDescriptionImage')">
+                                </div>
+                                <div class="col-sm-3">
+                                    <button type="button" class="close" aria-label="Close" onclick="ImageManager.RemoveContent($('#DescriptionFile'),'DescriptionFile')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </p>
+                            <span id="spnfileTxt" class="text-danger" style="display: none;"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="PopUp" style="float: right">
+                            <input type="button" id="btnPopUpClose" value="Ok" class="btn btn-success btn-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+</div>
+<script src="~/Scripts/CustomScripts/ImageManager.js"></script>
+<script src="~/Scripts/CustomScripts/DepositManager.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnAddDeposit").click(function (e) {
+            e.preventDefault();
+            if (DepositManager.DepositUpdateValidation() === true) {
+                DepositManager.UpdateDeposit();
+            }
+        });
+        $("#btnDeleteDeposit").click(function (e) {
+            e.preventDefault();
+            DepositManager.DeleteDeposit();
+        });
+        $('#DepositDate').datepicker({
+            dateFormat: 'mm/dd/yy',
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#CompanyID").change(function () {
+            debugger;
+            var CID = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "/Deposit/GetPayerList?CompanyID=" + CID,
+                contentType: "html",
+                success: function (data) {
+                    debugger;
+                    $("#PayerID").empty();
+                    $("#PayerID").append(data);
+                }
+            });
+        });
+    });
+
+</script>

@@ -1,0 +1,109 @@
+﻿<div class="col-sm-1">
+
+</div>
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Total Amount", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtTotalAmount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Total Amount ", @readonly = "readonly", disabled = "disabled" })
+    </div>
+</div>
+
+<div class="form-group col-sm-5">
+    <div>
+        @Html.Label("Paid Amount", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtRegularBillPaidAmount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Total ", @readonly = "readonly", disabled = "disabled" })
+    </div>
+</div>
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Due Amount", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtAmount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Due Amount ", @readonly = "readonly", disabled = "disabled" })
+    </div>
+</div>
+<div class="form-group col-sm-5">
+    <div>
+        @Html.Label("Pay", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtRegularBillPay", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Pay " })
+    </div>
+</div>
+
+<div class="col-sm-1">
+
+</div>
+<div class="form-group col-sm-3">
+    <div>
+        @Html.Label("Discount", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtRegularDiscount", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Discount " })
+    </div>
+</div>
+<div class="form-group col-sm-3">
+    <div>
+        @Html.Label("Permanent Discount", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtPermanentDiscount", null, new {@disabled="disabled", @class = "form-control input-sm col-sm-11", @placeholder = " Permanent Discount " })
+    </div>
+</div>
+<div class="form-group col-sm-5" style="visibility:hidden">
+    <div>
+        @Html.Label("Collected By", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.DropDownList("EmployeeID", null, "-- Collected By --", new { @class = "form-control input-sm col-sm-11", @placeholder = " Collected By " })
+    </div>
+</div>
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="form-group col-sm-6">
+    <div>
+        @Html.Label("Money Reset No", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtMoneyResetNo", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Money Reset No " })
+    </div>
+</div>
+<div class="form-group col-sm-5">
+    <div>
+        @Html.Label("Remarks", null, new { @class = "control-label col-md-0", Style = "float:left" })
+        <span class="required_field col-md-0" style="padding-left:5px"> *</span>
+    </div>
+    <div style="clear:both"> </div>
+    <div class="col-md-11" style="padding-left: 0px;">
+        @Html.TextBox("txtRemarks", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Remarks " })
+    </div>
+</div>
+

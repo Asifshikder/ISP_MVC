@@ -1,0 +1,282 @@
+﻿@using ISP_ManagementSystemModel
+@model IEnumerable<ISP_ManagementSystemModel.Models.Mikrotik>
+@{
+    ViewBag.Title = "Mikrotik List";
+}
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+<script src="~/Scripts/CustomScripts/MikrotikManager.js"></script>
+
+<script>
+
+    var MikrotikID;
+    $(document).ready(function () {
+        //$('#tblMikrotik').dataTable({
+        //    "lengthMenu": [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
+        //    "scrollX": true,
+        //    "stateSave": false,
+        //    dom: 'Bfrtip',
+        //    buttons:
+        //    [
+        //        'pageLength',
+
+        //        {
+        //            extend: 'excelHtml5',
+        //            title: 'Mikrotik List',
+        //            exportOptions: { columns: [1,2,3,4,5,6] }
+        //        }
+
+
+        //    ]
+        //});
+
+        $("#tblMikrotik").on("click", "#showMikrotikForUpdate", function (e) {
+
+            e.preventDefault();
+            MikrotikID = $(this).closest("tr").find("td:eq(0) input").val();
+
+            MikrotikManager.ShowMikrotikDetailsByIDForUpdate(MikrotikID);
+        });
+
+        $("#createNew").click(function (e) {
+
+            e.preventDefault();
+            $("#mdlMikrotikInsert").modal("show");
+        });
+
+        $("#btnInsertMikrotik").click(function (e) {
+
+            if (MikrotikManager.CreateValidation() === true) {
+
+                MikrotikManager.InsertMikrotikFromPopUp();
+            }
+        });
+
+        $("#btnUpdateMikrotik").click(function () {
+
+            if (MikrotikManager.UpdateValidation() === true) {
+
+                MikrotikManager.UpdateMikrotikInformation();
+            }
+        });
+        //btnMikrotikUpPackageClose
+
+
+
+        //$('#btnInsertMikrotikModalClose,#,#').click(function () {
+
+
+        //});
+
+
+        $("#btnPopUpMikrotikInsertClose").click(function (e) {
+            MikrotikManager.clearForSaveInformation();
+            $("#mdlMikrotikInsert").modal("hide");
+        });
+
+        $("#btnPopUpMikrotikUpdateClose").click(function () {
+            MikrotikID = "";
+            MikrotikManager.clearForUpdateInformation();
+            $("#mdlMikrotikUpdate").modal("hide");
+        });
+
+        $('#btnInsertMikrotikModalClose').click(function () {
+            MikrotikManager.clearForSaveInformation();
+        });
+        $('#btnUpdateMikrotikModalClose').click(function () {
+            MikrotikManager.clearForUpdateInformation();
+        });
+        $("#tblMikrotik").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            MikrotikManager.PrintMikrotikList();
+        });
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Mikrotik</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Mikrotik/Index"><i class="fa fa-dashboard"></i> All Mikrotik</a></li>
+
+            </ol>
+        </section>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file -->
+                @*<a class="btn btn-sm btn-primary" href="#">Export Excel</a>*@
+            </div>
+            <table id="tblMikrotik" class="table table-striped table-bordered table-responsive" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Mikrotic Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName(" Real IP ")
+                        </th>
+                        <th>
+                            @Html.DisplayName(" Mikrotik User Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName(" Password")
+                        </th>
+                        <th>
+                            @Html.DisplayName(" API Port")
+                        </th>
+                        <th>
+                            @Html.DisplayName(" Web Port")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Mikrotik))
+                            {
+                                <a href="" style="font-weight:800;color: crimson" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var Mikrotik in Model)
+                    {
+                        <tr>
+                            <td hidden="hidden">
+                                @Html.HiddenFor(s => Mikrotik.MikrotikID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelMikrotik => Mikrotik.MikName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelMikrotik => Mikrotik.RealIP)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelMikrotik => Mikrotik.MikUserName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelMikrotik => Mikrotik.MikPassword)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelMikrotik => Mikrotik.APIPort)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelMikrotik => Mikrotik.WebPort)
+                            </td>
+                            @*<td style="color: darkblue">
+                                    @Html.DisplayFor(modelMikrotik => Mikrotik.IPPool.PoolName)
+                                </td>*@
+                            <td>
+                                @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Mikrotik))
+                                {
+                                    <a href="" id="showMikrotikForUpdate">Show</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Mikrotik))
+        {
+            <div class="modal fade" id="mdlMikrotikInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertMikrotikModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Mikrotik Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Real IP", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("RealIP", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Real IP " })
+                                    </div>
+                                </div>
+                                <div class="row form-group"></div>
+                                <div>
+                                    @Html.Label("Mikrotik Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("MikrotikName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mikrotik Name " })
+                                    </div>
+                                </div>
+                                <div class="row form-group"></div>
+                                <div style="">
+                                    @Html.Label("Mikrotik User Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("MikUserName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mikrotik User Name " })
+                                    </div>
+                                </div>
+                                <div class="row form-group"></div>
+                                <div>
+                                    @Html.Label("Mikrotik Password", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("MikPassword", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Mikrotik Password" })
+                                    </div>
+                                </div>
+                                <div class="row form-group"></div>
+                                <div>
+                                    @Html.Label("API Port", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("APIPort", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " API Port " })
+                                    </div>
+                                </div>
+                                <div class="row form-group"></div>
+                                <div>
+                                    @Html.Label("Web Port", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("WebPort", null, new { @class = "form-control input-sm col-sm-11", @placeholder = " Web Port " })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <div id="MikrotikUp" style="float:right">
+                                <input type="button" id="btnPopUpMikrotikInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertMikrotik" value="Save Mikrotik" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Mikrotik))
+        {
+            <div class="modal fade" id="mdlMikrotikUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:45%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateMikrotikModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Mikrotik Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_Mikrotik")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="MikrotikUp" style="float:right">
+                                <input type="button" id="btnPopUpMikrotikUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateMikrotik" value="Update Mikrotik" class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

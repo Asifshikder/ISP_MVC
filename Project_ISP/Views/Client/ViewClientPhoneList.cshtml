@@ -1,0 +1,120 @@
+﻿@model IEnumerable<ISP_ManagementSystemModel.Models.ClientLineStatus>
+@{
+    ViewBag.Title = "Client Phone Number";
+}
+<style>
+    
+    .btn-sm {
+        padding: 3px 6px;
+    }
+
+</style>
+<script src="~/Scripts/CustomScripts/ClientDetailsManager.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnLoadPhoneNumberDependOnZoneAndLineStatus").click(function () {
+            ClientDetailsManager.GetPhoneListByZoneAndLineStatus();
+        });
+    });
+
+</script>
+
+
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+       
+        <section class="content-header">
+            <h6 class="panel-title">Phone Number</h6>
+            <ol class="breadcrumb">
+                <li><a href="/Client/GetAllCLients"><i class="fa fa-dashboard"></i> Client</a></li>
+                <li class="active"> <a href="/Client/ViewClientPhoneList"> Phone Number </a> </li>
+            </ol>
+        </section>
+
+    </div>
+    <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title">Filter Phone</h6>
+            </div>
+
+            <div class="panel-body">
+                <div class="form-group col-sm-6">
+                    <div>
+                        @Html.Label("Zone", new {@class = "control-label col-md-3", Style = "float:left"})
+                        @*<div style="clear:both"> </div>*@
+                        <div class="col-md-8" style="padding-left: 0px;">
+                            @Html.DropDownList("ZoneID", null, "-- All Zone --", new {@class = "form-control input-sm col-sm-11", @placeholder = " Zone "})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-5">
+                    <div>
+                        @Html.Label("Line Status", new {@class = "control-label col-md-4", Style = "float:left"})
+                        @*<div style="clear:both"> </div>*@
+                        <div class="col-md-8" style="padding-left: 0px;">
+                            @Html.DropDownList("LineStatusID", null, new {@class = "form-control input-sm col-sm-11", @placeholder = " Zone "})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-1">
+                    <input type="button" id="btnLoadPhoneNumberDependOnZoneAndLineStatus" value="Search" class="btn btn-primary btn-sm"/>
+                </div>
+
+            </div>
+        </div>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h6 class="panel-title">Phone Number</h6>
+                </div>
+
+                <div class="panel-body">
+                    <div style="height: 200px; overflow: auto;">
+
+                        <table id="tblPhoneList" class="table table-bordered table-responsive table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Phone List
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td style="padding:4px">
+                                            @Html.DisplayFor(s => item.ClientDetails.ContactNumber)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        }
+
+
+
+    </div>
+
+
+
+  
+
+</div>
+
+
+
+
+

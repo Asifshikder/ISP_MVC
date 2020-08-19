@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+@{
+    ViewBag.Title = "Create";
+    Layout = null;
+}
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>:: Swift - Real Estate ::</title>
+    <!-- Favicon-->
+    @*<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">*@
+    <link href="~/Content/CSSReference/MaterialIcons.css" rel="stylesheet" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Custom Css -->
+    <link href="~/Content/CustomStyle/LTEmain.css" rel="stylesheet">
+    <link href="~/Content/CustomStyle/LTElogin.css" rel="stylesheet">
+
+    <!-- Swift Themes. You can choose a theme from css/themes instead of get all themes -->
+    <link href="~/Content/CustomStyle/LTEall-themes.css" rel="stylesheet" />
+
+    <!-- notify css -->
+    <link href="~/Content/notify.min.css" rel="stylesheet" />
+</head>
+
+<body class="login-page authentication">
+
+    <div class="container" id="divContainer">
+        <div class="card-top"></div>
+        <div class="card">
+            <h1 class="title"><span>Tenanted</span>Login <div class="msg">Sign in to start your session</div></h1>
+            <div class="col-md-12">
+                @using (Html.BeginForm("ResellerLoginPage", "Account", new { ReturnUrl = ViewBag.ReturnUrl, Type = 3 }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="input-group">
+                        <span class="input-group-addon"> <i class="zmdi zmdi-account"></i> </span>
+                        <div class="form-line">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autofocus>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"> <i class="zmdi zmdi-lock"></i> </span>
+                        <div class="form-line">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="">
+                            <input type="checkbox" name="rememberme" id="rememberme" class="filled-in chk-col-pink">
+                            <label for="rememberme">Remember Me</label>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" value="SIGN IN" class="btn btn-raised waves-effect g-bg-blue">
+                            @*<a href="sign-up.html" class="btn btn-raised waves-effect" type="submit">SIGN UP</a>*@
+                        </div>
+                        <div class="text-center"> <a href="forgot-password.html">Forgot Password?</a></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="theme-bg"></div>
+
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <!--Notify JS-->
+    <script src="~/Scripts/notify.js"></script>
+
+    @if (TempData["TempInformation"] != null)
+    {
+        <script> 
+            $.notify('@TempData["TempInformation"].ToString()', "success");
+            @*$(".container").notify(
+                "I'm to the right of this box",
+                { position: "right" }
+            );
+            $("#username").notify('@TempData["TempInformation"].ToString()', {
+                position: "top center",
+                autoHideDelay: 5000,
+                showAnimation: "fadeIn",
+                hideAnimation: "fadeOut",
+                hideDuration: 700,
+                //arrowShow: false,
+                className: "success"
+            });*@
+        </script>
+    }
+    <!-- Jquery Core Js -->
+    <script src="~/Content/LTEScriptbundles/libscripts.bundle.js"></script> <!-- Lib Scripts Plugin Js -->
+    <script src="~/Content/LTEScriptbundles/vendorscripts.bundle.js"></script> <!-- Lib Scripts Plugin Js -->
+    <script src="~/Content/LTEScriptbundles/mainscripts.bundle.js"></script><!-- Custom Js -->
+
+    <script>
+        function ShowSuccessOnControl(message, controlID, position) {
+            debugger;
+            $("#" + controlID).notify(message, {
+                position: position,
+                autoHideDelay: 5000,
+                showAnimation: "fadeIn",
+                hideAnimation: "fadeOut",
+                hideDuration: 700,
+                //arrowShow: false,
+                className: "success"
+            });
+        }
+    </script>
+</body>
+
+</html>

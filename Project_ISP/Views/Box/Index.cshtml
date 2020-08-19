@@ -1,0 +1,285 @@
+﻿
+@using ISP_ManagementSystemModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .btn-sm {
+        padding: 3px 6px;
+    }
+</style>
+
+<script src="~/Scripts/CustomScripts/BoxManager.js"></script>
+
+@if (TempData["AlreadyInsert"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["AlreadyInsert"].ToString()');
+    </script>
+
+}
+@if (TempData["SaveSucessOrFail"] != null)
+{
+    <script>
+        AppUtil.ShowSuccess('@TempData["SaveSucessOrFail"].ToString()');
+    </script>
+
+}
+<script>
+
+    var BoxID;
+    var table;
+    $(document).ready(function () {
+
+        table = $("#tblBox").DataTable
+            ({
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+
+
+                "ajax":
+                {
+                    "url": "/Box/GetBoxAJAXData",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    data: function (d) {
+                        d.__RequestVerificationToken = $('[name=__RequestVerificationToken]').val();
+                        d.ResellerID = $("#SearchByResellerID").val();
+                    }
+                },
+                //https://stackoverflow.com/questions/11256864/jquery-datatables-actionlink-how-to-add
+                "columnDefs": [
+                    { "targets": [0], "render": function (data, type, row, meta) { return '<input type="hidden" id="ItemID" name="ItemID" value=' + row.BoxID + ' />' } },
+                    { "targets": [2], "orderable": false, "render": function (data, type, row, meta) { return '<a href="https://www.google.com.bd/maps/place/' + row.LatitudeLongitude + '" target="_blank" >' + row.BoxLocation+'</a>' } },
+                    { "targets": [3], "orderable": false, "render": function (data, type, row, meta) { return row.UpdateStatus === true ? '<a href="" id="showBoxForUpdate">Show</a>' : "" } }
+                ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //console.log(nRow);
+                    $(nRow).find("td:eq(0)").attr("hidden", true);
+                    return nRow;
+                },
+
+                "columns": [
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": "BoxName"
+                    },
+                    {
+                        "data": ""
+                    },
+                    {
+                        "data": ""
+                    }
+                ]
+            });
+
+        $("#btnSearchBoxListByResellerID").click(function () {
+            BoxManager.clearForSaveInformation();
+            BoxManager.clearForUpdateInformation();
+            table.draw();
+        });
+
+        $("#tblBox").on("click", "#showBoxForUpdate", function (e) {
+
+            e.preventDefault();
+            BoxID = $(this).closest("tr").find("td:eq(0) input").val();
+            BoxManager.ShowBoxDetailsByIDForUpdate(BoxID);
+        });
+
+        $("#createNew").click(function (e) {
+            e.preventDefault();
+            $("#mdlBoxInsert").modal("show");
+        });
+
+        $("#btnInsertBox").click(function (e) {
+            if (BoxManager.CreateValidation() === true) {
+                BoxManager.InsertBoxFromPopUp();
+            }
+        });
+
+        $("#btnUpdateBox").click(function () {
+            if (BoxManager.UpdateValidation() === true) {
+                BoxManager.UpdateBoxInformation();
+            }
+        });
+
+        $("#btnPopUpBoxInsertClose").click(function (e) {
+            BoxManager.clearForSaveInformation();
+            $("#mdlBoxInsert").modal("hide");
+        });
+
+        $("#btnPopUpBoxUpdateClose").click(function () {
+            BoxID = "";
+            BoxManager.clearForUpdateInformation();
+            $("#mdlBoxUpdate").modal("hide");
+        });
+        $('#btnInsertBoxModalClose').click(function () {
+            BoxManager.clearForSaveInformation();
+        });
+        $('#btnUpdateBoxModalClose').click(function () {
+            BoxManager.clearForUpdateInformation();
+        });
+
+        $("#tblBox").DataTable();
+
+        $("#btnExportExcel").click(function () {
+            BoxManager.PrintBoxList();
+        });
+
+    });
+
+
+</script>
+
+@Html.AntiForgeryToken()
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <section class="content-header">
+            <h6 class="panel-title">All Box List</h6>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/Box/Index"><i class="fa fa-dashboard"></i> All Box List</a></li>
+            </ol>
+        </section>
+    </div>
+
+    @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.View_Reseller_Box_List))
+    {
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-sm-4">
+                    @Html.DropDownList("SearchByResellerID", null, "-- Reseller List --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-sm-4">
+                    <input type="Button" id="btnSearchBoxListByResellerID" value="Search" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="panel panel-default" style="margin-bottom: 0px">
+
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+
+            <div style="float: right; padding-bottom:0px;">
+                <input type="button" id="btnExportExcel" class="btn btn-sm btn-primary" value="Export Excel">
+                <!-- export xl file --> 
+            </div>
+            <table id="tblBox" class="table table-bordered table-hover table-responsive table-condensed display nowrap" style="width: 100%;"> 
+                <thead>
+                    <tr>
+                        <th hidden="hidden"></th>
+                        <th>
+                            @Html.DisplayName("Box Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Box Location")
+                        </th>
+                        <th>
+                            @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Box))
+                            {
+                                <a style="font-weight:800;color: crimson" href="" id="createNew">Create New</a>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody> </tbody>
+            </table>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Add_Box))
+        {
+            <div class="modal fade" id="mdlBoxInsert" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:55%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnInsertBoxModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Box Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+
+                            @if (ISP_ManagementSystemModel.AppUtils.IsGranted(ISP_ManagementSystemModel.AppUtils.Add_Box))
+                            {
+                                <div class="form-group col-sm-12">
+                                    <div>
+                                        @Html.Label("Reseller Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                        <div class="col-md-8" style="padding-left: 0px;float:left">
+                                            @Html.DropDownList("ddlReseller", null, "-- Select Reseller --", new { @class = "form-control input-sm col-sm-11", @placeholder = "Reseller Name " })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Box Name", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("BoxName", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Box Name " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Box Location", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("BoxLocation", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Box Location " })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    @Html.Label("Latitude & Longitude", null, new { @class = "control-label col-md-4", Style = "float:left" })
+                                    @*<span class="required_field col-md-1" style="padding-left:5px; float:left;"> *</span>*@
+                                    <div class="col-md-8" style="padding-left: 0px;float:left">
+                                        @Html.TextBox("LatitudeLongitude", null, new { @class = "form-control input-sm col-sm-11", @placeholder = "Latitude & Longitude" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpBoxInsertClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnInsertBox" value="Save Box " class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (ISP_ManagementSystemModel.AppUtils.HasAccessInTheList(ISP_ManagementSystemModel.AppUtils.Update_Box))
+        {
+            <div class="modal fade" id="mdlBoxUpdate" role="dialog" style="overflow:auto">
+                <div class="modal-dialog modal-lg" style="width:65%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button id="btnUpdateBoxModalClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update Box Information</h4>
+                        </div>
+                        <div class="modal-body panel-body">
+                            @Html.Partial("Partial_Box")
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="PopUp" style="float:right">
+                                <input type="button" id="btnPopUpBoxUpdateClose" value="Close" class="btn btn-default btn-sm" />
+                                <input type="button" id="btnUpdateBox" value="Update Box " class="btn btn-primary btn-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>

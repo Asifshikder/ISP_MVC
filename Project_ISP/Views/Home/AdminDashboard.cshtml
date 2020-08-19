@@ -1,0 +1,397 @@
+﻿@{
+    var claimInformation = (System.Security.Claims.ClaimsIdentity)User.Identity;
+
+    //IEnumerable<System.Security.Claims.Claim> claims = claimInformation.Claims.ToList();
+    if (claimInformation.IsAuthenticated)
+    {
+        var role = claimInformation.FindFirst(System.Security.Claims.ClaimTypes.Role).Value;
+
+        if (role == "1")
+        {
+            <div class="col-sm-12" style="margin-top:20px">
+
+                <div id="content">
+                    <div style="margin-left: 0px;min-height: 348px;" id="main-container">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-street-view fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total : @ViewBag.TotalEmployee	</div>
+                                                <div><b>Client Management</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/members">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-unlock fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total : @ViewBag.ActiveClient</div>
+                                                <div><b>Active Client</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/active-members">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-lock fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total : @ViewBag.LockClient</div>
+                                                <div><b>Lock Client</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/lock-members">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-user-plus fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total : @ViewBag.ConnectionRequest</div>
+                                                <div><b>Connection Request</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/new-connections">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-bar-chart fa-5x"></i>
+                                            </div>								<div class="col-xs-9 text-right">
+                                                <div class="huge">Total Bill : @ViewBag.TotalBill BDT</div>
+                                                <div class="huge">Paid Bill : @ViewBag.PaidBill BDT</div>
+                                                <div class="huge">Discount : @ViewBag.Discount BDT</div>
+                                                <div class="huge">Unpaid Bill : @ViewBag.UnpaidBill BDT</div>
+                                                <div><b>Total Bills</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/archive-bills">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-usd fa-5x"></i>
+                                            </div>								<div class="col-xs-9 text-right">
+                                                <div class="huge">Unpaid Member : @ViewBag.UnpaidMember</div>
+                                                <div class="huge">Unpaid Bill : @ViewBag.UnpaidBill BDT</div>
+                                                <div><b>Unpaid Bills</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/unpaid-bills">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-line-chart fa-5x"></i>
+                                            </div>								<div class="col-xs-9 text-right">
+                                                <div class="huge">New Signup : @ViewBag.NewSignUp</div>
+                                                <div class="huge">New Signup Bill : @ViewBag.NewSignUpBill BDT</div>
+                                                <div><b>New Signup Bills</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/new-signup-bills">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-support fa-5x"></i>
+                                            </div>								<div class="col-xs-9 text-right">
+                                                <div class="huge">Lock To Active : @ViewBag.LockToActive</div>
+                                                <div class="huge">Total Bill : @ViewBag.LockToActiveTotalBill BDT</div>
+                                                <div><b>Lock to Active Client</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/lock-to-active">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-mobile fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total : @ViewBag.ActiveClientPhone</div>
+                                                <div><b>Active Client Phone</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/member-phones">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-mobile fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total : @ViewBag.LockClientPhone</div>
+                                                <div><b>Locked Client Phone</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/member-phones">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-mobile fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total : @ViewBag.UnpaidClientPhone</div>
+                                                <div><b>Unpaid Client Phone</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/member-phones">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-support fa-5x"></i>
+                                            </div>								<div class="col-xs-9 text-right">
+                                                <div class="huge">Active To Lock : @ViewBag.ActiveToLock</div>
+                                                <div class="huge">Total Bill : @ViewBag.ActiveToLockTotalBill BDT</div>
+                                                <div><b>Active to Lock Client</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/active-to-lock">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-comments fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total Complains : @ViewBag.TotalComplains</div>
+                                                <div class="huge">Pending Complains : @ViewBag.PendingComplains</div>
+                                                <div class="huge">Solved Complains : @ViewBag.SolvedComplains</div>
+                                                <div><b>Complains</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/complains">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div><div class="col-lg-3 col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-comments fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total Complains : @ViewBag.TotalComplains</div>
+                                                <div class="huge">Pending Complains : @ViewBag.PendingComplains</div>
+                                                <div class="huge">Solved Complains : @ViewBag.SolvedComplains</div>
+                                                <div><b>Complains</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/complains">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div><div class="col-lg-3 col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-comments fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total Complains : @ViewBag.TotalComplains</div>
+                                                <div class="huge">Pending Complains : @ViewBag.PendingComplains</div>
+                                                <div class="huge">Solved Complains : @ViewBag.SolvedComplains</div>
+                                                <div><b>Complains</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/complains">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div><div class="col-lg-3 col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-comments fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <div class="huge">Total Complains : @ViewBag.TotalComplains</div>
+                                                <div class="huge">Pending Complains : @ViewBag.PendingComplains</div>
+                                                <div class="huge">Solved Complains : @ViewBag.SolvedComplains</div>
+                                                <div><b>Complains</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="http://sakib.ispmix.com/dashboard/complains">
+                                        <div class="panel-footer">
+                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        else if (role == "2")
+        {
+           <h2>Hi</h2>
+        }
+
+    }
+
+}
+
